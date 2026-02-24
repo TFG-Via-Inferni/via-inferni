@@ -14,7 +14,7 @@ public enum RoomShape
 {
     OneByOne,
     OneByTwo,
-    TwoByTwo,
+    TwoByOne,
     TwoByTwo,
     LShape
 }
