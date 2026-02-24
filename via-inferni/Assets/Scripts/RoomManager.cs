@@ -28,7 +28,7 @@ public class RoomManager : MonoBehaviour
         createdRooms = new List<Room>();
     }
 
-    public void SetUpRooms()
+    public void SetUpRooms(List<Cell> spawnedCells)
     {
         for(int i = createdRooms.Count - 1; i >= 0; i--)
         {
