@@ -170,6 +170,7 @@ public class MapGenerator : MonoBehaviour
         SpawnRoom(secretRoomIndex);
 
         UpdateSpecialRoomVisuals();
+        RoomManager.instance.SetUpRooms(spawnedCells);
     }
 
     void UpdateSpecialRoomVisuals()
