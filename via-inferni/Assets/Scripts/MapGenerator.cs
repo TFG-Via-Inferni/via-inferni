@@ -7,6 +7,7 @@ using System.Linq;
 public class MapGenerator : MonoBehaviour
 {
     private int[] floorPlan;
+    public int[] getFloorPlan() => floorPlan;
 
     private int floorPlantCount;
     private int minRooms;
@@ -22,6 +23,9 @@ public class MapGenerator : MonoBehaviour
     private float cellSize;
     private Queue<int> cellQueue;
     private List<Cell> spawnedCells;
+
+    public List<Cell> getSpawnedCells() => spawnedCells; 
+
     private List<int> bigRoomIndexes;
 
     [Header("Sprite References")]
@@ -35,6 +39,8 @@ public class MapGenerator : MonoBehaviour
     [SerializeField] private Sprite verticalRoom;
     [SerializeField] private Sprite horizontalRoom;
     [SerializeField] private Sprite lShapeRoom;
+
+    public static MapGenerator instance;
 
     private static readonly List<int[]> roomShapes = new()
     {
@@ -68,6 +74,8 @@ public class MapGenerator : MonoBehaviour
 
     void Start()
     {
+        instance = this;
+
         minRooms = 7;
         maxRooms = 15;
         cellSize = 0.5f;
@@ -171,18 +179,22 @@ public class MapGenerator : MonoBehaviour
             if (cell.index == bossRoomIndex)
             {
                 cell.SetSpecialRoomSprite(boss);
+                cell.SetRoomType(RoomType.Boss);
             }
             else if (cell.index == itemRoomIndex)
             {
                 cell.SetSpecialRoomSprite(item);
+                cell.SetRoomType(RoomType.Item);
             }
             else if (cell.index == shopRoomIndex)
             {
                 cell.SetSpecialRoomSprite(shop);
+                cell.SetRoomType(RoomType.Shop);
             }
             else if (cell.index == secretRoomIndex)
             {
                 cell.SetSpecialRoomSprite(secret);
+                cell.SetRoomType(RoomType.Secret);
             }
         }
     }
@@ -277,6 +289,10 @@ public class MapGenerator : MonoBehaviour
         Cell newCell = Instantiate(cellPrefab, position, UnityEngine.Quaternion.identity);
         newCell.value = 1;
         newCell.index = index;
+        newCell.SetRoomShape(RoomShape.OneByOne);
+        newCell.SetRoomType(RoomType.Regular);
+
+        newCell.cellList.Add(index);
 
         spawnedCells.Add(newCell);
     }
@@ -351,6 +367,7 @@ public class MapGenerator : MonoBehaviour
 
             newCell = Instantiate(cellPrefab, position, UnityEngine.Quaternion.identity);
             newCell.SetRoomSprite(largeRoom);
+            newCell.SetRoomShape(RoomShape.TwoByTwo);
         }
 
         if (largeRoomIndexes.Count == 3)
@@ -359,6 +376,7 @@ public class MapGenerator : MonoBehaviour
             newCell = Instantiate(cellPrefab, position, UnityEngine.Quaternion.identity);
             newCell.SetRoomSprite(lShapeRoom);
             newCell.RotateCell(largeRoomIndexes);
+            newCell.SetRoomShape(RoomShape.LShape);
         }
 
         if (largeRoomIndexes.Count == 2)
@@ -368,15 +386,19 @@ public class MapGenerator : MonoBehaviour
                 UnityEngine.Vector2 position = new UnityEngine.Vector2(combinedX / 2 * cellSize, -combinedY / 2 * cellSize - offset);
                 newCell = Instantiate(cellPrefab, position, UnityEngine.Quaternion.identity);
                 newCell.SetRoomSprite(verticalRoom);
+                newCell.SetRoomShape(RoomShape.OneByTwo);
             }
             else if (largeRoomIndexes[0] + 1 == largeRoomIndexes[1] || largeRoomIndexes[0] - 1 == largeRoomIndexes[1])
             {
                 UnityEngine.Vector2 position = new UnityEngine.Vector2(combinedX / 2 * cellSize + offset, -combinedY / 2 * cellSize);
                 newCell = Instantiate(cellPrefab, position, UnityEngine.Quaternion.identity);
                 newCell.SetRoomSprite(horizontalRoom);
+                newCell.SetRoomShape(RoomShape.TwoByOne);
             }
         }
 
+        newCell.cellList = largeRoomIndexes;
+        newCell.cellList.Sort();
         spawnedCells.Add(newCell);
     } 
 
