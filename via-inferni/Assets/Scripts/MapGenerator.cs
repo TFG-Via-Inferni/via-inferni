@@ -7,7 +7,7 @@ using System.Linq;
 public class MapGenerator : MonoBehaviour
 {
     private int[] floorPlan;
-    public int[] getFloorPlan() => floorPlan;
+    public int[] getFloorPlan => floorPlan;
 
     private int floorPlantCount;
     private int minRooms;
@@ -24,7 +24,7 @@ public class MapGenerator : MonoBehaviour
     private Queue<int> cellQueue;
     private List<Cell> spawnedCells;
 
-    public List<Cell> getSpawnedCells() => spawnedCells; 
+    public List<Cell> getSpawnedCells => spawnedCells; 
 
     private List<int> bigRoomIndexes;
 

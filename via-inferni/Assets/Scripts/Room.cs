@@ -18,7 +18,7 @@ public class Room : MonoBehaviour
 
     public void SetupRoom(Cell currentCell, RoomScriptable room)
     {
-        spriteRederer.sprite = room.roomVariations[Random.Range(0, room.roomVariations.Length)];
+        spriteRenderer.sprite = room.roomVariations[Random.Range(0, room.roomVariations.Length)];
 
         if (currentCell.roomType == RoomType.Secret) return;
 
@@ -216,7 +216,7 @@ public class Room : MonoBehaviour
         }
     }
 
-    private DoorScriptable GetDoorOptions(RoomType roomType, EdgeDirection direction)
+    private DoorScriptable GetDoorOptions(RoomType roomType)
     {
         return RoomManager.instance.doors.FirstOrDefault(x => x.roomType == roomType);
     }
