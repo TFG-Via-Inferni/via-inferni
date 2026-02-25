@@ -47,6 +47,8 @@ public class RoomManager : MonoBehaviour
         
             var spawnedRoom = Instantiate(roomPrefab, convertedPosition, Quaternion.identity);
         
+            spawnedRoom.SetupRoom(currentCell, foundRoom);
+
             createdRooms.Add(spawnedRoom);
         }
     }
