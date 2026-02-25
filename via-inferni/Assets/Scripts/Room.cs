@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public enum EdgeDirection
 {
@@ -14,11 +15,26 @@ public enum EdgeDirection
 
 public class Room : MonoBehaviour
 {
-    public SpriteRenderer spriteRenderer;
-
     public void SetupRoom(Cell currentCell, RoomScriptable room)
     {
-        spriteRenderer.sprite = room.roomVariations[Random.Range(0, room.roomVariations.Length)];
+        // Instanciar el prefab visual de la habitación
+        if (room != null && room.roomVariations.Length > 0)
+        {
+            var selectedPrefab = room.roomVariations[Random.Range(0, room.roomVariations.Length)];
+            if (selectedPrefab != null)
+            {
+                var roomInstance = Instantiate(selectedPrefab, transform);
+                roomInstance.transform.localPosition = Vector3.zero;
+                
+                var tilemap = roomInstance.GetComponentInChildren<Tilemap>();
+                if (tilemap != null)
+                {
+                    tilemap.CompressBounds();
+                    var bounds = tilemap.localBounds;
+                    roomInstance.transform.localPosition = -bounds.center;
+                }
+            }
+        }
 
         if (currentCell.roomType == RoomType.Secret) return;
 
@@ -67,13 +83,13 @@ public class Room : MonoBehaviour
         var cellA = cell.cellList[0];
         var cellB = cell.cellList[1];
 
-        TryPlaceDoor(cellA, new Vector2(0f, 4f), EdgeDirection.Up, floorplan, cellList, cell);
-        TryPlaceDoor(cellA, new Vector2(-4.25f, 2.6125f), EdgeDirection.Left, floorplan, cellList, cell);
-        TryPlaceDoor(cellA, new Vector2(4.25f, 2.6125f), EdgeDirection.Right, floorplan, cellList, cell);
+        TryPlaceDoor(cellA, new Vector2(0f, 10f), EdgeDirection.Up, floorplan, cellList, cell);
+        TryPlaceDoor(cellA, new Vector2(-5f, 5f), EdgeDirection.Left, floorplan, cellList, cell);
+        TryPlaceDoor(cellA, new Vector2(5f, 5f), EdgeDirection.Right, floorplan, cellList, cell);
 
-        TryPlaceDoor(cellB, new Vector2(0f, -4f), EdgeDirection.Down, floorplan, cellList, cell);
-        TryPlaceDoor(cellB, new Vector2(-4.25f, -2.6125f), EdgeDirection.Left, floorplan, cellList, cell);
-        TryPlaceDoor(cellB, new Vector2(4.25f, -2.6125f), EdgeDirection.Right, floorplan, cellList, cell);
+        TryPlaceDoor(cellB, new Vector2(0f, -10f), EdgeDirection.Down, floorplan, cellList, cell);
+        TryPlaceDoor(cellB, new Vector2(-5f, -5f), EdgeDirection.Left, floorplan, cellList, cell);
+        TryPlaceDoor(cellB, new Vector2(5f, -5f), EdgeDirection.Right, floorplan, cellList, cell);
     }
 
     public void SetupTwoByOne(Cell cell, int[] floorplan, List<Cell> cellList)
@@ -81,13 +97,13 @@ public class Room : MonoBehaviour
         var cellA = cell.cellList[0];
         var cellB = cell.cellList[1];
 
-        TryPlaceDoor(cellA, new Vector2(-5f, 1.5f), EdgeDirection.Up, floorplan, cellList, cell);
-        TryPlaceDoor(cellA, new Vector2(-9.75f, 0f), EdgeDirection.Left, floorplan, cellList, cell);
-        TryPlaceDoor(cellA, new Vector2(-5f, -1.5f), EdgeDirection.Down, floorplan, cellList, cell);
+        TryPlaceDoor(cellA, new Vector2(-5f, 5f), EdgeDirection.Up, floorplan, cellList, cell);
+        TryPlaceDoor(cellA, new Vector2(-10f, 0f), EdgeDirection.Left, floorplan, cellList, cell);
+        TryPlaceDoor(cellA, new Vector2(-5f, -5f), EdgeDirection.Down, floorplan, cellList, cell);
 
-        TryPlaceDoor(cellB, new Vector2(5f, 1.5f), EdgeDirection.Up, floorplan, cellList, cell);
-        TryPlaceDoor(cellB, new Vector2(5f, -1.5f), EdgeDirection.Down, floorplan, cellList, cell);
-        TryPlaceDoor(cellB, new Vector2(9.75f, 0f), EdgeDirection.Right, floorplan, cellList, cell);
+        TryPlaceDoor(cellB, new Vector2(5f, 5f), EdgeDirection.Up, floorplan, cellList, cell);
+        TryPlaceDoor(cellB, new Vector2(5f, -5f), EdgeDirection.Down, floorplan, cellList, cell);
+        TryPlaceDoor(cellB, new Vector2(10f, 0f), EdgeDirection.Right, floorplan, cellList, cell);
     }
 
     public void SetupTwoByTwo(Cell cell, int[] floorplan, List<Cell> cellList)
@@ -97,17 +113,17 @@ public class Room : MonoBehaviour
         var cellC = cell.cellList[2];
         var cellD = cell.cellList[3];
 
-        TryPlaceDoor(cellA, new Vector2(-5.3125f, 4.5f), EdgeDirection.Up, floorplan, cellList, cell);
-        TryPlaceDoor(cellB, new Vector2(5.3125f, 4.5f), EdgeDirection.Up, floorplan, cellList, cell);
+        TryPlaceDoor(cellA, new Vector2(-5f, 10f), EdgeDirection.Up, floorplan, cellList, cell);
+        TryPlaceDoor(cellB, new Vector2(5f, 10f), EdgeDirection.Up, floorplan, cellList, cell);
 
-        TryPlaceDoor(cellA, new Vector2(-9.75f, 2.6125f), EdgeDirection.Left, floorplan, cellList, cell);
-        TryPlaceDoor(cellC, new Vector2(-9.75f, -2.6125f), EdgeDirection.Left, floorplan, cellList, cell);
+        TryPlaceDoor(cellA, new Vector2(-10f, 5f), EdgeDirection.Left, floorplan, cellList, cell);
+        TryPlaceDoor(cellC, new Vector2(-10f, -5f), EdgeDirection.Left, floorplan, cellList, cell);
 
-        TryPlaceDoor(cellC, new Vector2(-5.3125f, -4.5f), EdgeDirection.Down, floorplan, cellList, cell);
-        TryPlaceDoor(cellD, new Vector2(5.3125f, -4.5f), EdgeDirection.Down, floorplan, cellList, cell);
+        TryPlaceDoor(cellC, new Vector2(-5f, -10f), EdgeDirection.Down, floorplan, cellList, cell);
+        TryPlaceDoor(cellD, new Vector2(5f, -10f), EdgeDirection.Down, floorplan, cellList, cell);
 
-        TryPlaceDoor(cellB, new Vector2(9.75f, 2.6125f), EdgeDirection.Right, floorplan, cellList, cell);
-        TryPlaceDoor(cellD, new Vector2(9.75f, -2.6125f), EdgeDirection.Right, floorplan, cellList, cell);
+        TryPlaceDoor(cellB, new Vector2(10f, 5f), EdgeDirection.Right, floorplan, cellList, cell);
+        TryPlaceDoor(cellD, new Vector2(10f, -5f), EdgeDirection.Right, floorplan, cellList, cell);
     }
 
     public void SetupLShapeRoom(Cell cell, int[] floorplan, List<Cell> cellList)
@@ -196,19 +212,19 @@ public class Room : MonoBehaviour
         switch (direction)
         {
             case EdgeDirection.Up:
-                door.SetDoorSprite(doorTypes.upDoor);
+                door.SetDoorPrefab(doorTypes.upDoor);
                 break;
             
             case EdgeDirection.Down:
-                door.SetDoorSprite(doorTypes.downDoor);
+                door.SetDoorPrefab(doorTypes.downDoor);
                 break;
             
             case EdgeDirection.Left:
-                door.SetDoorSprite(doorTypes.leftDoor);
+                door.SetDoorPrefab(doorTypes.leftDoor);
                 break;
             
             case EdgeDirection.Right:
-                door.SetDoorSprite(doorTypes.rightDoor);
+                door.SetDoorPrefab(doorTypes.rightDoor);
                 break;
             
             default:

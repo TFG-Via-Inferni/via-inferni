@@ -7,5 +7,5 @@ public class RoomScriptable : ScriptableObject
     public RoomShape roomShape;
 
     public int[] occupiedTiles;
-    public Sprite[] roomVariations;
+    public GameObject[] roomVariations;
 }

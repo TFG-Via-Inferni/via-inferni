@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Boss Door
   m_EditorClassIdentifier: Assembly-CSharp::DoorScriptable
   roomType: 3
-  upDoor: {fileID: -1771168941, guid: a1a7fbbeb79e5a64f93ff80ebf1bdbe0, type: 3}
-  downDoor: {fileID: 973845185, guid: a1a7fbbeb79e5a64f93ff80ebf1bdbe0, type: 3}
-  leftDoor: {fileID: 1874717280, guid: a1a7fbbeb79e5a64f93ff80ebf1bdbe0, type: 3}
-  rightDoor: {fileID: -2019423506, guid: a1a7fbbeb79e5a64f93ff80ebf1bdbe0, type: 3}
+  upDoor: {fileID: 180135258960698612, guid: c183b901091e423448e86ff99874b627, type: 3}
+  downDoor: {fileID: 3192375301650918392, guid: fd9cbc0119bacb040b41b51f501c46d4, type: 3}
+  leftDoor: {fileID: 6453655323419198167, guid: 9f78a2e0f7d6bf842a7a99440e3735d4, type: 3}
+  rightDoor: {fileID: 5608438027087358684, guid: d94c575b1baabdb489847b99a0f05124, type: 3}

@@ -4,8 +4,8 @@ using UnityEngine;
 public class DoorScriptable : ScriptableObject
 {
     public RoomType roomType;
-    public Sprite upDoor;
-    public Sprite downDoor;
-    public Sprite leftDoor;
-    public Sprite rightDoor;
+    public GameObject upDoor;
+    public GameObject downDoor;
+    public GameObject leftDoor;
+    public GameObject rightDoor;
 }
