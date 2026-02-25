@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: L_ACD
   m_EditorClassIdentifier: Assembly-CSharp::RoomScriptable
   roomType: 0
-  roomShape: 0
+  roomShape: 4
   occupiedTiles: 000000000a0000000b000000
   roomVariations:
   - {fileID: 21300000, guid: 42fe080fd0cdf5c41957517518dc5834, type: 3}
