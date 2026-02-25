@@ -266,6 +266,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1316929923}
   - component: {fileID: 1316929924}
+  - component: {fileID: 1316929925}
   m_Layer: 0
   m_Name: Map Generator
   m_TagString: Untagged
@@ -309,6 +310,40 @@ MonoBehaviour:
   verticalRoom: {fileID: -1950277684, guid: 7232fd87630e755449e31a51aa216c36, type: 3}
   horizontalRoom: {fileID: -1027615629, guid: 7232fd87630e755449e31a51aa216c36, type: 3}
   lShapeRoom: {fileID: 157971813, guid: 7232fd87630e755449e31a51aa216c36, type: 3}
+--- !u!114 &1316929925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1316929922}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41a50692e2e1da0458e6857dd8a1f987, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomManager
+  offsetX: 21.25
+  offsetY: 10.625
+  roomPrefab: {fileID: 3625141736511110714, guid: bf88618e6bec61b4992515d0307d91ba, type: 3}
+  doorPrefab: {fileID: 6164487024370233051, guid: caa22eb102a515c478d1c65523b74bf3, type: 3}
+  doors:
+  - {fileID: 11400000, guid: 1de88b8a021bb5a43859c7b3deaff962, type: 2}
+  - {fileID: 11400000, guid: 7f59265b7c624424b9bb0437809a4074, type: 2}
+  - {fileID: 11400000, guid: 8baff84f26ffe7847bbd022b8eb584e3, type: 2}
+  - {fileID: 11400000, guid: fc16c7eb50524344f8514d01df624087, type: 2}
+  rooms:
+  - {fileID: 11400000, guid: dbb213d3070da8646b05fc89bc080810, type: 2}
+  - {fileID: 11400000, guid: 6d0166f80895ad245aa96569ad6f65be, type: 2}
+  - {fileID: 11400000, guid: f9aa4cb266dd0654c9be49f3fe327526, type: 2}
+  - {fileID: 11400000, guid: f584bab8d6fc7674caa955b48522244a, type: 2}
+  - {fileID: 11400000, guid: 00e1ced0646496c408f6f101dc4dfb3a, type: 2}
+  - {fileID: 11400000, guid: fa5cb87a2e853434295ffd0fa3266aa0, type: 2}
+  - {fileID: 11400000, guid: 37a72825c44e1c04e9d3cdf378212375, type: 2}
+  - {fileID: 11400000, guid: a8d5926f73e59aa4ab3eed4edc1499fa, type: 2}
+  - {fileID: 11400000, guid: cdd086e01ba7726438262ba6737c96a9, type: 2}
+  - {fileID: 11400000, guid: 4d8073593c99960439f74a8aca213991, type: 2}
+  - {fileID: 11400000, guid: e48273ecc2e38064d9708e034f22c968, type: 2}
+  - {fileID: 11400000, guid: 1847d4b28ed317f4883ae8b95550f1ee, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
