@@ -302,6 +302,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapGenerator
   cellPrefab: {fileID: 5191138252708928599, guid: 3f505c0408ea3304193489d0c722f42b, type: 3}
+  playerPrefab: {fileID: 6324667708166986596, guid: cc9d0bb7f2210cc4c964fd46ca231bc6, type: 3}
   item: {fileID: 677141824, guid: 615b6ca90597c4848bb7303ac32277e8, type: 3}
   shop: {fileID: 1926674112, guid: 615b6ca90597c4848bb7303ac32277e8, type: 3}
   boss: {fileID: 995336870, guid: 615b6ca90597c4848bb7303ac32277e8, type: 3}
