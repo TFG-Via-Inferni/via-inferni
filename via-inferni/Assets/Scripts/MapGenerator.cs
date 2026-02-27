@@ -184,9 +184,25 @@ public class MapGenerator : MonoBehaviour
 
     void SpawnPlayer()
     {
-        // Spawn player at the first room position (index 45)
-        // index 45: x = 45 % 10 = 5, y = 45 / 10 = 4
-        UnityEngine.Vector2 position = new UnityEngine.Vector2(5 * cellSize, -4 * cellSize);
+        // Buscar la celda con índice 45 (habitación central)
+        Cell centralCell = spawnedCells.Find(cell => cell.cellList.Contains(45));
+        
+        UnityEngine.Vector2 position;
+        if (centralCell != null)
+        {
+            // Usar la posición de la celda convertida con el offset del RoomManager
+            // para que el jugador aparezca en la habitación renderizada real
+            var cellPosition = centralCell.transform.position;
+            position = new UnityEngine.Vector2(
+                cellPosition.x * RoomManager.instance.offsetX, 
+                cellPosition.y * RoomManager.instance.offsetY
+            );
+        }
+        else
+        {
+            // Fallback: calcular posición manualmente si no se encuentra la celda
+            position = new UnityEngine.Vector2(5 * cellSize, -4 * cellSize);
+        }
         
         GameObject playerObj = Instantiate(playerPrefab, position, UnityEngine.Quaternion.identity);
         
