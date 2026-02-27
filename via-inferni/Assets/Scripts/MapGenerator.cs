@@ -20,6 +20,8 @@ public class MapGenerator : MonoBehaviour
     private int itemRoomIndex;
 
     public Cell cellPrefab;
+    public GameObject playerPrefab;
+    private Player playerInstance;
     private float cellSize;
     private Queue<int> cellQueue;
     private List<Cell> spawnedCells;
@@ -94,6 +96,12 @@ public class MapGenerator : MonoBehaviour
 
     void SetupDungeon()
     {
+        if (playerInstance != null)
+        {
+            Destroy(playerInstance.gameObject);
+            playerInstance = null;
+        }
+
         for (int i = 0; i < spawnedCells.Count; i++)
         {
             Destroy(spawnedCells[i].gameObject);
@@ -171,6 +179,24 @@ public class MapGenerator : MonoBehaviour
 
         UpdateSpecialRoomVisuals();
         RoomManager.instance.SetUpRooms(spawnedCells);
+        SpawnPlayer();
+    }
+
+    void SpawnPlayer()
+    {
+        // Spawn player at the first room position (index 45)
+        // index 45: x = 45 % 10 = 5, y = 45 / 10 = 4
+        UnityEngine.Vector2 position = new UnityEngine.Vector2(5 * cellSize, -4 * cellSize);
+        
+        GameObject playerObj = Instantiate(playerPrefab, position, UnityEngine.Quaternion.identity);
+        
+        Player player = playerObj.GetComponent<Player>();
+        if (player == null)
+        {
+            player = playerObj.AddComponent<Player>();
+        }
+        
+        playerInstance = player;
     }
 
     void UpdateSpecialRoomVisuals()
