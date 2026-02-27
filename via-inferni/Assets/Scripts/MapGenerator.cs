@@ -3,6 +3,7 @@ using System.Numerics;
 using Unity.VisualScripting;
 using UnityEngine;
 using System.Linq;
+using Unity.Cinemachine;
 
 public class MapGenerator : MonoBehaviour
 {
@@ -23,6 +24,9 @@ public class MapGenerator : MonoBehaviour
     public GameObject playerPrefab;
     private Player playerInstance;
     private float cellSize;
+    
+    [Header("Cinemachine")]
+    public CinemachineCamera cinemachineCamera;
     private Queue<int> cellQueue;
     private List<Cell> spawnedCells;
 
@@ -213,6 +217,12 @@ public class MapGenerator : MonoBehaviour
         }
         
         playerInstance = player;
+        
+        // Asignar el jugador a la Cinemachine Camera
+        if (cinemachineCamera != null)
+        {
+            cinemachineCamera.Follow = playerObj.transform;
+        }
     }
 
     void UpdateSpecialRoomVisuals()
