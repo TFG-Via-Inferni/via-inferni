@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Shop Door
   m_EditorClassIdentifier: Assembly-CSharp::DoorScriptable
   roomType: 2
-  upDoor: {fileID: 180135258960698612, guid: c183b901091e423448e86ff99874b627, type: 3}
-  downDoor: {fileID: 3192375301650918392, guid: fd9cbc0119bacb040b41b51f501c46d4, type: 3}
-  leftDoor: {fileID: 6453655323419198167, guid: 9f78a2e0f7d6bf842a7a99440e3735d4, type: 3}
-  rightDoor: {fileID: 5608438027087358684, guid: d94c575b1baabdb489847b99a0f05124, type: 3}
+  upDoor: {fileID: 6045565107106902450, guid: b71d5d6998d3b2c46824b805589a000f, type: 3}
+  downDoor: {fileID: 7414803648913497347, guid: 6f931f8909a5ce042b9f1cc56a76e604, type: 3}
+  leftDoor: {fileID: 7852595012441920443, guid: 75b7856d0f6c2654f9743ff8c97380fe, type: 3}
+  rightDoor: {fileID: 5367266944560936589, guid: 27866b7168cc9a4449a0a4bf51166feb, type: 3}

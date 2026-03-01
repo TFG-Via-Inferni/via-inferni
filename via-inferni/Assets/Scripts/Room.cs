@@ -72,10 +72,10 @@ public class Room : MonoBehaviour
     {
         var currentCell = cell.cellList[0];
 
-        TryPlaceDoor(currentCell, new Vector2(0, 1.75f), EdgeDirection.Up, floorplan, cellList, cell);
-        TryPlaceDoor(currentCell, new Vector2(0, -1.75f), EdgeDirection.Down, floorplan, cellList, cell);
-        TryPlaceDoor(currentCell, new Vector2(-4.25f, 0), EdgeDirection.Left, floorplan, cellList, cell);
-        TryPlaceDoor(currentCell, new Vector2(4.25f, 0), EdgeDirection.Right, floorplan, cellList, cell);
+        TryPlaceDoor(currentCell, new Vector2(1, 4f), EdgeDirection.Up, floorplan, cellList, cell);
+        TryPlaceDoor(currentCell, new Vector2(-2, -3f), EdgeDirection.Down, floorplan, cellList, cell);
+        TryPlaceDoor(currentCell, new Vector2(-6.5f, 0), EdgeDirection.Left, floorplan, cellList, cell);
+        TryPlaceDoor(currentCell, new Vector2(4.5f, 0), EdgeDirection.Right, floorplan, cellList, cell);
     }
 
     public void SetupOneByTwo(Cell cell, int[] floorplan, List<Cell> cellList)
@@ -83,13 +83,13 @@ public class Room : MonoBehaviour
         var cellA = cell.cellList[0];
         var cellB = cell.cellList[1];
 
-        TryPlaceDoor(cellA, new Vector2(0f, 10f), EdgeDirection.Up, floorplan, cellList, cell);
-        TryPlaceDoor(cellA, new Vector2(-5f, 5f), EdgeDirection.Left, floorplan, cellList, cell);
-        TryPlaceDoor(cellA, new Vector2(5f, 5f), EdgeDirection.Right, floorplan, cellList, cell);
+        TryPlaceDoor(cellA, new Vector2(1f, 8f), EdgeDirection.Up, floorplan, cellList, cell);
+        TryPlaceDoor(cellA, new Vector2(-6.5f, 4f), EdgeDirection.Left, floorplan, cellList, cell);
+        TryPlaceDoor(cellA, new Vector2(4.5f, 4f), EdgeDirection.Right, floorplan, cellList, cell);
 
-        TryPlaceDoor(cellB, new Vector2(0f, -10f), EdgeDirection.Down, floorplan, cellList, cell);
-        TryPlaceDoor(cellB, new Vector2(-5f, -5f), EdgeDirection.Left, floorplan, cellList, cell);
-        TryPlaceDoor(cellB, new Vector2(5f, -5f), EdgeDirection.Right, floorplan, cellList, cell);
+        TryPlaceDoor(cellB, new Vector2(-2f, -7f), EdgeDirection.Down, floorplan, cellList, cell);
+        TryPlaceDoor(cellB, new Vector2(-6.5f, -4f), EdgeDirection.Left, floorplan, cellList, cell);
+        TryPlaceDoor(cellB, new Vector2(4.5f, -4f), EdgeDirection.Right, floorplan, cellList, cell);
     }
 
     public void SetupTwoByOne(Cell cell, int[] floorplan, List<Cell> cellList)
@@ -97,13 +97,13 @@ public class Room : MonoBehaviour
         var cellA = cell.cellList[0];
         var cellB = cell.cellList[1];
 
-        TryPlaceDoor(cellA, new Vector2(-5f, 5f), EdgeDirection.Up, floorplan, cellList, cell);
-        TryPlaceDoor(cellA, new Vector2(-10f, 0f), EdgeDirection.Left, floorplan, cellList, cell);
-        TryPlaceDoor(cellA, new Vector2(-5f, -5f), EdgeDirection.Down, floorplan, cellList, cell);
+        TryPlaceDoor(cellA, new Vector2(-5.5f, 4f), EdgeDirection.Up, floorplan, cellList, cell);
+        TryPlaceDoor(cellA, new Vector2(-13f, 0f), EdgeDirection.Left, floorplan, cellList, cell);
+        TryPlaceDoor(cellA, new Vector2(-8.5f, -3f), EdgeDirection.Down, floorplan, cellList, cell);
 
-        TryPlaceDoor(cellB, new Vector2(5f, 5f), EdgeDirection.Up, floorplan, cellList, cell);
-        TryPlaceDoor(cellB, new Vector2(5f, -5f), EdgeDirection.Down, floorplan, cellList, cell);
-        TryPlaceDoor(cellB, new Vector2(10f, 0f), EdgeDirection.Right, floorplan, cellList, cell);
+        TryPlaceDoor(cellB, new Vector2(7.5f, 4f), EdgeDirection.Up, floorplan, cellList, cell);
+        TryPlaceDoor(cellB, new Vector2(4.5f, -3f), EdgeDirection.Down, floorplan, cellList, cell);
+        TryPlaceDoor(cellB, new Vector2(11f, 0f), EdgeDirection.Right, floorplan, cellList, cell);
     }
 
     public void SetupTwoByTwo(Cell cell, int[] floorplan, List<Cell> cellList)
@@ -113,17 +113,17 @@ public class Room : MonoBehaviour
         var cellC = cell.cellList[2];
         var cellD = cell.cellList[3];
 
-        TryPlaceDoor(cellA, new Vector2(-5f, 10f), EdgeDirection.Up, floorplan, cellList, cell);
-        TryPlaceDoor(cellB, new Vector2(5f, 10f), EdgeDirection.Up, floorplan, cellList, cell);
+        TryPlaceDoor(cellA, new Vector2(-5.5f, 8f), EdgeDirection.Up, floorplan, cellList, cell);
+        TryPlaceDoor(cellB, new Vector2(7.5f, 8f), EdgeDirection.Up, floorplan, cellList, cell);
 
-        TryPlaceDoor(cellA, new Vector2(-10f, 5f), EdgeDirection.Left, floorplan, cellList, cell);
-        TryPlaceDoor(cellC, new Vector2(-10f, -5f), EdgeDirection.Left, floorplan, cellList, cell);
+        TryPlaceDoor(cellA, new Vector2(-13f, 4f), EdgeDirection.Left, floorplan, cellList, cell);
+        TryPlaceDoor(cellC, new Vector2(-13f, -4f), EdgeDirection.Left, floorplan, cellList, cell);
 
-        TryPlaceDoor(cellC, new Vector2(-5f, -10f), EdgeDirection.Down, floorplan, cellList, cell);
-        TryPlaceDoor(cellD, new Vector2(5f, -10f), EdgeDirection.Down, floorplan, cellList, cell);
+        TryPlaceDoor(cellC, new Vector2(-8.5f, -7f), EdgeDirection.Down, floorplan, cellList, cell);
+        TryPlaceDoor(cellD, new Vector2(4.5f, -7f), EdgeDirection.Down, floorplan, cellList, cell);
 
-        TryPlaceDoor(cellB, new Vector2(10f, 5f), EdgeDirection.Right, floorplan, cellList, cell);
-        TryPlaceDoor(cellD, new Vector2(10f, -5f), EdgeDirection.Right, floorplan, cellList, cell);
+        TryPlaceDoor(cellB, new Vector2(11f, 4f), EdgeDirection.Right, floorplan, cellList, cell);
+        TryPlaceDoor(cellD, new Vector2(11f, -4f), EdgeDirection.Right, floorplan, cellList, cell);
     }
 
     public void SetupLShapeRoom(Cell cell, int[] floorplan, List<Cell> cellList)
@@ -134,55 +134,55 @@ public class Room : MonoBehaviour
 
         if (cellA + 1 == cellB && cellA + 10 == cellC)
         {
-            TryPlaceDoor(cellA, new Vector2(-5.3125f, 4.5f), EdgeDirection.Up, floorplan, cellList, cell);
-            TryPlaceDoor(cellA, new Vector2(-9.75f, 2.6125f), EdgeDirection.Left, floorplan, cellList, cell);
+            TryPlaceDoor(cellA, new Vector2(-5.5f, 8f), EdgeDirection.Up, floorplan, cellList, cell);
+            TryPlaceDoor(cellA, new Vector2(-13f, 4f), EdgeDirection.Left, floorplan, cellList, cell);
 
-            TryPlaceDoor(cellB, new Vector2(5.3125f, 4.5f), EdgeDirection.Up, floorplan, cellList, cell);
-            TryPlaceDoor(cellB, new Vector2(9.75f, 2.6375f), EdgeDirection.Right, floorplan, cellList, cell);
-            TryPlaceDoor(cellB, new Vector2(5.3125f, 1f), EdgeDirection.Down, floorplan, cellList, cell);
+            TryPlaceDoor(cellB, new Vector2(7.5f, 8f), EdgeDirection.Up, floorplan, cellList, cell);
+            TryPlaceDoor(cellB, new Vector2(11f, 4f), EdgeDirection.Right, floorplan, cellList, cell);
+            TryPlaceDoor(cellB, new Vector2(4.5f, 1f), EdgeDirection.Down, floorplan, cellList, cell);
 
-            TryPlaceDoor(cellC, new Vector2(-5.3125f, -4.5f), EdgeDirection.Down, floorplan, cellList, cell);
-            TryPlaceDoor(cellC, new Vector2(-1f, -2.6375f), EdgeDirection.Right, floorplan, cellList, cell);
-            TryPlaceDoor(cellC, new Vector2(-9.75f, -2.6125f), EdgeDirection.Left, floorplan, cellList, cell);
+            TryPlaceDoor(cellC, new Vector2(-8.5f, -7f), EdgeDirection.Down, floorplan, cellList, cell);
+            TryPlaceDoor(cellC, new Vector2(-2f, -4f), EdgeDirection.Right, floorplan, cellList, cell);
+            TryPlaceDoor(cellC, new Vector2(-13f, -4f), EdgeDirection.Left, floorplan, cellList, cell);
         }
         else if (cellA + 1 == cellB && cellB + 10 == cellC)
         {
-            TryPlaceDoor(cellA, new Vector2(-5.3125f, 4.5f), EdgeDirection.Up, floorplan, cellList, cell);
-            TryPlaceDoor(cellA, new Vector2(-9.75f, 2.6125f), EdgeDirection.Left, floorplan, cellList, cell);
-            TryPlaceDoor(cellA, new Vector2(-5.3125f, 1f), EdgeDirection.Down, floorplan, cellList, cell);
+            TryPlaceDoor(cellA, new Vector2(-5.5f, 8f), EdgeDirection.Up, floorplan, cellList, cell);
+            TryPlaceDoor(cellA, new Vector2(-13f, 4f), EdgeDirection.Left, floorplan, cellList, cell);
+            TryPlaceDoor(cellA, new Vector2(-8.5f, 1f), EdgeDirection.Down, floorplan, cellList, cell);
 
-            TryPlaceDoor(cellB, new Vector2(5.3125f, 4.5f), EdgeDirection.Up, floorplan, cellList, cell);
-            TryPlaceDoor(cellB, new Vector2(9.75f, 2.6375f), EdgeDirection.Right, floorplan, cellList, cell);
+            TryPlaceDoor(cellB, new Vector2(7.5f, 8f), EdgeDirection.Up, floorplan, cellList, cell);
+            TryPlaceDoor(cellB, new Vector2(11f, 4f), EdgeDirection.Right, floorplan, cellList, cell);
 
-            TryPlaceDoor(cellC, new Vector2(5.3125f, -4.5f), EdgeDirection.Down, floorplan, cellList, cell);
-            TryPlaceDoor(cellC, new Vector2(9.75f, -2.6375f), EdgeDirection.Right, floorplan, cellList, cell);
-            TryPlaceDoor(cellC, new Vector2(1, -2.6125f), EdgeDirection.Left, floorplan, cellList, cell);
+            TryPlaceDoor(cellC, new Vector2(4.5f, -7f), EdgeDirection.Down, floorplan, cellList, cell);
+            TryPlaceDoor(cellC, new Vector2(11f, -4f), EdgeDirection.Right, floorplan, cellList, cell);
+            TryPlaceDoor(cellC, new Vector2(0f, -4f), EdgeDirection.Left, floorplan, cellList, cell);
         }
         else if (cellA + 10 == cellB)
         {
-            TryPlaceDoor(cellA, new Vector2(-5.3125f, 4.5f), EdgeDirection.Up, floorplan, cellList, cell);
-            TryPlaceDoor(cellA, new Vector2(-9.75f, 2.6125f), EdgeDirection.Left, floorplan, cellList, cell);
-            TryPlaceDoor(cellA, new Vector2(-1f, 2.6125f), EdgeDirection.Right, floorplan, cellList, cell);
+            TryPlaceDoor(cellA, new Vector2(-5.5f, 8f), EdgeDirection.Up, floorplan, cellList, cell);
+            TryPlaceDoor(cellA, new Vector2(-13f, 4f), EdgeDirection.Left, floorplan, cellList, cell);
+            TryPlaceDoor(cellA, new Vector2(-2f, 4f), EdgeDirection.Right, floorplan, cellList, cell);
 
-            TryPlaceDoor(cellB, new Vector2(-5.3125f, -4.5f), EdgeDirection.Down, floorplan, cellList, cell);
-            TryPlaceDoor(cellB, new Vector2(-9.75f, -2.6125f), EdgeDirection.Left, floorplan, cellList, cell);
+            TryPlaceDoor(cellB, new Vector2(-8.5f, -7f), EdgeDirection.Down, floorplan, cellList, cell);
+            TryPlaceDoor(cellB, new Vector2(-13f, -4f), EdgeDirection.Left, floorplan, cellList, cell);
 
-            TryPlaceDoor(cellC, new Vector2(5.3125f, -1), EdgeDirection.Up, floorplan, cellList, cell);
-            TryPlaceDoor(cellC, new Vector2(5.3125f, -4.5f), EdgeDirection.Down, floorplan, cellList, cell);
-            TryPlaceDoor(cellC, new Vector2(9.75f, -2.6375f), EdgeDirection.Right, floorplan, cellList, cell);
+            TryPlaceDoor(cellC, new Vector2(7.5f, 0f), EdgeDirection.Up, floorplan, cellList, cell);
+            TryPlaceDoor(cellC, new Vector2(4.5f, -7f), EdgeDirection.Down, floorplan, cellList, cell);
+            TryPlaceDoor(cellC, new Vector2(11f, -4f), EdgeDirection.Right, floorplan, cellList, cell);
         }
         else if (cellA + 10 == cellC)
         {
-            TryPlaceDoor(cellA, new Vector2(5.3125f, 4.5f), EdgeDirection.Up, floorplan, cellList, cell);
-            TryPlaceDoor(cellA, new Vector2(1, 2.6125f), EdgeDirection.Left, floorplan, cellList, cell);
-            TryPlaceDoor(cellA, new Vector2(9.75f, 2.6125f), EdgeDirection.Right, floorplan, cellList, cell);
+            TryPlaceDoor(cellA, new Vector2(7.5f, 8f), EdgeDirection.Up, floorplan, cellList, cell);
+            TryPlaceDoor(cellA, new Vector2(0f, 4f), EdgeDirection.Left, floorplan, cellList, cell);
+            TryPlaceDoor(cellA, new Vector2(11f, 4f), EdgeDirection.Right, floorplan, cellList, cell);
 
-            TryPlaceDoor(cellB, new Vector2(-5.3125f, -1f), EdgeDirection.Up, floorplan, cellList, cell);
-            TryPlaceDoor(cellB, new Vector2(-5.3125f, -4.5f), EdgeDirection.Down, floorplan, cellList, cell);
-            TryPlaceDoor(cellB, new Vector2(-9.75f, -2.6125f), EdgeDirection.Left, floorplan, cellList, cell);
+            TryPlaceDoor(cellB, new Vector2(-5.5f, 0f), EdgeDirection.Up, floorplan, cellList, cell);
+            TryPlaceDoor(cellB, new Vector2(-8.5f, -7f), EdgeDirection.Down, floorplan, cellList, cell);
+            TryPlaceDoor(cellB, new Vector2(-13f, -4f), EdgeDirection.Left, floorplan, cellList, cell);
 
-            TryPlaceDoor(cellC, new Vector2(5.3125f, -4.5f), EdgeDirection.Down, floorplan, cellList, cell);
-            TryPlaceDoor(cellC, new Vector2(9.75f, -2.6375f), EdgeDirection.Right, floorplan, cellList, cell);
+            TryPlaceDoor(cellC, new Vector2(4.5f, -7f), EdgeDirection.Down, floorplan, cellList, cell);
+            TryPlaceDoor(cellC, new Vector2(11f, -4f), EdgeDirection.Right, floorplan, cellList, cell);
         }
     }
 
