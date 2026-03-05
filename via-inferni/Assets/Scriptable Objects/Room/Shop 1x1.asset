@@ -16,4 +16,4 @@ MonoBehaviour:
   roomShape: 0
   occupiedTiles: 00000000
   roomVariations:
-  - {fileID: 2524191575578862905, guid: f6d78b1dc01b5604497c4bb58f7c64f7, type: 3}
+  - {fileID: 3270335705701011065, guid: 6eb087e841063f34caf829eb607f7aa0, type: 3}
