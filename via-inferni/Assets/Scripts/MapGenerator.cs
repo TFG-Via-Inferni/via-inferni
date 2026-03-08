@@ -92,13 +92,14 @@ public class MapGenerator : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            SetupDungeon();
-        }
+        // Descomenta para testear regeneración manual
+        // if (Input.GetKeyDown(KeyCode.Space))
+        // {
+        //     SetupDungeon();
+        // }
     }
 
-    void SetupDungeon()
+    public void SetupDungeon()
     {
         if (playerInstance != null)
         {
