@@ -8,4 +8,10 @@ public class DoorScriptable : ScriptableObject
     public GameObject downDoor;
     public GameObject leftDoor;
     public GameObject rightDoor;
+    
+    [Header("Walls")]
+    public GameObject upWall;
+    public GameObject downWall;
+    public GameObject leftWall;
+    public GameObject rightWall;
 }

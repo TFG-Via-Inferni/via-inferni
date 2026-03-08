@@ -227,20 +227,59 @@ public class Room : MonoBehaviour
     private void TryPlaceDoor(int fromIndex, Vector2 positionOffset, EdgeDirection direction, int[] floorplan, List<Cell> cellList, Cell currentCell)
     {
         int neighborIndex = fromIndex + GetOffset(direction);
+        bool shouldPlaceDoor = false;
 
-        if (neighborIndex < 0 || neighborIndex >= floorplan.Length) return;
+        if (neighborIndex >= 0 && neighborIndex < floorplan.Length)
+        {
+            if (floorplan[neighborIndex] == 1)
+            {
+                var foundCell = cellList.FirstOrDefault(x => x.cellList.Contains(neighborIndex));
 
-        if (floorplan[neighborIndex] != 1) return;
+                if (foundCell.roomType != RoomType.Secret)
+                {
+                    shouldPlaceDoor = true;
+                    var door = Instantiate(RoomManager.instance.doorPrefab, transform);
+                    door.transform.position = (Vector2)transform.position + positionOffset;
+                    SetupDoor(door, direction, currentCell.roomType == RoomType.Regular ? foundCell.roomType : currentCell.roomType);
+                }
+            }
+        }
 
-        var foundCell = cellList.FirstOrDefault(x => x.cellList.Contains(neighborIndex));
+        if (!shouldPlaceDoor)
+        {
+            PlaceWall(positionOffset, direction, currentCell.roomType);
+        }
+    }
 
-        if (foundCell.roomType == RoomType.Secret) return;
+    private void PlaceWall(Vector2 positionOffset, EdgeDirection direction, RoomType roomType)
+    {
+        var doorTypes = GetDoorOptions(roomType);
+        GameObject wallPrefab = null;
 
-        var door = Instantiate(RoomManager.instance.doorPrefab, transform);
+        switch (direction)
+        {
+            case EdgeDirection.Up:
+                wallPrefab = doorTypes.upWall;
+                break;
+            
+            case EdgeDirection.Down:
+                wallPrefab = doorTypes.downWall;
+                break;
+            
+            case EdgeDirection.Left:
+                wallPrefab = doorTypes.leftWall;
+                break;
+            
+            case EdgeDirection.Right:
+                wallPrefab = doorTypes.rightWall;
+                break;
+        }
 
-        door.transform.position = (Vector2)transform.position + positionOffset;
-
-        SetupDoor(door, direction, currentCell.roomType == RoomType.Regular ? foundCell.roomType : currentCell.roomType);
+        if (wallPrefab != null)
+        {
+            var wall = Instantiate(wallPrefab, transform);
+            wall.transform.position = (Vector2)transform.position + positionOffset;
+        }
     }
 
     private void SetupDoor(Door door, EdgeDirection direction, RoomType roomType)
