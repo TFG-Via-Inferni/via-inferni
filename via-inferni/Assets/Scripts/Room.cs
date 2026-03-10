@@ -15,6 +15,12 @@ public enum EdgeDirection
 
 public class Room : MonoBehaviour
 {
+    [Header("Enemy Spawning")]
+    public GameObject enemyPrefab;
+    public int minEnemies = 1;
+    public int maxEnemies = 2;
+    public float spawnRadius = 5f;
+
     public void SetupRoom(Cell currentCell, RoomScriptable room)
     {
         // Instanciar el prefab visual de la habitación
@@ -66,6 +72,9 @@ public class Room : MonoBehaviour
             default:
                 break;
         }
+
+        // Spawnear enemigos después de configurar la sala
+        SpawnEnemies();
     }
 
     public void SetupOneByOne(Cell cell, int[] floorplan, List<Cell> cellList)
@@ -332,5 +341,23 @@ public class Room : MonoBehaviour
         }
 
         return 0;
+    }
+
+    private void SpawnEnemies()
+    {
+        // Solo spawnear si hay prefab asignado
+        if (enemyPrefab == null) return;
+
+        int enemyCount = Random.Range(minEnemies, maxEnemies + 1);
+
+        for (int i = 0; i < enemyCount; i++)
+        {
+            // Generar posición aleatoria dentro del radio de spawn
+            Vector2 randomPos = Random.insideUnitCircle * spawnRadius;
+            Vector3 spawnPosition = transform.position + new Vector3(randomPos.x, randomPos.y, 0);
+
+            // Instanciar enemigo
+            GameObject enemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity, transform);
+        }
     }
 }

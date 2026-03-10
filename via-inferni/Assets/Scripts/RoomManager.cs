@@ -15,6 +15,7 @@ public class RoomManager : MonoBehaviour
     [Header("Prefab References")]
     public Room roomPrefab;
     public Door doorPrefab;
+    public GameObject enemyPrefab;
 
     [Header("Scriptable Obeject References ")]
     public DoorScriptable[] doors;
@@ -47,6 +48,12 @@ public class RoomManager : MonoBehaviour
         
             var spawnedRoom = Instantiate(roomPrefab, convertedPosition, Quaternion.identity);
         
+            // Asignar el prefab del enemigo a la sala
+            if (enemyPrefab != null)
+            {
+                spawnedRoom.enemyPrefab = enemyPrefab;
+            }
+
             spawnedRoom.SetupRoom(currentCell, foundRoom);
 
             createdRooms.Add(spawnedRoom);

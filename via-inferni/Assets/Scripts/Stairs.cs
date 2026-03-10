@@ -37,27 +37,20 @@ public class Stairs : MonoBehaviour
             triggerCollider.enabled = active;
         }
 
-        Debug.Log($"Escalera {(active ? "ACTIVADA" : "DESACTIVADA")}");
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (!isActive) return;
         
-        Debug.Log($"Trigger detectado con: {other.gameObject.name}, Tag: {other.tag}");
         
         if (other.CompareTag("Player") && !hasBeenUsed)
         {
             hasBeenUsed = true;
-            Debug.Log("¡Jugador ha tocado la escalera! Descendiendo...");
             
             if (CircleManager.instance != null)
             {
                 CircleManager.instance.DescendToNextCircle();
-            }
-            else
-            {
-                Debug.LogError("CircleManager.instance es null!");
             }
         }
     }
