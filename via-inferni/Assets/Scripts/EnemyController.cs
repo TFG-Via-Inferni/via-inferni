@@ -25,10 +25,12 @@ public class EnemyController : MonoBehaviour
     private Rigidbody2D rb;
     private Vector2 movement;
     private float lastAttackTime;
+    private Room parentRoom;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        parentRoom = GetComponentInParent<Room>();
         
         // Buscar al player por tag
         GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
@@ -88,7 +90,6 @@ public class EnemyController : MonoBehaviour
         if (currentState == newState) return;
         
         currentState = newState;
-        Debug.Log($"Enemy cambió a estado: {currentState}");
     }
 
     void HandleIdle()
@@ -119,6 +120,19 @@ public class EnemyController : MonoBehaviour
         Debug.Log("¡Enemigo atacando!");
         // Aquí irá la lógica de daño cuando tengas sistema de vida
         // Por ejemplo: player.GetComponent<PlayerHealth>()?.TakeDamage(10);
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        // Si toca al Player, notificar a la sala y destruirse
+        if (collision.CompareTag("Player"))
+        {
+            if (parentRoom != null)
+            {
+                parentRoom.OnEnemyDestroyed(this);
+            }
+            Destroy(gameObject);
+        }
     }
 
     void OnDrawGizmosSelected()

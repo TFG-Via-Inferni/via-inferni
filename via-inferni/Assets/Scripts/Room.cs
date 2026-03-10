@@ -21,6 +21,10 @@ public class Room : MonoBehaviour
     public int maxEnemies = 2;
     public float spawnRadius = 5f;
 
+    private List<EnemyController> activeEnemies = new List<EnemyController>();
+    private List<Door> roomDoors = new List<Door>();
+    private bool playerHasEntered = false;
+
     public void SetupRoom(Cell currentCell, RoomScriptable room)
     {
         // Instanciar el prefab visual de la habitación
@@ -250,6 +254,7 @@ public class Room : MonoBehaviour
                     var door = Instantiate(RoomManager.instance.doorPrefab, transform);
                     door.transform.position = (Vector2)transform.position + positionOffset;
                     SetupDoor(door, direction, currentCell.roomType == RoomType.Regular ? foundCell.roomType : currentCell.roomType);
+                    roomDoors.Add(door); // Guardar referencia
                 }
             }
         }
@@ -294,28 +299,34 @@ public class Room : MonoBehaviour
     private void SetupDoor(Door door, EdgeDirection direction, RoomType roomType)
     {
         var doorTypes = GetDoorOptions(roomType);
+        GameObject doorPrefab = null;
+        GameObject wallPrefab = null;
 
         switch (direction)
         {
             case EdgeDirection.Up:
-                door.SetDoorPrefab(doorTypes.upDoor);
+                doorPrefab = doorTypes.upDoor;
+                wallPrefab = doorTypes.upWall;
                 break;
             
             case EdgeDirection.Down:
-                door.SetDoorPrefab(doorTypes.downDoor);
+                doorPrefab = doorTypes.downDoor;
+                wallPrefab = doorTypes.downWall;
                 break;
             
             case EdgeDirection.Left:
-                door.SetDoorPrefab(doorTypes.leftDoor);
+                doorPrefab = doorTypes.leftDoor;
+                wallPrefab = doorTypes.leftWall;
                 break;
             
             case EdgeDirection.Right:
-                door.SetDoorPrefab(doorTypes.rightDoor);
-                break;
-            
-            default:
+                doorPrefab = doorTypes.rightDoor;
+                wallPrefab = doorTypes.rightWall;
                 break;
         }
+
+        door.SetDoorPrefab(doorPrefab);
+        door.SetWallPrefab(wallPrefab, direction, roomType);
     }
 
     private DoorScriptable GetDoorOptions(RoomType roomType)
@@ -357,7 +368,61 @@ public class Room : MonoBehaviour
             Vector3 spawnPosition = transform.position + new Vector3(randomPos.x, randomPos.y, 0);
 
             // Instanciar enemigo
-            GameObject enemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity, transform);
+            GameObject enemyObj = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity, transform);
+            EnemyController enemy = enemyObj.GetComponent<EnemyController>();
+            if (enemy != null)
+            {
+                activeEnemies.Add(enemy);
+            }
+        }
+
+        // NO bloquear puertas aquí, esperar a que el player entre
+    }
+
+    public void OnPlayerEnter(Collider2D collision)
+    {        
+        // Cuando el Player entra por primera vez, bloquear puertas si hay enemigos
+        if (!playerHasEntered && collision.CompareTag("Player"))
+        {
+            playerHasEntered = true;
+                        
+            if (activeEnemies.Count > 0)
+            {
+                LockDoors();
+            }
+        }
+    }
+
+    public void OnEnemyDestroyed(EnemyController enemy)
+    {
+        activeEnemies.Remove(enemy);
+
+        // Si no quedan enemigos, desbloquear puertas
+        if (activeEnemies.Count == 0)
+        {
+            UnlockDoors();
+        }
+    }
+
+    private void LockDoors()
+    {
+        foreach (var door in roomDoors)
+        {
+            if (door != null)
+            {
+                door.Lock();
+            }
+        }
+    }
+
+    private void UnlockDoors()
+    {
+        foreach (var door in roomDoors)
+        {
+            if (door != null)
+            {
+                door.Unlock();
+            }
         }
     }
 }
