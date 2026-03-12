@@ -77,7 +77,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 32, y: 18}
+  m_Size: {x: 32.05, y: 18.05}
   m_EdgeRadius: 0
 --- !u!1 &1142009030948117391
 GameObject:
@@ -1362,6 +1362,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6754387549563932622}
   - component: {fileID: 7162887561781545571}
+  - component: {fileID: 143435960397439110}
   m_Layer: 0
   m_Name: RoomTriggerEnter
   m_TagString: Untagged
@@ -1430,6 +1431,18 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 31, y: 17}
   m_EdgeRadius: 0
+--- !u!114 &143435960397439110
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6093956034113304967}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5c25217e0176c84db0b2200c0319556, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomCameraTrigger
 --- !u!1 &8802786395018117175
 GameObject:
   m_ObjectHideFlags: 0

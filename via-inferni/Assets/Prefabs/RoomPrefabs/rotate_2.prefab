@@ -3748,12 +3748,12 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 16, y: -7}
-      - {x: 16, y: -16}
-      - {x: 32, y: -16}
-      - {x: 32, y: -25}
-      - {x: 48, y: -25}
-      - {x: 48, y: -7}
+    - - {x: 15.95, y: -6.95}
+      - {x: 15.95, y: -16.05}
+      - {x: 31.95, y: -16.05}
+      - {x: 31.95, y: -25.05}
+      - {x: 48.05, y: -25.05}
+      - {x: 48.05, y: -6.95}
   m_UseDelaunayMesh: 1
 --- !u!1 &6509921328915795906
 GameObject:
@@ -5003,8 +5003,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1852733810931722951}
   - component: {fileID: 7147874997163748533}
+  - component: {fileID: 2215512451788657597}
   m_Layer: 0
-  m_Name: RoomEnterTrigger
+  m_Name: RoomTriggerEnter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5078,3 +5079,15 @@ PolygonCollider2D:
       - {x: 47.5, y: -24.5}
       - {x: 47.5, y: -7.5}
   m_UseDelaunayMesh: 1
+--- !u!114 &2215512451788657597
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6904432718289624135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5c25217e0176c84db0b2200c0319556, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomCameraTrigger
