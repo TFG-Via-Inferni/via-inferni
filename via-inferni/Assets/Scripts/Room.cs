@@ -24,9 +24,18 @@ public class Room : MonoBehaviour
     private List<EnemyController> activeEnemies = new List<EnemyController>();
     private List<Door> roomDoors = new List<Door>();
     private bool playerHasEntered = false;
+    private Cell currentCell;
+    private Collider2D cameraBoundsCollider;
+    private Transform cameraCenterTarget;
+
+    public Collider2D CameraBoundsCollider => cameraBoundsCollider;
+    public Transform CameraCenterTarget => cameraCenterTarget;
+    public bool RequiresFixedCamera => currentCell != null && currentCell.roomShape == RoomShape.OneByOne;
 
     public void SetupRoom(Cell currentCell, RoomScriptable room)
     {
+        this.currentCell = currentCell;
+
         // Instanciar el prefab visual de la habitación
         if (room != null && room.roomVariations.Length > 0)
         {
@@ -45,6 +54,8 @@ public class Room : MonoBehaviour
                 }
             }
         }
+
+        CacheCameraData();
 
         if (currentCell.roomType == RoomType.Secret) return;
 
@@ -79,6 +90,33 @@ public class Room : MonoBehaviour
 
         // Spawnear enemigos después de configurar la sala
         SpawnEnemies();
+    }
+
+    public bool ContainsPoint(Vector2 point)
+    {
+        return cameraBoundsCollider != null && cameraBoundsCollider.OverlapPoint(point);
+    }
+
+    private void CacheCameraData()
+    {
+        cameraBoundsCollider = GetComponentsInChildren<Collider2D>(true)
+            .FirstOrDefault(col => col.name.Equals("CameraBounds", System.StringComparison.OrdinalIgnoreCase));
+
+        if (cameraCenterTarget == null)
+        {
+            var centerObj = new GameObject("CameraCenterTarget");
+            cameraCenterTarget = centerObj.transform;
+            cameraCenterTarget.SetParent(transform);
+        }
+
+        Vector3 centerPosition = transform.position;
+        if (cameraBoundsCollider != null)
+        {
+            centerPosition = cameraBoundsCollider.bounds.center;
+            centerPosition.z = transform.position.z;
+        }
+
+        cameraCenterTarget.position = centerPosition;
     }
 
     public void SetupOneByOne(Cell cell, int[] floorplan, List<Cell> cellList)
@@ -380,9 +418,14 @@ public class Room : MonoBehaviour
     }
 
     public void OnPlayerEnter(Collider2D collision)
-    {        
+    {
+        if (!collision.CompareTag("Player"))
+        {
+            return;
+        }
+
         // Cuando el Player entra por primera vez, bloquear puertas si hay enemigos
-        if (!playerHasEntered && collision.CompareTag("Player"))
+        if (!playerHasEntered)
         {
             playerHasEntered = true;
                         

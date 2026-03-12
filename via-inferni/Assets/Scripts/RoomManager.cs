@@ -60,6 +60,11 @@ public class RoomManager : MonoBehaviour
         }
     }
 
+    public Room GetRoomContainingPoint(Vector2 point)
+    {
+        return createdRooms.FirstOrDefault(room => room != null && room.ContainsPoint(point));
+    }
+
     private bool DoesTileMatchCell(int[] occupiedTiles, Cell cell)
     {
         if(occupiedTiles.Length != cell.cellList.Count)

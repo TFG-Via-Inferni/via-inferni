@@ -6,7 +6,6 @@ public class RoomTrigger : MonoBehaviour
 
     void Start()
     {
-        // Buscar el componente Room en el padre
         parentRoom = GetComponentInParent<Room>();
     }
 

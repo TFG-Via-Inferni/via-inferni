@@ -27,6 +27,7 @@ public class MapGenerator : MonoBehaviour
     
     [Header("Cinemachine")]
     public CinemachineCamera cinemachineCamera;
+    public RoomCameraController roomCameraController;
     private Queue<int> cellQueue;
     private List<Cell> spawnedCells;
 
@@ -217,10 +218,15 @@ public class MapGenerator : MonoBehaviour
         }
         
         playerInstance = player;
-        
-        // Asignar el jugador a la Cinemachine Camera
-        if (cinemachineCamera != null)
+
+        if (roomCameraController != null)
         {
+            roomCameraController.RegisterPlayer(playerObj.transform);
+            StartCoroutine(roomCameraController.SnapToPlayerRoomNextFrame());
+        }
+        else if (cinemachineCamera != null)
+        {
+            // Fallback si no hay controlador dinámico en escena
             cinemachineCamera.Follow = playerObj.transform;
         }
     }
