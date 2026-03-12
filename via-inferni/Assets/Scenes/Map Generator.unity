@@ -268,6 +268,7 @@ GameObject:
   - component: {fileID: 910796518}
   - component: {fileID: 910796516}
   - component: {fileID: 910796515}
+  - component: {fileID: 910796520}
   m_Layer: 0
   m_Name: PlayerCamera
   m_TagString: MainCamera
@@ -417,6 +418,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &910796520
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910796514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7078a04540f4721488117850ecf6971d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomCameraController
+  cinemachineCamera: {fileID: 958170167}
+  confiner2D: {fileID: 958170170}
 --- !u!1 &958170166
 GameObject:
   m_ObjectHideFlags: 0
@@ -508,7 +523,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineFollow
   TrackerSettings:
     BindingMode: 4
-    PositionDamping: {x: 1, y: 1, z: 1}
+    PositionDamping: {x: 0.5, y: 0.5, z: 1}
     AngularDampingMode: 0
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
@@ -581,6 +596,7 @@ MonoBehaviour:
   cellPrefab: {fileID: 5191138252708928599, guid: 3f505c0408ea3304193489d0c722f42b, type: 3}
   playerPrefab: {fileID: 6324667708166986596, guid: cc9d0bb7f2210cc4c964fd46ca231bc6, type: 3}
   cinemachineCamera: {fileID: 958170167}
+  roomCameraController: {fileID: 910796520}
   item: {fileID: 677141824, guid: 615b6ca90597c4848bb7303ac32277e8, type: 3}
   shop: {fileID: 1926674112, guid: 615b6ca90597c4848bb7303ac32277e8, type: 3}
   boss: {fileID: 995336870, guid: 615b6ca90597c4848bb7303ac32277e8, type: 3}
