@@ -1,5 +1,12 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+
+public enum PlayerFormType
+{
+    Melee,
+    Ranged
+}
 
 public class Player : MonoBehaviour
 {
@@ -7,6 +14,18 @@ public class Player : MonoBehaviour
     [Header("Movement Feel")]
     [SerializeField] private float acceleration = 28f;
     [SerializeField] private float deceleration = 36f;
+
+    [Header("Form Swap")]
+    [SerializeField] private PlayerFormType startingForm = PlayerFormType.Melee;
+    [SerializeField] private float swapCooldown = 0.35f;
+    [SerializeField] private GameObject meleeVisual;
+    [SerializeField] private GameObject rangedVisual;
+
+    [Header("Shared Stats")]
+    [SerializeField] private float maxHealth = 100f;
+    [SerializeField] private float maxResource = 100f;
+    [SerializeField] private float baseDamage = 10f;
+
     [Header("Input System (optional)")]
     [SerializeField] private InputActionAsset inputActionsAsset;
     [SerializeField] private string playerActionMapName = "Player";
@@ -19,6 +38,16 @@ public class Player : MonoBehaviour
     private InputAction moveAction;
     private InputAction swapAction;
     private bool swapRequested;
+    private float currentHealth;
+    private float currentResource;
+    private float lastSwapTime = -999f;
+
+    public event Action<PlayerFormType> OnFormChanged;
+
+    public PlayerFormType CurrentForm { get; private set; }
+    public float CurrentHealth => currentHealth;
+    public float CurrentResource => currentResource;
+    public float BaseDamage => baseDamage;
 
     private void Awake()
     {
@@ -31,6 +60,8 @@ public class Player : MonoBehaviour
         }
 
         ConfigureInputActions();
+        InitializeSharedStats();
+        SetForm(startingForm, force: true);
     }
 
     private void OnEnable()
@@ -63,6 +94,11 @@ public class Player : MonoBehaviour
         {
             swapRequested = true;
         }
+
+        if (ConsumeSwapRequested())
+        {
+            TrySwapForm();
+        }
     }
 
     private void FixedUpdate()
@@ -88,6 +124,105 @@ public class Player : MonoBehaviour
 
         swapRequested = false;
         return true;
+    }
+
+    public bool TrySwapForm()
+    {
+        if (Time.time < lastSwapTime + swapCooldown)
+        {
+            return false;
+        }
+
+        PlayerFormType nextForm = CurrentForm == PlayerFormType.Melee
+            ? PlayerFormType.Ranged
+            : PlayerFormType.Melee;
+
+        SetForm(nextForm, force: false);
+        lastSwapTime = Time.time;
+        return true;
+    }
+
+    public float GetSwapCooldownRemaining()
+    {
+        float remaining = (lastSwapTime + swapCooldown) - Time.time;
+        return Mathf.Max(0f, remaining);
+    }
+
+    public void ApplyDamage(float amount)
+    {
+        if (amount <= 0f)
+        {
+            return;
+        }
+
+        currentHealth = Mathf.Max(0f, currentHealth - amount);
+    }
+
+    public void RestoreHealth(float amount)
+    {
+        if (amount <= 0f)
+        {
+            return;
+        }
+
+        currentHealth = Mathf.Min(maxHealth, currentHealth + amount);
+    }
+
+    public bool SpendResource(float amount)
+    {
+        if (amount <= 0f)
+        {
+            return true;
+        }
+
+        if (currentResource < amount)
+        {
+            return false;
+        }
+
+        currentResource -= amount;
+        return true;
+    }
+
+    public void RestoreResource(float amount)
+    {
+        if (amount <= 0f)
+        {
+            return;
+        }
+
+        currentResource = Mathf.Min(maxResource, currentResource + amount);
+    }
+
+    private void InitializeSharedStats()
+    {
+        currentHealth = maxHealth;
+        currentResource = maxResource;
+    }
+
+    private void SetForm(PlayerFormType form, bool force)
+    {
+        if (!force && CurrentForm == form)
+        {
+            return;
+        }
+
+        CurrentForm = form;
+        ApplyFormVisuals(form);
+        OnFormChanged?.Invoke(form);
+    }
+
+    private void ApplyFormVisuals(PlayerFormType form)
+    {
+        if (meleeVisual != null)
+        {
+            meleeVisual.SetActive(form == PlayerFormType.Melee);
+        }
+
+        if (rangedVisual != null)
+        {
+            rangedVisual.SetActive(form == PlayerFormType.Ranged);
+        }
     }
 
     private void ConfigureInputActions()
