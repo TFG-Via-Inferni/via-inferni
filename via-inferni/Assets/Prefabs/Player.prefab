@@ -180,3 +180,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
   moveSpeed: 5
+  acceleration: 40
+  deceleration: 45
+  inputActionsAsset: {fileID: 0}
+  playerActionMapName: Player
+  moveActionName: Move
+  swapActionName: Swap
