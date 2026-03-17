@@ -5137,6 +5137,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbc05633c68bb2d4b8d3e505245bbd3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomSpawnGrid
+  spawnWeight: 3
+  localCenterOffset: {x: 0, y: 0}
   areaSize: {x: 14, y: 16}
   cellSize: 1.5
   edgePadding: 0.5
@@ -5188,6 +5190,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbc05633c68bb2d4b8d3e505245bbd3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomSpawnGrid
+  spawnWeight: 1
+  localCenterOffset: {x: 0, y: 0}
   areaSize: {x: 16, y: 7}
   cellSize: 1.5
   edgePadding: 0.5

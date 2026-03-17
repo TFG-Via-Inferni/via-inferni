@@ -15,7 +15,8 @@ public enum EdgeDirection
 
 public interface IRoomSpawnProvider
 {
-    List<Vector3> GetSpawnPositions(int requestedCount);
+    float SpawnWeight { get; }
+    List<Vector3> GetAllSpawnPositions();
 }
 
 public class Room : MonoBehaviour
@@ -28,7 +29,7 @@ public class Room : MonoBehaviour
 
     private List<EnemyController> activeEnemies = new List<EnemyController>();
     private List<Door> roomDoors = new List<Door>();
-    private IRoomSpawnProvider spawnGrid;
+    private List<IRoomSpawnProvider> spawnGrids = new List<IRoomSpawnProvider>();
     private bool playerHasEntered = false;
     private Cell currentCell;
     private Collider2D cameraBoundsCollider;
@@ -41,7 +42,7 @@ public class Room : MonoBehaviour
     public void SetupRoom(Cell currentCell, RoomScriptable room)
     {
         this.currentCell = currentCell;
-        spawnGrid = null;
+        spawnGrids.Clear();
 
         // Instanciar el prefab visual de la habitación
         if (room != null && room.roomVariations.Length > 0)
@@ -52,10 +53,10 @@ public class Room : MonoBehaviour
                 var roomInstance = Instantiate(selectedPrefab, transform);
                 roomInstance.transform.localPosition = Vector3.zero;
 
-                spawnGrid = roomInstance
+                spawnGrids = roomInstance
                     .GetComponentsInChildren<MonoBehaviour>(true)
                     .OfType<IRoomSpawnProvider>()
-                    .FirstOrDefault();
+                    .ToList();
                 
                 var tilemap = roomInstance.GetComponentInChildren<Tilemap>();
                 if (tilemap != null)
@@ -408,15 +409,58 @@ public class Room : MonoBehaviour
     {
         // Solo spawnear si hay prefab asignado
         if (enemyPrefab == null) return;
-        if (spawnGrid == null) return;
+        if (spawnGrids.Count == 0) return;
 
         int enemyCount = Random.Range(minEnemies, maxEnemies + 1);
-        List<Vector3> spawnPositions = spawnGrid.GetSpawnPositions(enemyCount);
 
-        for (int i = 0; i < spawnPositions.Count; i++)
+        List<SpawnZoneData> spawnZones = new List<SpawnZoneData>();
+        HashSet<Vector2Int> usedKeys = new HashSet<Vector2Int>();
+
+        foreach (IRoomSpawnProvider grid in spawnGrids)
         {
+            List<Vector3> rawPositions = grid.GetAllSpawnPositions();
+            List<Vector3> uniqueZonePositions = new List<Vector3>();
+
+            foreach (Vector3 pos in rawPositions)
+            {
+                Vector2Int key = new Vector2Int(Mathf.RoundToInt(pos.x * 100f), Mathf.RoundToInt(pos.y * 100f));
+                if (usedKeys.Add(key))
+                {
+                    uniqueZonePositions.Add(pos);
+                }
+            }
+
+            if (uniqueZonePositions.Count > 0)
+            {
+                spawnZones.Add(new SpawnZoneData
+                {
+                    Weight = Mathf.Max(0f, grid.SpawnWeight),
+                    Positions = uniqueZonePositions
+                });
+            }
+        }
+
+        if (spawnZones.Count == 0)
+        {
+            return;
+        }
+
+        int finalCount = Mathf.Min(enemyCount, spawnZones.Sum(zone => zone.Positions.Count));
+
+        for (int i = 0; i < finalCount; i++)
+        {
+            SpawnZoneData selectedZone = PickWeightedZone(spawnZones);
+            if (selectedZone == null || selectedZone.Positions.Count == 0)
+            {
+                break;
+            }
+
+            int randomIndex = Random.Range(0, selectedZone.Positions.Count);
+            Vector3 spawnPosition = selectedZone.Positions[randomIndex];
+            selectedZone.Positions.RemoveAt(randomIndex);
+
             // Instanciar enemigo
-            GameObject enemyObj = Instantiate(enemyPrefab, spawnPositions[i], Quaternion.identity, transform);
+            GameObject enemyObj = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity, transform);
             EnemyController enemy = enemyObj.GetComponent<EnemyController>();
             if (enemy != null)
             {
@@ -425,6 +469,39 @@ public class Room : MonoBehaviour
         }
 
         // NO bloquear puertas aquí, esperar a que el player entre
+    }
+
+    private SpawnZoneData PickWeightedZone(List<SpawnZoneData> spawnZones)
+    {
+        List<SpawnZoneData> zonesWithPositions = spawnZones
+            .Where(zone => zone.Positions.Count > 0)
+            .ToList();
+
+        if (zonesWithPositions.Count == 0)
+        {
+            return null;
+        }
+
+        float totalWeight = zonesWithPositions.Sum(zone => zone.Weight > 0f ? zone.Weight : 1f);
+        float randomValue = Random.value * totalWeight;
+        float accumulated = 0f;
+
+        foreach (SpawnZoneData zone in zonesWithPositions)
+        {
+            accumulated += zone.Weight > 0f ? zone.Weight : 1f;
+            if (randomValue <= accumulated)
+            {
+                return zone;
+            }
+        }
+
+        return zonesWithPositions[zonesWithPositions.Count - 1];
+    }
+
+    private class SpawnZoneData
+    {
+        public float Weight;
+        public List<Vector3> Positions;
     }
 
     public void OnPlayerEnter(Collider2D collision)

@@ -3,6 +3,10 @@ using UnityEngine;
 
 public class RoomSpawnGrid : MonoBehaviour, IRoomSpawnProvider
 {
+    [Header("Control de probabilidad")]
+    [Tooltip("Peso relativo de este grid frente a otros grids de la misma sala.")]
+    [SerializeField] private float spawnWeight = 1f;
+
     [Header("Area del grid (espacio local)")]
     [Tooltip("Desplazamiento local del centro del area de spawn.")]
     [SerializeField] private Vector2 localCenterOffset = Vector2.zero;
@@ -19,23 +23,11 @@ public class RoomSpawnGrid : MonoBehaviour, IRoomSpawnProvider
     [Tooltip("Radio usado para comprobar si una celda esta libre.")]
     [SerializeField] private float occupancyCheckRadius = 0.35f;
 
-    public List<Vector3> GetSpawnPositions(int requestedCount)
+    public float SpawnWeight => Mathf.Max(0f, spawnWeight);
+
+    public List<Vector3> GetAllSpawnPositions()
     {
-        List<Vector3> availablePositions = CollectAvailablePositions();
-        if (availablePositions.Count == 0 || requestedCount <= 0)
-        {
-            return new List<Vector3>();
-        }
-
-        // Fisher-Yates para mezclar sin sesgo y tomar posiciones unicas.
-        for (int i = availablePositions.Count - 1; i > 0; i--)
-        {
-            int j = Random.Range(0, i + 1);
-            (availablePositions[i], availablePositions[j]) = (availablePositions[j], availablePositions[i]);
-        }
-
-        int finalCount = Mathf.Min(requestedCount, availablePositions.Count);
-        return availablePositions.GetRange(0, finalCount);
+        return CollectAvailablePositions();
     }
 
     private List<Vector3> CollectAvailablePositions()
