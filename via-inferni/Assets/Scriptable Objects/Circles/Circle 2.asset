@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cd53b62a7560d5499cc9d5c6061394e, type: 3}
+  m_Name: Circle 2
+  m_EditorClassIdentifier: Assembly-CSharp::CircleDefinition
+  circleNumber: 2
+  displayName: "Segundo C\xEDrculo - Lujuria"
+  roomPool:
+  - {fileID: 11400000, guid: e7981d3ad2ef039419a3757cf239f3fd, type: 2}
+  - {fileID: 11400000, guid: 8b062c1575ec2e04ea4c855ddf336581, type: 2}
+  - {fileID: 11400000, guid: 5313871082ba99548a271bf0ca0ccc73, type: 2}
+  - {fileID: 11400000, guid: 7208ed852f040c644a732c40107e4cee, type: 2}
+  - {fileID: 11400000, guid: 1fcfa01e8db667349a6e8c901c9066f8, type: 2}
+  - {fileID: 11400000, guid: dfa9bf89d370c824baae448571f6107f, type: 2}
+  - {fileID: 11400000, guid: e64c50fe32459d547b1e4f9123c2cc44, type: 2}
+  - {fileID: 11400000, guid: 5ae27cd6f9f9e4649841aa2ee9a98f20, type: 2}
+  - {fileID: 11400000, guid: 523cdbccea0897048b75dd3076775477, type: 2}
+  - {fileID: 11400000, guid: 54ec7f030d2752b488ebead29e633d4e, type: 2}
+  - {fileID: 11400000, guid: 5c270d6be5f85e141bdb61eee01c70fd, type: 2}
+  enemyPool:
+  - enemyPrefab: {fileID: 1736370125707709183, guid: 88c1b017378c0c242ba6ccb361bf9b1c, type: 3}
+    weight: 1
+    useRoomTypeFilter: 0
+    allowedRoomTypes: 

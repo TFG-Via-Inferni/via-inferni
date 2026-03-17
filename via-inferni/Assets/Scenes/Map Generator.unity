@@ -641,6 +641,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 4d8073593c99960439f74a8aca213991, type: 2}
   - {fileID: 11400000, guid: e48273ecc2e38064d9708e034f22c968, type: 2}
   - {fileID: 11400000, guid: 1847d4b28ed317f4883ae8b95550f1ee, type: 2}
+  enemyPoolFallback: []
 --- !u!1 &1479316069
 GameObject:
   m_ObjectHideFlags: 0
@@ -672,6 +673,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CircleManager
   currentCircle: 1
   maxCircles: 9
+  circleDatabase: {fileID: 11400000, guid: 0b409c8468fc14545b00e4a18d949420, type: 2}
 --- !u!4 &1479316071
 Transform:
   m_ObjectHideFlags: 0

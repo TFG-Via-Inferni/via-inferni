@@ -27,21 +27,33 @@ public class EnemyController : MonoBehaviour
     private float lastAttackTime;
     private Room parentRoom;
 
+    private void TryFindPlayer()
+    {
+        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        player = playerObject != null ? playerObject.transform : null;
+    }
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         parentRoom = GetComponentInParent<Room>();
-        
+
         // Buscar al player por tag
-        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
-        if (playerObject != null)
-        {
-            player = playerObject.transform;
-        }
+        TryFindPlayer();
     }
 
     void Update()
     {
+        if (player == null)
+        {
+            TryFindPlayer();
+            if (player == null)
+            {
+                movement = Vector2.zero;
+                ChangeState(EnemyState.Idle);
+                return;
+            }
+        }
 
         float distanceToPlayer = Vector2.Distance(transform.position, player.position);
 

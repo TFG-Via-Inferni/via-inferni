@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 568a649015c2234439ad13adcd5c29ae, type: 3}
+  m_Name: CircleDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::CircleDatabase
+  circles:
+  - {fileID: 11400000, guid: 75e058227d185e147a3ad075ad4ae013, type: 2}
+  - {fileID: 11400000, guid: 50a0ee5a5f202ef41994aa25ed01dc72, type: 2}
+  - {fileID: 11400000, guid: 822db42366e5848409ab581149e8f79e, type: 2}
+  - {fileID: 11400000, guid: 9be3288b14a23794cb53cb2cf2f1f20c, type: 2}
+  - {fileID: 11400000, guid: 2cc12ce2267d411468fd6b039fc3bde8, type: 2}
+  - {fileID: 11400000, guid: a2fbbd2c98bf10e439307ef9456e32e7, type: 2}
+  - {fileID: 11400000, guid: 2b826c37ddd29784d88cc7e9a632c0a6, type: 2}
+  - {fileID: 11400000, guid: 24f307a5a73e18b43a980158ebe1d29b, type: 2}
+  - {fileID: 11400000, guid: c6151246a687b97429d42740c14cd361, type: 2}

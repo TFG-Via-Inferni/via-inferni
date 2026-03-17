@@ -8,8 +8,10 @@ public class CircleManager : MonoBehaviour
     [Header("Circle Configuration")]
     [SerializeField] private int currentCircle = 1;
     [SerializeField] private int maxCircles = 9;
+    [SerializeField] private CircleDatabase circleDatabase;
 
     public int CurrentCircle => currentCircle;
+    public CircleDefinition CurrentCircleDefinition { get; private set; }
 
     private void Awake()
     {
@@ -17,6 +19,7 @@ public class CircleManager : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
+            RefreshCurrentCircleDefinition();
         }
         else
         {
@@ -29,6 +32,7 @@ public class CircleManager : MonoBehaviour
         if (currentCircle < maxCircles)
         {
             currentCircle++;
+            RefreshCurrentCircleDefinition();
             Debug.Log($"=== DESCENDIENDO AL CÍRCULO {currentCircle} ===");
             
             // Actualizar UI primero
@@ -55,6 +59,11 @@ public class CircleManager : MonoBehaviour
 
     public string GetCircleName()
     {
+        if (CurrentCircleDefinition != null && !string.IsNullOrWhiteSpace(CurrentCircleDefinition.displayName))
+        {
+            return CurrentCircleDefinition.displayName;
+        }
+
         return currentCircle switch
         {
             1 => "Primer Círculo - Limbo",
@@ -68,5 +77,12 @@ public class CircleManager : MonoBehaviour
             9 => "Noveno Círculo - Traición",
             _ => "Desconocido"
         };
+    }
+
+    private void RefreshCurrentCircleDefinition()
+    {
+        CurrentCircleDefinition = circleDatabase != null
+            ? circleDatabase.GetByNumber(currentCircle)
+            : null;
     }
 }

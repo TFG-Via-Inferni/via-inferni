@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cd53b62a7560d5499cc9d5c6061394e, type: 3}
+  m_Name: Circle 1
+  m_EditorClassIdentifier: Assembly-CSharp::CircleDefinition
+  circleNumber: 1
+  displayName: "Primer C\xEDrculo - Limbo"
+  roomPool:
+  - {fileID: 11400000, guid: dbb213d3070da8646b05fc89bc080810, type: 2}
+  - {fileID: 11400000, guid: 6d0166f80895ad245aa96569ad6f65be, type: 2}
+  - {fileID: 11400000, guid: f9aa4cb266dd0654c9be49f3fe327526, type: 2}
+  - {fileID: 11400000, guid: f584bab8d6fc7674caa955b48522244a, type: 2}
+  - {fileID: 11400000, guid: 00e1ced0646496c408f6f101dc4dfb3a, type: 2}
+  - {fileID: 11400000, guid: fa5cb87a2e853434295ffd0fa3266aa0, type: 2}
+  - {fileID: 11400000, guid: 37a72825c44e1c04e9d3cdf378212375, type: 2}
+  - {fileID: 11400000, guid: a8d5926f73e59aa4ab3eed4edc1499fa, type: 2}
+  - {fileID: 11400000, guid: cdd086e01ba7726438262ba6737c96a9, type: 2}
+  - {fileID: 11400000, guid: 4d8073593c99960439f74a8aca213991, type: 2}
+  - {fileID: 11400000, guid: e48273ecc2e38064d9708e034f22c968, type: 2}
+  - {fileID: 11400000, guid: 1847d4b28ed317f4883ae8b95550f1ee, type: 2}
+  enemyPool:
+  - enemyPrefab: {fileID: 1736370125707709183, guid: 88c1b017378c0c242ba6ccb361bf9b1c, type: 3}
+    weight: 1
+    useRoomTypeFilter: 0
+    allowedRoomTypes: 00000000

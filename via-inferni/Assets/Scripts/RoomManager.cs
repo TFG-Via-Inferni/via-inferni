@@ -21,6 +21,10 @@ public class RoomManager : MonoBehaviour
     public DoorScriptable[] doors;
     public RoomScriptable[] rooms;
 
+    [Header("Fallback Enemy Pool")]
+    [Tooltip("Se usa solo si el circulo actual no tiene enemyPool configurado.")]
+    public GameObject[] enemyPoolFallback;
+
     public static RoomManager instance;
 
     private void Awake()
@@ -38,9 +42,20 @@ public class RoomManager : MonoBehaviour
 
         createdRooms.Clear();
 
+        RoomScriptable[] activeRoomPool = GetActiveRoomPool();
+        if (activeRoomPool.Length == 0)
+        {
+            Debug.LogWarning("No hay roomPool configurado para el circulo actual. No se instanciaron habitaciones.");
+            return;
+        }
+
         foreach (var currentCell in spawnedCells)
         {
-            var foundRoom = rooms.FirstOrDefault(x => x.roomShape == currentCell.roomShape && x.roomType == currentCell.roomType && DoesTileMatchCell(x.occupiedTiles, currentCell));
+            var foundRoom = activeRoomPool.FirstOrDefault(x => x.roomShape == currentCell.roomShape && x.roomType == currentCell.roomType && DoesTileMatchCell(x.occupiedTiles, currentCell));
+            if (foundRoom == null)
+            {
+                continue;
+            }
         
             var currentPosition = currentCell.transform.position;
 
@@ -48,16 +63,51 @@ public class RoomManager : MonoBehaviour
         
             var spawnedRoom = Instantiate(roomPrefab, convertedPosition, Quaternion.identity);
         
-            // Asignar el prefab del enemigo a la sala
-            if (enemyPrefab != null)
-            {
-                spawnedRoom.enemyPrefab = enemyPrefab;
-            }
+            spawnedRoom.enemyPrefab = PickEnemyPrefabForCell(currentCell);
 
             spawnedRoom.SetupRoom(currentCell, foundRoom);
 
             createdRooms.Add(spawnedRoom);
         }
+    }
+
+    private RoomScriptable[] GetActiveRoomPool()
+    {
+        CircleDefinition definition = CircleManager.instance != null
+            ? CircleManager.instance.CurrentCircleDefinition
+            : null;
+
+        if (definition != null)
+        {
+            return definition.GetRoomPoolOrEmpty();
+        }
+
+        return rooms ?? Array.Empty<RoomScriptable>();
+    }
+
+    private GameObject PickEnemyPrefabForCell(Cell cell)
+    {
+        CircleDefinition definition = CircleManager.instance != null
+            ? CircleManager.instance.CurrentCircleDefinition
+            : null;
+
+        if (definition != null)
+        {
+            // Si hay definicion del circulo, esa configuracion manda.
+            // Si no hay enemigos en ese circulo, no se hace spawn.
+            return definition.PickEnemyPrefab(cell.roomType);
+        }
+
+        if (enemyPoolFallback != null && enemyPoolFallback.Length > 0)
+        {
+            List<GameObject> valid = enemyPoolFallback.Where(enemy => enemy != null).ToList();
+            if (valid.Count > 0)
+            {
+                return valid[UnityEngine.Random.Range(0, valid.Count)];
+            }
+        }
+
+        return enemyPrefab;
     }
 
     public Room GetRoomContainingPoint(Vector2 point)
