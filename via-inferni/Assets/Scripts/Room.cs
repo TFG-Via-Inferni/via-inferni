@@ -13,6 +13,11 @@ public enum EdgeDirection
     Right
 }
 
+public interface IRoomSpawnProvider
+{
+    List<Vector3> GetSpawnPositions(int requestedCount);
+}
+
 public class Room : MonoBehaviour
 {
     [Header("Enemy Spawning")]
@@ -23,6 +28,7 @@ public class Room : MonoBehaviour
 
     private List<EnemyController> activeEnemies = new List<EnemyController>();
     private List<Door> roomDoors = new List<Door>();
+    private IRoomSpawnProvider spawnGrid;
     private bool playerHasEntered = false;
     private Cell currentCell;
     private Collider2D cameraBoundsCollider;
@@ -35,6 +41,7 @@ public class Room : MonoBehaviour
     public void SetupRoom(Cell currentCell, RoomScriptable room)
     {
         this.currentCell = currentCell;
+        spawnGrid = null;
 
         // Instanciar el prefab visual de la habitación
         if (room != null && room.roomVariations.Length > 0)
@@ -44,6 +51,11 @@ public class Room : MonoBehaviour
             {
                 var roomInstance = Instantiate(selectedPrefab, transform);
                 roomInstance.transform.localPosition = Vector3.zero;
+
+                spawnGrid = roomInstance
+                    .GetComponentsInChildren<MonoBehaviour>(true)
+                    .OfType<IRoomSpawnProvider>()
+                    .FirstOrDefault();
                 
                 var tilemap = roomInstance.GetComponentInChildren<Tilemap>();
                 if (tilemap != null)
@@ -396,17 +408,15 @@ public class Room : MonoBehaviour
     {
         // Solo spawnear si hay prefab asignado
         if (enemyPrefab == null) return;
+        if (spawnGrid == null) return;
 
         int enemyCount = Random.Range(minEnemies, maxEnemies + 1);
+        List<Vector3> spawnPositions = spawnGrid.GetSpawnPositions(enemyCount);
 
-        for (int i = 0; i < enemyCount; i++)
+        for (int i = 0; i < spawnPositions.Count; i++)
         {
-            // Generar posición aleatoria dentro del radio de spawn
-            Vector2 randomPos = Random.insideUnitCircle * spawnRadius;
-            Vector3 spawnPosition = transform.position + new Vector3(randomPos.x, randomPos.y, 0);
-
             // Instanciar enemigo
-            GameObject enemyObj = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity, transform);
+            GameObject enemyObj = Instantiate(enemyPrefab, spawnPositions[i], Quaternion.identity, transform);
             EnemyController enemy = enemyObj.GetComponent<EnemyController>();
             if (enemy != null)
             {

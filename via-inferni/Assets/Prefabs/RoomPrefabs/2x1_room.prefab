@@ -3383,6 +3383,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 8742047815045243288}
   - {fileID: 8166153834608888547}
   - {fileID: 2299432731191500910}
   - {fileID: 6747259804435460187}
@@ -3479,6 +3480,57 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 32.05, y: 9.05}
   m_EdgeRadius: 0
+--- !u!1 &6019289730474812277
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8742047815045243288}
+  - component: {fileID: 3773274927823143035}
+  m_Layer: 0
+  m_Name: EnemySpawnGrid
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8742047815045243288
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6019289730474812277}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 32, y: -11.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5554913485553817355}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3773274927823143035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6019289730474812277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbc05633c68bb2d4b8d3e505245bbd3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoomSpawnGrid
+  areaSize: {x: 30, y: 7}
+  cellSize: 1.5
+  edgePadding: 0.5
+  blockedLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  occupancyCheckRadius: 0.35
 --- !u!1 &6180852849692805472
 GameObject:
   m_ObjectHideFlags: 0
