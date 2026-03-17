@@ -180,7 +180,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3b26edfc88157a46a7d558f28c88d3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
-  detectionRadius: 5
+  detectionRadius: 8
   attackRange: 1.5
   speed: 2
   attackCooldown: 1
