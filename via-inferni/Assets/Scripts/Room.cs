@@ -515,6 +515,11 @@ public class Room : MonoBehaviour
         if (!playerHasEntered)
         {
             playerHasEntered = true;
+
+            if (MapGenerator.instance != null)
+            {
+                MapGenerator.instance.DiscoverRoom(currentCell);
+            }
                         
             if (activeEnemies.Count > 0)
             {

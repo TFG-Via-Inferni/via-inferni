@@ -47,7 +47,12 @@ public class MapGenerator : MonoBehaviour
     [SerializeField] private Sprite horizontalRoom;
     [SerializeField] private Sprite lShapeRoom;
 
+    [Header("Minimap")]
+    [SerializeField] private float discoveredAlpha = 1f;
+    [SerializeField] private float undiscoveredAlpha = 0f;
+
     public static MapGenerator instance;
+    private HashSet<int> discoveredRoomIndexes = new();
 
     private static readonly List<int[]> roomShapes = new()
     {
@@ -119,6 +124,7 @@ public class MapGenerator : MonoBehaviour
         cellQueue = new Queue<int>();
         endRooms = new List<int>();
         bigRoomIndexes = new List<int>();
+        discoveredRoomIndexes.Clear();
 
         VisitCell(45);
 
@@ -183,8 +189,89 @@ public class MapGenerator : MonoBehaviour
         SpawnRoom(secretRoomIndex);
 
         UpdateSpecialRoomVisuals();
+        InitializeMinimapFog();
         RoomManager.instance.SetUpRooms(spawnedCells);
         SpawnPlayer();
+    }
+
+    private void InitializeMinimapFog()
+    {
+        discoveredRoomIndexes.Clear();
+        discoveredRoomIndexes.Add(45);
+        RefreshMinimapVisuals();
+    }
+
+    public void DiscoverRoom(Cell enteredCell)
+    {
+        if (enteredCell == null || enteredCell.cellList == null)
+        {
+            return;
+        }
+
+        bool hasNewDiscovery = false;
+
+        foreach (int roomIndex in enteredCell.cellList)
+        {
+            if (discoveredRoomIndexes.Add(roomIndex))
+            {
+                hasNewDiscovery = true;
+            }
+        }
+
+        if (hasNewDiscovery)
+        {
+            RefreshMinimapVisuals();
+        }
+    }
+
+    private void RefreshMinimapVisuals()
+    {
+        foreach (Cell cell in spawnedCells)
+        {
+            bool discovered = IsDiscovered(cell);
+            float alpha = discovered ? discoveredAlpha : undiscoveredAlpha;
+            SetCellAlpha(cell, alpha);
+        }
+    }
+
+    private bool IsDiscovered(Cell cell)
+    {
+        if (cell == null || cell.cellList == null)
+        {
+            return false;
+        }
+
+        foreach (int index in cell.cellList)
+        {
+            if (discoveredRoomIndexes.Contains(index))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void SetCellAlpha(Cell cell, float alpha)
+    {
+        if (cell == null)
+        {
+            return;
+        }
+
+        if (cell.roomSprite != null)
+        {
+            Color roomColor = cell.roomSprite.color;
+            roomColor.a = alpha;
+            cell.roomSprite.color = roomColor;
+        }
+
+        if (cell.spriteRenderer != null)
+        {
+            Color specialColor = cell.spriteRenderer.color;
+            specialColor.a = alpha;
+            cell.spriteRenderer.color = specialColor;
+        }
     }
 
     void SpawnPlayer()

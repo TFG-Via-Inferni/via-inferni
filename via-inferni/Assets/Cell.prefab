@@ -46,10 +46,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ce0800429e33254095c9783ad9b1a37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Cell
+  roomType: 0
+  roomShape: 0
   index: 0
   value: 0
   spriteRenderer: {fileID: 6046812071812959451}
   roomSprite: {fileID: 7095561036684602971}
+  cellList: 
 --- !u!212 &7095561036684602971
 SpriteRenderer:
   serializedVersion: 2
@@ -95,8 +98,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -460926003
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 3b620bf9949515e40988865bfdf0eebd, type: 3}
@@ -186,8 +189,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -460926003
+  m_SortingLayer: 1
   m_SortingOrder: 1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 0}
