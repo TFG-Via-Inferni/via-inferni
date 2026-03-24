@@ -15,16 +15,15 @@ public class Player : MonoBehaviour
     [SerializeField] private float acceleration = 28f;
     [SerializeField] private float deceleration = 36f;
 
+    [Header("Vital")]
+    [SerializeField] private float maxHealth = 100f;
+    [SerializeField] private float currentHealth = 100f;
+
     [Header("Form Swap")]
     [SerializeField] private PlayerFormType startingForm = PlayerFormType.Melee;
     [SerializeField] private float swapCooldown = 0.35f;
     [SerializeField] private GameObject meleeVisual;
     [SerializeField] private GameObject rangedVisual;
-
-    [Header("Shared Stats")]
-    [SerializeField] private float maxHealth = 100f;
-    [SerializeField] private float maxResource = 100f;
-    [SerializeField] private float baseDamage = 10f;
 
     [Header("Input System (optional)")]
     [SerializeField] private InputActionAsset inputActionsAsset;
@@ -38,16 +37,15 @@ public class Player : MonoBehaviour
     private InputAction moveAction;
     private InputAction swapAction;
     private bool swapRequested;
-    private float currentHealth;
-    private float currentResource;
     private float lastSwapTime = -999f;
+    private PlayerStats playerStats;
 
     public event Action<PlayerFormType> OnFormChanged;
 
     public PlayerFormType CurrentForm { get; private set; }
     public float CurrentHealth => currentHealth;
-    public float CurrentResource => currentResource;
-    public float BaseDamage => baseDamage;
+    public float MaxHealth => maxHealth;
+    public PlayerStats Stats => playerStats;
 
     private void Awake()
     {
@@ -59,8 +57,14 @@ public class Player : MonoBehaviour
             rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         }
 
+        playerStats = GetComponent<PlayerStats>();
+        if (playerStats == null)
+        {
+            playerStats = gameObject.AddComponent<PlayerStats>();
+        }
+
         ConfigureInputActions();
-        InitializeSharedStats();
+        InitializeHealth();
         SetForm(startingForm, force: true);
     }
 
@@ -103,7 +107,9 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Vector2 targetVelocity = Vector2.ClampMagnitude(movement, 1f) * moveSpeed;
+        float moveSpeedMultiplier = playerStats != null ? playerStats.MoveSpeedMultiplier : 1f;
+        float finalMoveSpeed = moveSpeed * moveSpeedMultiplier;
+        Vector2 targetVelocity = Vector2.ClampMagnitude(movement, 1f) * finalMoveSpeed;
         float rate = targetVelocity.sqrMagnitude > 0.0001f ? acceleration : deceleration;
 
         currentVelocity = Vector2.MoveTowards(
@@ -168,36 +174,24 @@ public class Player : MonoBehaviour
         currentHealth = Mathf.Min(maxHealth, currentHealth + amount);
     }
 
-    public bool SpendResource(float amount)
+    public bool IsDead()
     {
-        if (amount <= 0f)
-        {
-            return true;
-        }
-
-        if (currentResource < amount)
-        {
-            return false;
-        }
-
-        currentResource -= amount;
-        return true;
+        return currentHealth <= 0f;
     }
 
-    public void RestoreResource(float amount)
-    {
-        if (amount <= 0f)
-        {
-            return;
-        }
-
-        currentResource = Mathf.Min(maxResource, currentResource + amount);
-    }
-
-    private void InitializeSharedStats()
+    public void HealToFull()
     {
         currentHealth = maxHealth;
-        currentResource = maxResource;
+    }
+
+    private void InitializeHealth()
+    {
+        maxHealth = Mathf.Max(1f, maxHealth);
+        currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
+        if (currentHealth <= 0f)
+        {
+            currentHealth = maxHealth;
+        }
     }
 
     private void SetForm(PlayerFormType form, bool force)
