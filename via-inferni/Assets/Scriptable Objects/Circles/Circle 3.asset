@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Circle 3
   m_EditorClassIdentifier: Assembly-CSharp::CircleDefinition
   circleNumber: 3
-  displayName: "Tercer C\xEDrculo - Gula"
+  displayName: Third Circle - Gluttony
   roomPool: []
   enemyPool: []

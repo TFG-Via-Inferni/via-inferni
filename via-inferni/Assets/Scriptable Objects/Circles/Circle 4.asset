@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Circle 4
   m_EditorClassIdentifier: Assembly-CSharp::CircleDefinition
   circleNumber: 4
-  displayName: "Cuarto C\xEDrculo - Avaricia"
+  displayName: Fourth Circle - Greed
   roomPool: []
   enemyPool: []

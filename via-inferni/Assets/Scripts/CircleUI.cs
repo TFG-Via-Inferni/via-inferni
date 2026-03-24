@@ -90,58 +90,58 @@ public class CircleUI : MonoBehaviour
 
         if (trackedPlayer == null)
         {
-            statsText.text = "Stats: esperando jugador...";
+            statsText.text = "Stats: waiting for player...";
             return;
         }
 
         PlayerStats stats = trackedPlayer.Stats;
 
         statsBuilder.Clear();
-        statsBuilder.AppendLine("STATS ACTUALES");
-        statsBuilder.Append("Vida: ")
+        statsBuilder.AppendLine("CURRENT STATS");
+        statsBuilder.Append("Health: ")
             .Append(trackedPlayer.CurrentHealth.ToString("0"))
             .Append(" / ")
             .Append(trackedPlayer.MaxHealth.ToString("0"))
             .AppendLine();
 
-        statsBuilder.Append("Forma: ")
+        statsBuilder.Append("Form: ")
             .Append(trackedPlayer.CurrentForm)
             .AppendLine();
 
         if (stats == null)
         {
-            statsBuilder.AppendLine("Stats: no disponible");
+            statsBuilder.AppendLine("Stats: unavailable");
             statsText.text = statsBuilder.ToString();
             return;
         }
 
-        statsBuilder.Append("Arma: ")
+        statsBuilder.Append("Weapon: ")
             .Append(stats.GetSelectedWeaponId(trackedPlayer.CurrentForm))
             .AppendLine();
 
-        statsBuilder.Append("Daño: ")
+        statsBuilder.Append("Damage: ")
             .Append(stats.GetFinalDamage(trackedPlayer.CurrentForm).ToString("0.0"))
             .Append(" (x")
             .Append(stats.DamageMultiplier.ToString("0.00"))
             .AppendLine(")");
 
-        statsBuilder.Append("Velocidad: x")
+        statsBuilder.Append("Speed: x")
             .Append(stats.MoveSpeedMultiplier.ToString("0.00"))
             .AppendLine();
 
-        statsBuilder.Append("Suerte: x")
+        statsBuilder.Append("Luck: x")
             .Append(stats.LuckMultiplier.ToString("0.00"))
             .AppendLine();
 
         statsBuilder.Append("Crit: ")
             .Append((stats.CritChance * 100f).ToString("0"))
-            .Append("%   Esquiva: ")
+            .Append("%   Dodge: ")
             .Append((stats.DodgeChance * 100f).ToString("0"))
             .AppendLine("%");
 
-        statsBuilder.Append("Monedas: ")
+        statsBuilder.Append("Coins: ")
             .Append(stats.Coins)
-            .Append("   Mochila: ")
+            .Append("   Bag: ")
             .Append(stats.InventoryCapacity)
             .AppendLine();
 
@@ -176,7 +176,7 @@ public class CircleUI : MonoBehaviour
         statsText.color = statsColor;
         statsText.fontSize = statsFontSize;
         statsText.alignment = TextAlignmentOptions.TopLeft;
-        statsText.enableWordWrapping = false;
+        statsText.textWrappingMode = TextWrappingModes.NoWrap;
         statsText.raycastTarget = false;
 
         if (statsText.font == null && circleText != null)

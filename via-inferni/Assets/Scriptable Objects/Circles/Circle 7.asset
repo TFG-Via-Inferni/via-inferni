@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Circle 7
   m_EditorClassIdentifier: Assembly-CSharp::CircleDefinition
   circleNumber: 7
-  displayName: "S\xE9ptimo C\xEDrculo - Violencia"
+  displayName: Seventh Circle - Violence
   roomPool: []
   enemyPool: []

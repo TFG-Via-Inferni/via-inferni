@@ -32,7 +32,7 @@ public class CircleDefinition : ScriptableObject
 {
     [Header("Circle")]
     [Min(1)] public int circleNumber = 1;
-    public string displayName = "Primer Círculo - Limbo";
+    public string displayName = "First Circle - Limbo";
 
     [Header("Content Pools")]
     [Tooltip("Pool de salas disponible para este círculo. Pueden compartir shape/tipo con distintos tilesets.")]

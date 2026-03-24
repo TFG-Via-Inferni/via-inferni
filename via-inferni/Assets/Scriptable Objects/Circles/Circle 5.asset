@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Circle 5
   m_EditorClassIdentifier: Assembly-CSharp::CircleDefinition
   circleNumber: 5
-  displayName: "Quinto C\xEDrculo - Ira"
+  displayName: Fifth Circle - Wrath
   roomPool: []
   enemyPool: []

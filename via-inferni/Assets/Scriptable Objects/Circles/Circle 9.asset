@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Circle 9
   m_EditorClassIdentifier: Assembly-CSharp::CircleDefinition
   circleNumber: 9
-  displayName: "Noveno C\xEDrculo - Traici\xF3n"
+  displayName: Ninth Circle - Treachery
   roomPool: []
   enemyPool: []

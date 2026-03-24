@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Circle 1
   m_EditorClassIdentifier: Assembly-CSharp::CircleDefinition
   circleNumber: 1
-  displayName: "Primer C\xEDrculo - Limbo"
+  displayName: First Circle - Limbo
   roomPool:
   - {fileID: 11400000, guid: dbb213d3070da8646b05fc89bc080810, type: 2}
   - {fileID: 11400000, guid: 6d0166f80895ad245aa96569ad6f65be, type: 2}

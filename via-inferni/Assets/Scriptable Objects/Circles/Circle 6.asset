@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Circle 6
   m_EditorClassIdentifier: Assembly-CSharp::CircleDefinition
   circleNumber: 6
-  displayName: "Sexto C\xEDrculo - Herej\xEDa"
+  displayName: Sixth Circle - Heresy
   roomPool: []
   enemyPool: []

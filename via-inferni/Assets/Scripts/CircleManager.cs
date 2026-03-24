@@ -66,16 +66,16 @@ public class CircleManager : MonoBehaviour
 
         return currentCircle switch
         {
-            1 => "Primer Círculo - Limbo",
-            2 => "Segundo Círculo - Lujuria",
-            3 => "Tercer Círculo - Gula",
-            4 => "Cuarto Círculo - Avaricia",
-            5 => "Quinto Círculo - Ira",
-            6 => "Sexto Círculo - Herejía",
-            7 => "Séptimo Círculo - Violencia",
-            8 => "Octavo Círculo - Fraude",
-            9 => "Noveno Círculo - Traición",
-            _ => "Desconocido"
+            1 => "First Circle - Limbo",
+            2 => "Second Circle - Lust",
+            3 => "Third Circle - Gluttony",
+            4 => "Fourth Circle - Greed",
+            5 => "Fifth Circle - Wrath",
+            6 => "Sixth Circle - Heresy",
+            7 => "Seventh Circle - Violence",
+            8 => "Eighth Circle - Fraud",
+            9 => "Ninth Circle - Treachery",
+            _ => "Unknown"
         };
     }
 

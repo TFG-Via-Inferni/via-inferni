@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Circle 8
   m_EditorClassIdentifier: Assembly-CSharp::CircleDefinition
   circleNumber: 8
-  displayName: "Octavo C\xEDrculo - Fraude"
+  displayName: Eighth Circle - Fraud
   roomPool: []
   enemyPool: []

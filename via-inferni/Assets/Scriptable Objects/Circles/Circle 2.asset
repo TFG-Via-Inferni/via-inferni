@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Circle 2
   m_EditorClassIdentifier: Assembly-CSharp::CircleDefinition
   circleNumber: 2
-  displayName: "Segundo C\xEDrculo - Lujuria"
+  displayName: Second Circle - Lust
   roomPool:
   - {fileID: 11400000, guid: e7981d3ad2ef039419a3757cf239f3fd, type: 2}
   - {fileID: 11400000, guid: 8b062c1575ec2e04ea4c855ddf336581, type: 2}
