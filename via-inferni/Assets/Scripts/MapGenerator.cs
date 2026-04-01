@@ -48,11 +48,14 @@ public class MapGenerator : MonoBehaviour
     [SerializeField] private Sprite lShapeRoom;
 
     [Header("Minimap")]
-    [SerializeField] private float discoveredAlpha = 1f;
+    [SerializeField] private float visitedAlpha = 0.4f;
+    [SerializeField] private float currentRoomAlpha = 1f;
     [SerializeField] private float undiscoveredAlpha = 0f;
 
     public static MapGenerator instance;
-    private HashSet<int> discoveredRoomIndexes = new();
+    private HashSet<Cell> visitedRooms = new();
+    private Cell currentRoomCell;
+    private Room lastPlayerRoom;
 
     private static readonly List<int[]> roomShapes = new()
     {
@@ -102,6 +105,8 @@ public class MapGenerator : MonoBehaviour
         {
             SetupDungeon();
         }
+
+        UpdateMinimapCurrentRoomFromPlayer();
     }
 
     public void SetupDungeon()
@@ -124,7 +129,9 @@ public class MapGenerator : MonoBehaviour
         cellQueue = new Queue<int>();
         endRooms = new List<int>();
         bigRoomIndexes = new List<int>();
-        discoveredRoomIndexes.Clear();
+        visitedRooms.Clear();
+        currentRoomCell = null;
+        lastPlayerRoom = null;
 
         VisitCell(45);
 
@@ -196,29 +203,57 @@ public class MapGenerator : MonoBehaviour
 
     private void InitializeMinimapFog()
     {
-        discoveredRoomIndexes.Clear();
-        discoveredRoomIndexes.Add(45);
+        visitedRooms.Clear();
+        currentRoomCell = null;
+        lastPlayerRoom = null;
         RefreshMinimapVisuals();
     }
 
-    public void DiscoverRoom(Cell enteredCell)
+    private void UpdateMinimapCurrentRoomFromPlayer()
     {
-        if (enteredCell == null || enteredCell.cellList == null)
+        if (playerInstance == null || RoomManager.instance == null)
         {
             return;
         }
 
-        bool hasNewDiscovery = false;
-
-        foreach (int roomIndex in enteredCell.cellList)
+        Room room = RoomManager.instance.GetRoomContainingPoint(playerInstance.transform.position);
+        if (room == null)
         {
-            if (discoveredRoomIndexes.Add(roomIndex))
+            if (currentRoomCell != null)
             {
-                hasNewDiscovery = true;
+                currentRoomCell = null;
+                lastPlayerRoom = null;
+                RefreshMinimapVisuals();
             }
+
+            return;
         }
 
-        if (hasNewDiscovery)
+        if (room == lastPlayerRoom)
+        {
+            return;
+        }
+
+        lastPlayerRoom = room;
+
+        if (room.CellData != null)
+        {
+            OnPlayerEnteredRoom(room.CellData);
+        }
+    }
+
+    public void OnPlayerEnteredRoom(Cell enteredCell)
+    {
+        if (enteredCell == null)
+        {
+            return;
+        }
+
+        visitedRooms.Add(enteredCell);
+        bool hasRoomChange = currentRoomCell != enteredCell;
+        currentRoomCell = enteredCell;
+
+        if (hasRoomChange)
         {
             RefreshMinimapVisuals();
         }
@@ -228,28 +263,11 @@ public class MapGenerator : MonoBehaviour
     {
         foreach (Cell cell in spawnedCells)
         {
-            bool discovered = IsDiscovered(cell);
-            float alpha = discovered ? discoveredAlpha : undiscoveredAlpha;
+            bool isCurrent = cell == currentRoomCell;
+            bool isVisited = visitedRooms.Contains(cell);
+            float alpha = isCurrent ? currentRoomAlpha : (isVisited ? visitedAlpha : undiscoveredAlpha);
             SetCellAlpha(cell, alpha);
         }
-    }
-
-    private bool IsDiscovered(Cell cell)
-    {
-        if (cell == null || cell.cellList == null)
-        {
-            return false;
-        }
-
-        foreach (int index in cell.cellList)
-        {
-            if (discoveredRoomIndexes.Contains(index))
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private void SetCellAlpha(Cell cell, float alpha)
@@ -259,8 +277,11 @@ public class MapGenerator : MonoBehaviour
             return;
         }
 
+        bool visible = alpha > 0.001f;
+
         if (cell.roomSprite != null)
         {
+            cell.roomSprite.enabled = visible;
             Color roomColor = cell.roomSprite.color;
             roomColor.a = alpha;
             cell.roomSprite.color = roomColor;
@@ -268,6 +289,7 @@ public class MapGenerator : MonoBehaviour
 
         if (cell.spriteRenderer != null)
         {
+            cell.spriteRenderer.enabled = visible;
             Color specialColor = cell.spriteRenderer.color;
             specialColor.a = alpha;
             cell.spriteRenderer.color = specialColor;
@@ -305,6 +327,11 @@ public class MapGenerator : MonoBehaviour
         }
         
         playerInstance = player;
+
+        if (centralCell != null)
+        {
+            OnPlayerEnteredRoom(centralCell);
+        }
 
         if (roomCameraController != null)
         {

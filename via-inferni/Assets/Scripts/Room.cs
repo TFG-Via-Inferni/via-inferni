@@ -38,6 +38,7 @@ public class Room : MonoBehaviour
     public Collider2D CameraBoundsCollider => cameraBoundsCollider;
     public Transform CameraCenterTarget => cameraCenterTarget;
     public bool RequiresFixedCamera => currentCell != null && currentCell.roomShape == RoomShape.OneByOne;
+    public Cell CellData => currentCell;
 
     public void SetupRoom(Cell currentCell, RoomScriptable room)
     {
@@ -515,11 +516,6 @@ public class Room : MonoBehaviour
         if (!playerHasEntered)
         {
             playerHasEntered = true;
-
-            if (MapGenerator.instance != null)
-            {
-                MapGenerator.instance.DiscoverRoom(currentCell);
-            }
                         
             if (activeEnemies.Count > 0)
             {

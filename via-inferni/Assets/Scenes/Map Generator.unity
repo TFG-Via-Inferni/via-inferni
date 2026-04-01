@@ -944,8 +944,9 @@ MonoBehaviour:
   verticalRoom: {fileID: -1950277684, guid: 7232fd87630e755449e31a51aa216c36, type: 3}
   horizontalRoom: {fileID: -1027615629, guid: 7232fd87630e755449e31a51aa216c36, type: 3}
   lShapeRoom: {fileID: 157971813, guid: 7232fd87630e755449e31a51aa216c36, type: 3}
-  discoveredAlpha: 1
-  undiscoveredAlpha: 0.2
+  visitedAlpha: 0.4
+  currentRoomAlpha: 1
+  undiscoveredAlpha: 0
 --- !u!114 &1316929925
 MonoBehaviour:
   m_ObjectHideFlags: 0
