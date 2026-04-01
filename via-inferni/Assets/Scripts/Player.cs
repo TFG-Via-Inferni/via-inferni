@@ -94,6 +94,8 @@ public class Player : MonoBehaviour
     {
         movement = moveAction != null ? moveAction.ReadValue<Vector2>() : Vector2.zero;
 
+        HandleWeaponSlotInput();
+
         if (swapAction != null && swapAction.WasPressedThisFrame())
         {
             swapRequested = true;
@@ -130,6 +132,37 @@ public class Player : MonoBehaviour
 
         swapRequested = false;
         return true;
+    }
+
+    private void HandleWeaponSlotInput()
+    {
+        if (playerStats == null)
+        {
+            return;
+        }
+
+        Keyboard keyboard = Keyboard.current;
+        if (keyboard == null)
+        {
+            return;
+        }
+
+        if (keyboard.digit1Key.wasPressedThisFrame)
+        {
+            playerStats.SelectWeaponSlot(CurrentForm, 1);
+            return;
+        }
+
+        if (keyboard.digit2Key.wasPressedThisFrame)
+        {
+            playerStats.SelectWeaponSlot(CurrentForm, 2);
+            return;
+        }
+
+        if (keyboard.digit3Key.wasPressedThisFrame)
+        {
+            playerStats.SelectWeaponSlot(CurrentForm, 3);
+        }
     }
 
     public bool TrySwapForm()

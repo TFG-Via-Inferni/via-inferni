@@ -1164,6 +1164,23 @@ MonoBehaviour:
   statsColor: {r: 0.72, g: 0.72, b: 0.72, a: 0.62}
   statsFontSize: 24
   statsAnchoredPosition: {x: 32, y: -64}
+  showSelectionHud: 1
+  selectedCharacterImage: {fileID: 0}
+  selectedWeaponImage: {fileID: 0}
+  characterSize: {x: 128, y: 128}
+  weaponSize: {x: 128, y: 128}
+  iconHeightPercentOfScreen: 0.15
+  marginPercentOfScreen: 0.05
+  danteSelectedSprite: {fileID: 21300000, guid: 8b4a4c87e9548664587637ecb6dbc5ef, type: 3}
+  virgilioSelectedSprite: {fileID: 21300000, guid: 1112747f969ba814a8941b7ca72675a4, type: 3}
+  danteWeaponSelectedSprites:
+  - {fileID: 21300000, guid: efb064904da70d142ac220e6e371184d, type: 3}
+  - {fileID: 21300000, guid: 26ff1844f65fe864480db091fa99f178, type: 3}
+  - {fileID: 21300000, guid: c78f038d2ccf4d44d8016ab92230ac77, type: 3}
+  virgilioWeaponSelectedSprites:
+  - {fileID: 21300000, guid: d5d1007dbc04c4e41b96ffcef8b76dd2, type: 3}
+  - {fileID: 21300000, guid: b46adc87292de5541a6fed12ae6482d6, type: 3}
+  - {fileID: 21300000, guid: aa87c3d984615864aac7c2e51e453123, type: 3}
 --- !u!1 &1830817228
 GameObject:
   m_ObjectHideFlags: 0
