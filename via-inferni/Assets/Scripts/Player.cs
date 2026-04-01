@@ -92,6 +92,12 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        if (PauseMenuController.IsPaused)
+        {
+            movement = Vector2.zero;
+            return;
+        }
+
         movement = moveAction != null ? moveAction.ReadValue<Vector2>() : Vector2.zero;
 
         HandleWeaponSlotInput();
@@ -109,6 +115,12 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (PauseMenuController.IsPaused)
+        {
+            rb.linearVelocity = Vector2.zero;
+            return;
+        }
+
         float moveSpeedMultiplier = playerStats != null ? playerStats.MoveSpeedMultiplier : 1f;
         float finalMoveSpeed = moveSpeed * moveSpeedMultiplier;
         Vector2 targetVelocity = Vector2.ClampMagnitude(movement, 1f) * finalMoveSpeed;

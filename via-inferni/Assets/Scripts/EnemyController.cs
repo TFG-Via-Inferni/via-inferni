@@ -44,6 +44,12 @@ public class EnemyController : MonoBehaviour
 
     void Update()
     {
+        if (PauseMenuController.IsPaused)
+        {
+            movement = Vector2.zero;
+            return;
+        }
+
         if (player == null)
         {
             TryFindPlayer();
@@ -77,6 +83,12 @@ public class EnemyController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (PauseMenuController.IsPaused)
+        {
+            rb.linearVelocity = Vector2.zero;
+            return;
+        }
+
         // Mover al enemigo
         rb.MovePosition(rb.position + movement * Time.fixedDeltaTime);
     }
