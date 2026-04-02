@@ -20,6 +20,7 @@ public class PauseMenuController : MonoBehaviour
     [SerializeField] private Button resumeButton;
     [SerializeField] private Button restartButton;
     [SerializeField] private Button exitButton;
+    [SerializeField] private string startMenuSceneName = "StartMenu";
     [SerializeField] private bool hidePauseMenuOnStart = true;
 
     [Header("Lifetime")]
@@ -112,11 +113,13 @@ public class PauseMenuController : MonoBehaviour
     {
         ResumeGame();
 
-#if UNITY_EDITOR
-        EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
-#endif
+        if (!SceneExistsInBuildSettings(startMenuSceneName))
+        {
+            Debug.LogError($"PauseMenuController: Scene '{startMenuSceneName}' is not in Build Settings.");
+            return;
+        }
+
+        SceneManager.LoadScene(startMenuSceneName);
     }
 
     private void SetPaused(bool paused, bool force = false)
@@ -222,5 +225,22 @@ public class PauseMenuController : MonoBehaviour
         }
 
         EventSystem.current.SetSelectedGameObject(resumeButton.gameObject);
+    }
+
+    private bool SceneExistsInBuildSettings(string sceneName)
+    {
+        int sceneCount = SceneManager.sceneCountInBuildSettings;
+
+        for (int i = 0; i < sceneCount; i++)
+        {
+            string path = SceneUtility.GetScenePathByBuildIndex(i);
+            string name = System.IO.Path.GetFileNameWithoutExtension(path);
+            if (name == sceneName)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
