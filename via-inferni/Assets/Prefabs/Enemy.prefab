@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 2377357636001896446}
   - component: {fileID: 3000090820783681809}
   - component: {fileID: 8029814907209707987}
+  - component: {fileID: 4566395978418312827}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -184,6 +185,7 @@ MonoBehaviour:
   attackRange: 1.5
   speed: 2
   attackCooldown: 1
+  attackDamage: 10
 --- !u!61 &8029814907209707987
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -230,3 +232,17 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.6, y: 0.7}
   m_EdgeRadius: 0
+--- !u!114 &4566395978418312827
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1736370125707709183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f50b02b65e593cd4d99d00c3cb6b6441, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
+  maxHealth: 30
+  destroyOnDeath: 1

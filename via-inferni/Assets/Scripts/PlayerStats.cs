@@ -107,8 +107,18 @@ public class PlayerStats : MonoBehaviour
     {
         int slot = GetSelectedWeaponIndex(form) + 1;
         return form == PlayerFormType.Melee
-            ? $"Melee_{slot}"
-            : $"Ranged_{slot}";
+            ? slot switch
+            {
+                1 => "Sword",
+                2 => "Spear",
+                _ => "Axe"
+            }
+            : slot switch
+            {
+                1 => "Bow",
+                2 => "Magic",
+                _ => "Ballista"
+            };
     }
 
     public bool IncreaseInventoryCapacity(int amount)

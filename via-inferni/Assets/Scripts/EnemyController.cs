@@ -19,9 +19,11 @@ public class EnemyController : MonoBehaviour
 
     [Header("Attack")]
     public float attackCooldown = 1f;
+    public float attackDamage = 10f;
 
     private EnemyState currentState = EnemyState.Idle;
     private Transform player;
+    private IDamageable playerDamageable;
     private Rigidbody2D rb;
     private Vector2 movement;
     private float lastAttackTime;
@@ -31,6 +33,7 @@ public class EnemyController : MonoBehaviour
     {
         GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
         player = playerObject != null ? playerObject.transform : null;
+        playerDamageable = playerObject != null ? playerObject.GetComponent<IDamageable>() : null;
     }
 
     void Start()
@@ -142,8 +145,11 @@ public class EnemyController : MonoBehaviour
     void PerformAttack()
     {
         Debug.Log("¡Enemigo atacando!");
-        // Aquí irá la lógica de daño cuando tengas sistema de vida
-        // Por ejemplo: player.GetComponent<PlayerHealth>()?.TakeDamage(10);
+
+        if (playerDamageable != null && playerDamageable.CanTakeDamage)
+        {
+            playerDamageable.TakeDamage(attackDamage, gameObject);
+        }
     }
 
     void OnTriggerEnter2D(Collider2D collision)

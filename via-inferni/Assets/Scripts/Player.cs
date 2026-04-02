@@ -8,7 +8,7 @@ public enum PlayerFormType
     Ranged
 }
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, IDamageable
 {
     [SerializeField] private float moveSpeed = 5f;
     [Header("Movement Feel")]
@@ -39,6 +39,7 @@ public class Player : MonoBehaviour
     private bool swapRequested;
     private float lastSwapTime = -999f;
     private PlayerStats playerStats;
+    private Vector2 facingDirection = Vector2.right;
 
     public event Action<PlayerFormType> OnFormChanged;
 
@@ -46,6 +47,8 @@ public class Player : MonoBehaviour
     public float CurrentHealth => currentHealth;
     public float MaxHealth => maxHealth;
     public PlayerStats Stats => playerStats;
+    public bool CanTakeDamage => currentHealth > 0f;
+    public Vector2 FacingDirection => facingDirection;
 
     private void Awake()
     {
@@ -99,6 +102,11 @@ public class Player : MonoBehaviour
         }
 
         movement = moveAction != null ? moveAction.ReadValue<Vector2>() : Vector2.zero;
+
+        if (Mathf.Abs(movement.x) > 0.01f)
+        {
+            facingDirection = movement.x > 0f ? Vector2.right : Vector2.left;
+        }
 
         HandleWeaponSlotInput();
 
@@ -199,7 +207,7 @@ public class Player : MonoBehaviour
         return Mathf.Max(0f, remaining);
     }
 
-    public void ApplyDamage(float amount)
+    public void TakeDamage(float amount, GameObject source = null)
     {
         if (amount <= 0f)
         {
@@ -207,6 +215,11 @@ public class Player : MonoBehaviour
         }
 
         currentHealth = Mathf.Max(0f, currentHealth - amount);
+    }
+
+    public void ApplyDamage(float amount)
+    {
+        TakeDamage(amount);
     }
 
     public void RestoreHealth(float amount)
@@ -278,11 +291,6 @@ public class Player : MonoBehaviour
             .With("Down", "<Keyboard>/s")
             .With("Left", "<Keyboard>/a")
             .With("Right", "<Keyboard>/d");
-        moveAction.AddCompositeBinding("2DVector")
-            .With("Up", "<Keyboard>/upArrow")
-            .With("Down", "<Keyboard>/downArrow")
-            .With("Left", "<Keyboard>/leftArrow")
-            .With("Right", "<Keyboard>/rightArrow");
         moveAction.AddBinding("<Gamepad>/leftStick");
 
         swapAction = new InputAction(name: "Swap", type: InputActionType.Button);
