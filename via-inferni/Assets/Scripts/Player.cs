@@ -48,6 +48,8 @@ public class Player : MonoBehaviour, IDamageable
     public float MaxHealth => maxHealth;
     public PlayerStats Stats => playerStats;
     public bool CanTakeDamage => currentHealth > 0f;
+    public Vector2 MovementInput => movement;
+    public bool IsMoving => movement.sqrMagnitude > 0.0001f;
     public Vector2 FacingDirection => facingDirection;
 
     private void Awake()
@@ -103,10 +105,7 @@ public class Player : MonoBehaviour, IDamageable
 
         movement = moveAction != null ? moveAction.ReadValue<Vector2>() : Vector2.zero;
 
-        if (Mathf.Abs(movement.x) > 0.01f)
-        {
-            facingDirection = movement.x > 0f ? Vector2.right : Vector2.left;
-        }
+        UpdateFacingDirection(movement);
 
         HandleWeaponSlotInput();
 
@@ -275,6 +274,22 @@ public class Player : MonoBehaviour, IDamageable
         {
             rangedVisual.SetActive(form == PlayerFormType.Ranged);
         }
+    }
+
+    private void UpdateFacingDirection(Vector2 input)
+    {
+        if (input.sqrMagnitude <= 0.0001f)
+        {
+            return;
+        }
+
+        if (Mathf.Abs(input.x) >= Mathf.Abs(input.y))
+        {
+            facingDirection = input.x >= 0f ? Vector2.right : Vector2.left;
+            return;
+        }
+
+        facingDirection = input.y >= 0f ? Vector2.up : Vector2.down;
     }
 
     private void ConfigureInputActions()

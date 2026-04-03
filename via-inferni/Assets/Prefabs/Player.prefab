@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 463508191734498181}
   - component: {fileID: 937351442390892362}
+  - component: {fileID: 5629490830128404276}
   m_Layer: 0
   m_Name: RangedVisual
   m_TagString: Untagged
@@ -81,7 +82,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 5
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -1306699671, guid: daa66dd237160c64ead327ba59a12899, type: 3}
+  m_Sprite: {fileID: 343252588, guid: 696591dc4bfcf0e4b80f30a39d185ad1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -91,6 +92,51 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &5629490830128404276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3072731771519389114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b307d837a21e0774894ff3e78603bbb3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerSpriteAnimator
+  player: {fileID: 0}
+  framesPerSecond: 8
+  inputDeadZone: 0.15
+  sideIdleFrames:
+  - {fileID: 343252588, guid: 696591dc4bfcf0e4b80f30a39d185ad1, type: 3}
+  - {fileID: 510067703, guid: 696591dc4bfcf0e4b80f30a39d185ad1, type: 3}
+  - {fileID: 1570723345, guid: 696591dc4bfcf0e4b80f30a39d185ad1, type: 3}
+  - {fileID: 1578608453, guid: 696591dc4bfcf0e4b80f30a39d185ad1, type: 3}
+  sideWalkFrames:
+  - {fileID: 2099444871, guid: 23393ff3cf54d6340bb2f6e6abbd9cb7, type: 3}
+  - {fileID: -1225814861, guid: 23393ff3cf54d6340bb2f6e6abbd9cb7, type: 3}
+  - {fileID: 1762512093, guid: 23393ff3cf54d6340bb2f6e6abbd9cb7, type: 3}
+  - {fileID: -697221739, guid: 23393ff3cf54d6340bb2f6e6abbd9cb7, type: 3}
+  frontIdleFrames:
+  - {fileID: 365549781, guid: 8cedeb620e040874497720cf3da25cdc, type: 3}
+  - {fileID: 380463039, guid: 8cedeb620e040874497720cf3da25cdc, type: 3}
+  - {fileID: -1733122435, guid: 8cedeb620e040874497720cf3da25cdc, type: 3}
+  - {fileID: -1085641915, guid: 8cedeb620e040874497720cf3da25cdc, type: 3}
+  frontWalkFrames:
+  - {fileID: -518508499, guid: 89dd57c7c5bb8d84aac9329997e3d238, type: 3}
+  - {fileID: -632219879, guid: 89dd57c7c5bb8d84aac9329997e3d238, type: 3}
+  - {fileID: 1376910368, guid: 89dd57c7c5bb8d84aac9329997e3d238, type: 3}
+  - {fileID: 2084972523, guid: 89dd57c7c5bb8d84aac9329997e3d238, type: 3}
+  backIdleFrames:
+  - {fileID: -288463800, guid: 2e2eb83e6dcbbdb4eafd8ee6d5ba0b62, type: 3}
+  - {fileID: -1705198188, guid: 2e2eb83e6dcbbdb4eafd8ee6d5ba0b62, type: 3}
+  - {fileID: 1571913526, guid: 2e2eb83e6dcbbdb4eafd8ee6d5ba0b62, type: 3}
+  - {fileID: -1066508802, guid: 2e2eb83e6dcbbdb4eafd8ee6d5ba0b62, type: 3}
+  backWalkFrames:
+  - {fileID: 2104480785, guid: d80df82e92705c341ad85058ae441f73, type: 3}
+  - {fileID: -743025781, guid: d80df82e92705c341ad85058ae441f73, type: 3}
+  - {fileID: 509470241, guid: d80df82e92705c341ad85058ae441f73, type: 3}
+  - {fileID: 2090271932, guid: d80df82e92705c341ad85058ae441f73, type: 3}
 --- !u!1 &6324667708166986596
 GameObject:
   m_ObjectHideFlags: 0
@@ -173,7 +219,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.8, y: 0.8}
+  m_Size: {x: 0.5, y: 0.8}
   m_EdgeRadius: 0
 --- !u!50 &356368039974748993
 Rigidbody2D:
@@ -271,8 +317,6 @@ MonoBehaviour:
   inputActionsAsset: {fileID: 0}
   playerActionMapName: Player
   attackActionName: Attack
-  useMouseLeftButtonFallback: 1
-  useKeyboardSpaceFallback: 1
   attackOrigin: {fileID: 0}
   damageLayers:
     serializedVersion: 2
@@ -295,6 +339,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7982568844714833421}
   - component: {fileID: 7240654737619054710}
+  - component: {fileID: 6325062660478089348}
   m_Layer: 0
   m_Name: MeleeVisual
   m_TagString: Untagged
@@ -366,7 +411,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 5
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 473678003, guid: daa66dd237160c64ead327ba59a12899, type: 3}
+  m_Sprite: {fileID: -898747296, guid: 9338758140bdd9641931d05daeb12e48, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -376,3 +421,48 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &6325062660478089348
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7601860083779843958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b307d837a21e0774894ff3e78603bbb3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerSpriteAnimator
+  player: {fileID: 0}
+  framesPerSecond: 4
+  inputDeadZone: 0.15
+  sideIdleFrames:
+  - {fileID: -898747296, guid: 9338758140bdd9641931d05daeb12e48, type: 3}
+  - {fileID: -1442759124, guid: 9338758140bdd9641931d05daeb12e48, type: 3}
+  - {fileID: -741245231, guid: 9338758140bdd9641931d05daeb12e48, type: 3}
+  - {fileID: 472889706, guid: 9338758140bdd9641931d05daeb12e48, type: 3}
+  sideWalkFrames:
+  - {fileID: -529016579, guid: 67aba9b3768472c4a8b1468f951ac8c5, type: 3}
+  - {fileID: -1907290434, guid: 67aba9b3768472c4a8b1468f951ac8c5, type: 3}
+  - {fileID: 2056021271, guid: 67aba9b3768472c4a8b1468f951ac8c5, type: 3}
+  - {fileID: -692600163, guid: 67aba9b3768472c4a8b1468f951ac8c5, type: 3}
+  frontIdleFrames:
+  - {fileID: 846130558, guid: 9d5b096f7aab59142a77e406422bfcae, type: 3}
+  - {fileID: -1090123150, guid: 9d5b096f7aab59142a77e406422bfcae, type: 3}
+  - {fileID: -1828234521, guid: 9d5b096f7aab59142a77e406422bfcae, type: 3}
+  - {fileID: 1700108173, guid: 9d5b096f7aab59142a77e406422bfcae, type: 3}
+  frontWalkFrames:
+  - {fileID: 173104849, guid: 81b44ef7caea44d49be0722fd8dbb0ea, type: 3}
+  - {fileID: 1391796713, guid: 81b44ef7caea44d49be0722fd8dbb0ea, type: 3}
+  - {fileID: -1622615781, guid: 81b44ef7caea44d49be0722fd8dbb0ea, type: 3}
+  - {fileID: 1887716597, guid: 81b44ef7caea44d49be0722fd8dbb0ea, type: 3}
+  backIdleFrames:
+  - {fileID: 470308201, guid: 93a9801c87711ae4e9ebc74a03fbb9d3, type: 3}
+  - {fileID: -336236948, guid: 93a9801c87711ae4e9ebc74a03fbb9d3, type: 3}
+  - {fileID: -364864078, guid: 93a9801c87711ae4e9ebc74a03fbb9d3, type: 3}
+  - {fileID: 1996864428, guid: 93a9801c87711ae4e9ebc74a03fbb9d3, type: 3}
+  backWalkFrames:
+  - {fileID: -428209679, guid: ba1fe15e89e56be4abc18cd02996997c, type: 3}
+  - {fileID: -1408149220, guid: ba1fe15e89e56be4abc18cd02996997c, type: 3}
+  - {fileID: 1508767339, guid: ba1fe15e89e56be4abc18cd02996997c, type: 3}
+  - {fileID: 649134830, guid: ba1fe15e89e56be4abc18cd02996997c, type: 3}
