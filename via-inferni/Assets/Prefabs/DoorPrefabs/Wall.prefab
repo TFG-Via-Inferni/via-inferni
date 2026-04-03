@@ -58,10 +58,10 @@ Tilemap:
   m_AnimatedTiles: {}
   m_TileAssetArray:
   - m_RefCount: 1
-    m_Data: {fileID: 11400000, guid: f17a9ee1209174a4f9aa180b46821c11, type: 2}
+    m_Data: {fileID: 11400000, guid: 84ba182b5ede31c4cb3c07811439d125, type: 2}
   m_TileSpriteArray:
   - m_RefCount: 1
-    m_Data: {fileID: -651299442, guid: daa66dd237160c64ead327ba59a12899, type: 3}
+    m_Data: {fileID: 1539451098, guid: 3f845d9d433a4b64f8b8aad0cfff05bd, type: 3}
   m_TileMatrixArray:
   - m_RefCount: 1
     m_Data:
@@ -88,7 +88,7 @@ Tilemap:
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Origin: {x: 0, y: -33, z: 0}
-  m_Size: {x: 62, y: 33, z: 1}
+  m_Size: {x: 62, y: 34, z: 1}
   m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
   m_TileOrientation: 0
   m_TileOrientationMatrix:
@@ -270,20 +270,20 @@ CompositeCollider2D:
   m_ColliderPaths:
   - m_Collider: {fileID: 9059934372170693338}
     m_ColliderPaths:
-    - - X: 620000000
-        Y: -320000000
-      - X: 610000000
-        Y: -320000000
-      - X: 610000000
-        Y: -330000000
-      - X: 620000000
-        Y: -330000000
+    - - X: 10000000
+        Y: 10000000
+      - X: 0
+        Y: 10000000
+      - X: 0
+        Y: 0
+      - X: 10000000
+        Y: 0
   m_CompositePaths:
     m_Paths:
-    - - {x: 61.99997, y: -33}
-      - {x: 61.99997, y: -32}
-      - {x: 61, y: -32.00003}
-      - {x: 61.000034, y: -33}
+    - - {x: 0.99997073, y: 0}
+      - {x: 0.99997073, y: 1}
+      - {x: 0, y: 0.99997073}
+      - {x: 0.000029300001, y: 0}
   m_VertexDistance: 0.0005
   m_OffsetDistance: 0.00005
   m_UseDelaunayMesh: 0
