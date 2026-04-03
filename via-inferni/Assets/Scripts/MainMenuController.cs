@@ -17,8 +17,13 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] private Button exitGameButton;
     [SerializeField] private Button devModeButton;
 
+    [Header("Button Style")]
+    [SerializeField] private Sprite menuButtonBackground;
+
     private void Awake()
     {
+        EnsureMenuButtonBackground();
+        ApplyMenuButtonBackgrounds();
         HookButtons();
     }
 
@@ -102,6 +107,43 @@ public class MainMenuController : MonoBehaviour
             devModeButton.onClick.RemoveListener(ToggleDevMode);
             devModeButton.onClick.AddListener(ToggleDevMode);
         }
+    }
+
+    private void ApplyMenuButtonBackgrounds()
+    {
+        if (menuButtonBackground == null)
+        {
+            return;
+        }
+
+        ApplyBackgroundToButton(startGameButton);
+        ApplyBackgroundToButton(optionsButton);
+        ApplyBackgroundToButton(exitGameButton);
+        ApplyBackgroundToButton(devModeButton);
+    }
+
+    private void ApplyBackgroundToButton(Button button)
+    {
+        if (button == null || button.image == null)
+        {
+            return;
+        }
+
+        button.image.sprite = menuButtonBackground;
+        button.image.overrideSprite = null;
+        button.image.type = Image.Type.Simple;
+    }
+
+    private void EnsureMenuButtonBackground()
+    {
+        if (menuButtonBackground != null)
+        {
+            return;
+        }
+
+#if UNITY_EDITOR
+        menuButtonBackground = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/menu/menu_button.png");
+#endif
     }
 
     private void UnhookButtons()

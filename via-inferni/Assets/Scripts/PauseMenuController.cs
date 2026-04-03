@@ -20,6 +20,7 @@ public class PauseMenuController : MonoBehaviour
     [SerializeField] private Button resumeButton;
     [SerializeField] private Button restartButton;
     [SerializeField] private Button exitButton;
+    [SerializeField] private Sprite menuButtonBackground;
     [SerializeField] private string startMenuSceneName = "StartMenu";
     [SerializeField] private bool hidePauseMenuOnStart = true;
 
@@ -60,6 +61,9 @@ public class PauseMenuController : MonoBehaviour
                 selfCanvasGroup = pauseMenuRoot.AddComponent<CanvasGroup>();
             }
         }
+
+        EnsureMenuButtonBackground();
+        ApplyMenuButtonBackgrounds();
 
         HookButtons();
         SetPaused(false, force: true);
@@ -197,6 +201,42 @@ public class PauseMenuController : MonoBehaviour
             exitButton.onClick.RemoveListener(ExitGame);
             exitButton.onClick.AddListener(ExitGame);
         }
+    }
+
+    private void ApplyMenuButtonBackgrounds()
+    {
+        if (menuButtonBackground == null)
+        {
+            return;
+        }
+
+        ApplyBackgroundToButton(resumeButton);
+        ApplyBackgroundToButton(restartButton);
+        ApplyBackgroundToButton(exitButton);
+    }
+
+    private void ApplyBackgroundToButton(Button button)
+    {
+        if (button == null || button.image == null)
+        {
+            return;
+        }
+
+        button.image.sprite = menuButtonBackground;
+        button.image.overrideSprite = null;
+        button.image.type = Image.Type.Simple;
+    }
+
+    private void EnsureMenuButtonBackground()
+    {
+        if (menuButtonBackground != null)
+        {
+            return;
+        }
+
+#if UNITY_EDITOR
+        menuButtonBackground = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/menu/menu_button.png");
+#endif
     }
 
     private void UnhookButtons()
