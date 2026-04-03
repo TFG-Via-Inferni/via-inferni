@@ -105,7 +105,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSpriteAnimator
   player: {fileID: 0}
-  framesPerSecond: 8
+  framesPerSecond: 6
   inputDeadZone: 0.15
   sideIdleFrames:
   - {fileID: 343252588, guid: 696591dc4bfcf0e4b80f30a39d185ad1, type: 3}
@@ -434,7 +434,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSpriteAnimator
   player: {fileID: 0}
-  framesPerSecond: 4
+  framesPerSecond: 6
   inputDeadZone: 0.15
   sideIdleFrames:
   - {fileID: -898747296, guid: 9338758140bdd9641931d05daeb12e48, type: 3}
