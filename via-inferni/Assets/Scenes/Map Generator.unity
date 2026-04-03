@@ -1901,7 +1901,7 @@ MonoBehaviour:
   selectedWeaponImage: {fileID: 0}
   characterSize: {x: 128, y: 128}
   weaponSize: {x: 128, y: 128}
-  iconHeightPercentOfScreen: 0.15
+  iconHeightPercentOfScreen: 0.2
   marginPercentOfScreen: 0.05
   danteSelectedSprite: {fileID: 21300000, guid: 8b4a4c87e9548664587637ecb6dbc5ef, type: 3}
   virgilioSelectedSprite: {fileID: 21300000, guid: 1112747f969ba814a8941b7ca72675a4, type: 3}
