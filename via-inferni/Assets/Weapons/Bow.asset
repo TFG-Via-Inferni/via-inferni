@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 217044e3f02829a428f3dcc762121142, type: 3}
   m_Name: Bow
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
-  weaponId: 
-  displayName: 
+  weaponId: 4
+  displayName: Bow
   form: 1
   attackType: 1
   baseDamage: 10
