@@ -93,21 +93,24 @@ public class PlayerCombatController : MonoBehaviour
 
         float finalDamage = stats != null ? stats.GetFinalDamage(player.CurrentForm) : weapon.BaseDamage;
         Vector2 facingDirection = attackDirection.sqrMagnitude > 0.0001f ? attackDirection.normalized : GetDefaultAttackDirection();
+        string attackWeaponId = stats != null
+            ? stats.GetSelectedWeaponId(player.CurrentForm)
+            : weapon.WeaponId;
 
         if (weapon.AttackType == WeaponAttackType.Melee)
         {
-            PerformMeleeAttack(weapon, finalDamage, facingDirection);
+            PerformMeleeAttack(weapon, finalDamage, facingDirection, attackWeaponId, player.CurrentForm);
         }
         else
         {
-            PerformProjectileAttack(weapon, finalDamage, facingDirection);
+            PerformProjectileAttack(weapon, finalDamage, facingDirection, attackWeaponId, player.CurrentForm);
         }
 
         lastAttackTime = Time.time;
         return true;
     }
 
-    private void PerformMeleeAttack(WeaponDefinition weapon, float damageAmount, Vector2 facingDirection)
+    private void PerformMeleeAttack(WeaponDefinition weapon, float damageAmount, Vector2 facingDirection, string weaponId, PlayerFormType form)
     {
         if (weapon == null || player == null)
         {
@@ -127,11 +130,14 @@ public class PlayerCombatController : MonoBehaviour
         hitboxCollider.isTrigger = true;
         hitboxCollider.size = weapon.HitboxSize;
 
+        DamageSourceContext context = hitboxObject.AddComponent<DamageSourceContext>();
+        context.Configure(player.transform.root, weaponId, form);
+
         MeleeHitbox hitbox = hitboxObject.AddComponent<MeleeHitbox>();
-        hitbox.Initialize(damageAmount, gameObject, damageLayers);
+        hitbox.Initialize(damageAmount, hitboxObject, damageLayers);
     }
 
-    private void PerformProjectileAttack(WeaponDefinition weapon, float damageAmount, Vector2 facingDirection)
+    private void PerformProjectileAttack(WeaponDefinition weapon, float damageAmount, Vector2 facingDirection, string weaponId, PlayerFormType form)
     {
         if (weapon == null || weapon.ProjectilePrefab == null || player == null)
         {
@@ -149,7 +155,15 @@ public class PlayerCombatController : MonoBehaviour
             projectile = projectileObject.AddComponent<Projectile>();
         }
 
-        projectile.Initialize(damageAmount, weapon.ProjectileSpeed, weapon.ProjectileLifetime, facingDirection, gameObject);
+        DamageSourceContext context = projectileObject.GetComponent<DamageSourceContext>();
+        if (context == null)
+        {
+            context = projectileObject.AddComponent<DamageSourceContext>();
+        }
+
+        context.Configure(player.transform.root, weaponId, form);
+
+        projectile.Initialize(damageAmount, weapon.ProjectileSpeed, weapon.ProjectileLifetime, facingDirection, projectileObject);
     }
 
     private WeaponDefinition GetCurrentWeaponDefinition()

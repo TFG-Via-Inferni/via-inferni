@@ -48,7 +48,7 @@ public class Projectile : MonoBehaviour
                 continue;
             }
 
-            if (source != null && hit.transform.root == source.transform.root)
+            if (ShouldIgnoreSelfHit(hit))
             {
                 continue;
             }
@@ -64,5 +64,21 @@ public class Projectile : MonoBehaviour
                 }
             }
         }
+    }
+
+    private bool ShouldIgnoreSelfHit(Collider2D other)
+    {
+        if (source == null)
+        {
+            return false;
+        }
+
+        if (other.transform.root == source.transform.root)
+        {
+            return true;
+        }
+
+        DamageSourceContext context = source.GetComponent<DamageSourceContext>();
+        return context != null && context.OwnerRoot != null && other.transform.root == context.OwnerRoot;
     }
 }

@@ -1404,7 +1404,7 @@ MonoBehaviour:
   spawnWeight: 1
   localCenterOffset: {x: 0, y: 0}
   areaSize: {x: 30, y: 16}
-  cellSize: 1.5
+  cellSize: 1
   edgePadding: 0.5
   blockedLayers:
     serializedVersion: 2

@@ -21,7 +21,7 @@ public class MeleeHitbox : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (source != null && other.transform.root == source.transform.root)
+        if (ShouldIgnoreSelfHit(other))
         {
             return;
         }
@@ -41,5 +41,21 @@ public class MeleeHitbox : MonoBehaviour
         {
             damageable.TakeDamage(damage, source);
         }
+    }
+
+    private bool ShouldIgnoreSelfHit(Collider2D other)
+    {
+        if (source == null)
+        {
+            return false;
+        }
+
+        if (other.transform.root == source.transform.root)
+        {
+            return true;
+        }
+
+        DamageSourceContext context = source.GetComponent<DamageSourceContext>();
+        return context != null && context.OwnerRoot != null && other.transform.root == context.OwnerRoot;
     }
 }

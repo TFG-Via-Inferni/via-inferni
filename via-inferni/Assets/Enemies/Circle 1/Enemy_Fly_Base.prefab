@@ -188,6 +188,16 @@ MonoBehaviour:
   attackDamage: 10
   spriteRenderer: {fileID: 0}
   startDormant: 1
+  flyPreferredDistance: 3.5
+  flyOrbitStrength: 0.65
+  flyAttackRangeMultiplier: 2.2
+  flyProjectileSpeed: 8.5
+  flyProjectileLifetime: 2.2
+  flyProjectileSpawnOffset: 0.5
+  flyProjectilePrefab: {fileID: 1835126340686643829, guid: c4522ea733e295f4fa8383dec4a6a879, type: 3}
+  tankSpeedMultiplier: 0.7
+  tankAttackWindup: 0.45
+  tankAttackDamageMultiplier: 1.35
 --- !u!61 &8029814907209707987
 BoxCollider2D:
   m_ObjectHideFlags: 0

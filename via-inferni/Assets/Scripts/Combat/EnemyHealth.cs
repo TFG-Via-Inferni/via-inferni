@@ -41,6 +41,17 @@ public class EnemyHealth : MonoBehaviour, IDamageable
             return;
         }
 
+        EnemyController enemyController = GetComponent<EnemyController>();
+        if (enemyController != null)
+        {
+            amount = enemyController.ModifyIncomingDamage(amount, source);
+        }
+
+        if (amount <= 0f)
+        {
+            return;
+        }
+
         currentHealth = Mathf.Max(0f, currentHealth - amount);
 
         if (currentHealth > 0f)

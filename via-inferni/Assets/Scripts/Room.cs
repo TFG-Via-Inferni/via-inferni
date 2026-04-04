@@ -77,8 +77,6 @@ public class Room : MonoBehaviour
 
         CacheCameraData();
 
-        if (currentCell.roomType == RoomType.Secret) return;
-
         var floorplan = MapGenerator.instance.getFloorPlan;
         var cellList = MapGenerator.instance.getSpawnedCells;
 
@@ -308,14 +306,25 @@ public class Room : MonoBehaviour
             if (floorplan[neighborIndex] == 1)
             {
                 var foundCell = cellList.FirstOrDefault(x => x.cellList.Contains(neighborIndex));
-
-                if (foundCell.roomType != RoomType.Secret)
+                if (foundCell == null)
+                {
+                    shouldPlaceDoor = false;
+                }
+                else if (foundCell.roomType != RoomType.Secret)
                 {
                     shouldPlaceDoor = true;
-                    var door = Instantiate(RoomManager.instance.doorPrefab, transform);
-                    door.transform.position = (Vector2)transform.position + positionOffset;
-                    SetupDoor(door, direction, currentCell.roomType == RoomType.Regular ? foundCell.roomType : currentCell.roomType);
-                    roomDoors.Add(door); // Guardar referencia
+
+                    if (RoomManager.instance == null || RoomManager.instance.doorPrefab == null)
+                    {
+                        Debug.LogWarning("No se pudo instanciar puerta: falta RoomManager o doorPrefab.");
+                    }
+                    else
+                    {
+                        var door = Instantiate(RoomManager.instance.doorPrefab, transform);
+                        door.transform.position = (Vector2)transform.position + positionOffset;
+                        SetupDoor(door, direction, currentCell.roomType == RoomType.Regular ? foundCell.roomType : currentCell.roomType);
+                        roomDoors.Add(door); // Guardar referencia
+                    }
                 }
             }
         }
@@ -329,6 +338,12 @@ public class Room : MonoBehaviour
     private void PlaceWall(Vector2 positionOffset, EdgeDirection direction, RoomType roomType)
     {
         var doorTypes = GetDoorOptions(roomType);
+        if (doorTypes == null)
+        {
+            Debug.LogWarning($"No hay DoorScriptable configurado para roomType={roomType}. No se pudo colocar muro.");
+            return;
+        }
+
         GameObject wallPrefab = null;
 
         switch (direction)
@@ -360,6 +375,16 @@ public class Room : MonoBehaviour
     private void SetupDoor(Door door, EdgeDirection direction, RoomType roomType)
     {
         var doorTypes = GetDoorOptions(roomType);
+        if (doorTypes == null)
+        {
+            Debug.LogWarning($"No hay DoorScriptable configurado para roomType={roomType}. Se elimina la puerta sin configurar para evitar NullReference.");
+            if (door != null)
+            {
+                Destroy(door.gameObject);
+            }
+            return;
+        }
+
         GameObject doorPrefab = null;
         GameObject wallPrefab = null;
 
@@ -392,7 +417,18 @@ public class Room : MonoBehaviour
 
     private DoorScriptable GetDoorOptions(RoomType roomType)
     {
-        return RoomManager.instance.doors.FirstOrDefault(x => x.roomType == roomType);
+        if (RoomManager.instance == null || RoomManager.instance.doors == null)
+        {
+            return null;
+        }
+
+        DoorScriptable exact = RoomManager.instance.doors.FirstOrDefault(x => x != null && x.roomType == roomType);
+        if (exact != null)
+        {
+            return exact;
+        }
+
+        return RoomManager.instance.doors.FirstOrDefault(x => x != null && x.roomType == RoomType.Regular);
     }
 
     private int GetOffset(EdgeDirection direction)
@@ -417,19 +453,6 @@ public class Room : MonoBehaviour
 
     private void SpawnEnemies()
     {
-        if (enemySpawnEntry == null || enemySpawnEntry.enemyPrefab == null)
-        {
-            if (enemyPrefab == null)
-            {
-                return;
-            }
-
-            enemySpawnEntry = new WeightedEnemyEntry
-            {
-                enemyPrefab = enemyPrefab
-            };
-        }
-
         if (spawnGrids.Count == 0) return;
 
         int enemyCount = Random.Range(minEnemies, maxEnemies + 1);
@@ -480,18 +503,52 @@ public class Room : MonoBehaviour
             Vector3 spawnPosition = selectedZone.Positions[randomIndex];
             selectedZone.Positions.RemoveAt(randomIndex);
 
+            WeightedEnemyEntry spawnEntry = PickEnemyEntryForThisSpawn();
+            if (spawnEntry == null || spawnEntry.enemyPrefab == null)
+            {
+                continue;
+            }
+
             // Instanciar enemigo
-            GameObject enemyObj = Instantiate(enemySpawnEntry.enemyPrefab, spawnPosition, Quaternion.identity, transform);
+            GameObject enemyObj = Instantiate(spawnEntry.enemyPrefab, spawnPosition, Quaternion.identity, transform);
             EnemyController enemy = enemyObj.GetComponent<EnemyController>();
             if (enemy != null)
             {
-                enemy.Configure(enemySpawnEntry.enemyDefinition, this);
+                enemy.Configure(spawnEntry.enemyDefinition, this);
                 enemy.SetDormant(true);
                 activeEnemies.Add(enemy);
             }
         }
 
         // NO bloquear puertas aquí, esperar a que el player entre
+    }
+
+    private WeightedEnemyEntry PickEnemyEntryForThisSpawn()
+    {
+        CircleDefinition definition = CircleManager.instance != null
+            ? CircleManager.instance.CurrentCircleDefinition
+            : null;
+
+        if (definition != null)
+        {
+            WeightedEnemyEntry circleEntry = definition.PickEnemyEntry(currentCell != null ? currentCell.roomType : RoomType.Regular);
+            if (circleEntry != null && circleEntry.enemyPrefab != null)
+            {
+                return circleEntry;
+            }
+        }
+
+        if (enemySpawnEntry != null && enemySpawnEntry.enemyPrefab != null)
+        {
+            return enemySpawnEntry;
+        }
+
+        if (enemyPrefab != null)
+        {
+            return new WeightedEnemyEntry { enemyPrefab = enemyPrefab };
+        }
+
+        return null;
     }
 
     private SpawnZoneData PickWeightedZone(List<SpawnZoneData> spawnZones)
@@ -565,7 +622,7 @@ public class Room : MonoBehaviour
             return false;
         }
 
-        if (currentCell.roomType != RoomType.Regular)
+        if (currentCell.roomType == RoomType.Item || currentCell.roomType == RoomType.Boss)
         {
             return false;
         }

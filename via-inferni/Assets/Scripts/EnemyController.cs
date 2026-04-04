@@ -25,6 +25,18 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private bool startDormant = true;
 
+    [Header("Type Behavior")]
+    [SerializeField] private float flyPreferredDistance = 3.5f;
+    [SerializeField] private float flyOrbitStrength = 0.65f;
+    [SerializeField] private float flyAttackRangeMultiplier = 2.2f;
+    [SerializeField] private float flyProjectileSpeed = 8.5f;
+    [SerializeField] private float flyProjectileLifetime = 2.2f;
+    [SerializeField] private float flyProjectileSpawnOffset = 0.5f;
+    [SerializeField] private GameObject flyProjectilePrefab;
+    [SerializeField] private float tankSpeedMultiplier = 0.7f;
+    [SerializeField] private float tankAttackWindup = 0.45f;
+    [SerializeField] private float tankAttackDamageMultiplier = 1.35f;
+
     private EnemyState currentState = EnemyState.Idle;
     private Transform player;
     private IDamageable playerDamageable;
@@ -36,6 +48,11 @@ public class EnemyController : MonoBehaviour
     private bool aiEnabled;
     private bool isDead;
     private EnemyDefinition runtimeDefinition;
+    private float flyOrbitSign = 1f;
+    private bool tankIsWindingUp;
+    private float tankWindupReadyAt;
+
+    private EnemyType CurrentEnemyType => runtimeDefinition != null ? runtimeDefinition.enemyType : EnemyType.Normal;
 
     private void TryFindPlayer()
     {
@@ -63,6 +80,7 @@ public class EnemyController : MonoBehaviour
         // Buscar al player por tag
         TryFindPlayer();
         SetDormant(startDormant);
+        flyOrbitSign = Random.value < 0.5f ? -1f : 1f;
     }
 
     private void OnDestroy()
@@ -147,6 +165,7 @@ public class EnemyController : MonoBehaviour
     {
         aiEnabled = false;
         movement = Vector2.zero;
+        tankIsWindingUp = false;
 
         if (rb != null)
         {
@@ -224,7 +243,13 @@ public class EnemyController : MonoBehaviour
 
     void UpdateState(float distanceToPlayer)
     {
-        if (distanceToPlayer <= attackRange)
+        float effectiveAttackRange = attackRange;
+        if (CurrentEnemyType == EnemyType.Fly)
+        {
+            effectiveAttackRange *= Mathf.Max(1f, flyAttackRangeMultiplier);
+        }
+
+        if (distanceToPlayer <= effectiveAttackRange)
         {
             ChangeState(EnemyState.Attack);
         }
@@ -252,12 +277,45 @@ public class EnemyController : MonoBehaviour
 
     void HandleChase()
     {
-        Vector2 direction = (player.position - transform.position).normalized;
-        movement = direction * speed;
+        Vector2 toPlayer = (player.position - transform.position);
+        float distance = toPlayer.magnitude;
+        Vector2 direction = distance > 0.0001f ? toPlayer / distance : Vector2.zero;
+
+        switch (CurrentEnemyType)
+        {
+            case EnemyType.Fly:
+                Vector2 tangent = new Vector2(-direction.y, direction.x) * flyOrbitSign;
+                Vector2 radial = distance > flyPreferredDistance
+                    ? direction
+                    : -direction * 0.35f;
+                Vector2 flyVector = (radial + tangent * flyOrbitStrength).normalized;
+                movement = flyVector * speed;
+                break;
+
+            case EnemyType.Tank:
+                movement = direction * (speed * tankSpeedMultiplier);
+                break;
+
+            default:
+                movement = direction * speed;
+                break;
+        }
     }
 
     void HandleAttack()
     {
+        if (CurrentEnemyType == EnemyType.Fly)
+        {
+            HandleFlyAttack();
+            return;
+        }
+
+        if (CurrentEnemyType == EnemyType.Tank)
+        {
+            HandleTankAttack();
+            return;
+        }
+
         movement = Vector2.zero;
 
         // Atacar si ha pasado el cooldown
@@ -265,6 +323,11 @@ public class EnemyController : MonoBehaviour
         {
             PerformAttack();
             lastAttackTime = Time.time;
+
+            if (CurrentEnemyType == EnemyType.Fly)
+            {
+                flyOrbitSign *= -1f;
+            }
         }
     }
 
@@ -275,6 +338,199 @@ public class EnemyController : MonoBehaviour
         if (playerDamageable != null && playerDamageable.CanTakeDamage)
         {
             playerDamageable.TakeDamage(attackDamage, gameObject);
+        }
+    }
+
+    private void HandleTankAttack()
+    {
+        movement = Vector2.zero;
+
+        if (!tankIsWindingUp)
+        {
+            if (Time.time < lastAttackTime + attackCooldown)
+            {
+                return;
+            }
+
+            tankIsWindingUp = true;
+            tankWindupReadyAt = Time.time + Mathf.Max(0.05f, tankAttackWindup);
+            return;
+        }
+
+        if (Time.time < tankWindupReadyAt)
+        {
+            return;
+        }
+
+        tankIsWindingUp = false;
+        lastAttackTime = Time.time;
+
+        if (player == null)
+        {
+            return;
+        }
+
+        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
+        if (distanceToPlayer > attackRange * 1.25f)
+        {
+            return;
+        }
+
+        float heavyDamage = attackDamage * tankAttackDamageMultiplier;
+        if (playerDamageable != null && playerDamageable.CanTakeDamage)
+        {
+            playerDamageable.TakeDamage(heavyDamage, gameObject);
+        }
+    }
+
+    private void HandleFlyAttack()
+    {
+        if (player == null)
+        {
+            return;
+        }
+
+        Vector2 toPlayer = (player.position - transform.position);
+        float distance = toPlayer.magnitude;
+        Vector2 direction = distance > 0.0001f ? toPlayer / distance : Vector2.right;
+
+        // Mantiene distancia y strafea mientras prepara disparo.
+        Vector2 tangent = new Vector2(-direction.y, direction.x) * flyOrbitSign;
+        float preferred = Mathf.Max(attackRange, flyPreferredDistance);
+        Vector2 radial = distance > preferred
+            ? direction
+            : -direction * 0.35f;
+        movement = (radial + tangent * flyOrbitStrength).normalized * speed;
+
+        if (Time.time < lastAttackTime + attackCooldown)
+        {
+            return;
+        }
+
+        ShootAtPlayer(direction);
+        lastAttackTime = Time.time;
+        flyOrbitSign *= -1f;
+    }
+
+    private void ShootAtPlayer(Vector2 directionToPlayer)
+    {
+        Vector3 spawnPos = transform.position + (Vector3)(directionToPlayer * Mathf.Max(0.05f, flyProjectileSpawnOffset));
+        GameObject projectileObject = null;
+
+        if (flyProjectilePrefab != null)
+        {
+            projectileObject = Instantiate(flyProjectilePrefab, spawnPos, Quaternion.identity);
+        }
+        else
+        {
+            projectileObject = new GameObject("EnemyProjectile");
+            projectileObject.transform.position = spawnPos;
+
+            CircleCollider2D collider = projectileObject.AddComponent<CircleCollider2D>();
+            collider.isTrigger = true;
+            collider.radius = 0.14f;
+        }
+
+        EnemyProjectile projectile = projectileObject.GetComponent<EnemyProjectile>();
+        if (projectile == null)
+        {
+            projectile = projectileObject.AddComponent<EnemyProjectile>();
+        }
+
+        projectile.Initialize(
+            attackDamage,
+            flyProjectileSpeed,
+            flyProjectileLifetime,
+            directionToPlayer,
+            transform
+        );
+    }
+
+    public float ModifyIncomingDamage(float baseDamage, GameObject source)
+    {
+        if (baseDamage <= 0f)
+        {
+            return 0f;
+        }
+
+        if (!TryResolveWeaponContext(source, out string weaponId, out PlayerFormType form))
+        {
+            return baseDamage;
+        }
+
+        float multiplier = GetWeaponMultiplier(CurrentEnemyType, weaponId, form);
+        return baseDamage * Mathf.Max(0f, multiplier);
+    }
+
+    private static bool TryResolveWeaponContext(GameObject source, out string weaponId, out PlayerFormType form)
+    {
+        weaponId = string.Empty;
+        form = PlayerFormType.Melee;
+
+        if (source == null)
+        {
+            return false;
+        }
+
+        DamageSourceContext context = source.GetComponent<DamageSourceContext>();
+        if (context != null && !string.IsNullOrWhiteSpace(context.WeaponId))
+        {
+            weaponId = context.WeaponId;
+            form = context.Form;
+            return true;
+        }
+
+        Transform root = source.transform.root;
+        Player player = root != null ? root.GetComponent<Player>() : null;
+        PlayerStats stats = root != null ? root.GetComponent<PlayerStats>() : null;
+
+        if (player == null || stats == null)
+        {
+            return false;
+        }
+
+        form = player.CurrentForm;
+        weaponId = stats.GetSelectedWeaponId(form);
+        return !string.IsNullOrWhiteSpace(weaponId);
+    }
+
+    private static float GetWeaponMultiplier(EnemyType enemyType, string weaponId, PlayerFormType form)
+    {
+        string key = string.IsNullOrWhiteSpace(weaponId)
+            ? string.Empty
+            : weaponId.Trim().ToLowerInvariant();
+
+        switch (enemyType)
+        {
+            case EnemyType.Fly:
+                return key switch
+                {
+                    "bow" => 1.25f,
+                    "magic" => 1.15f,
+                    "spear" => 1.2f,
+                    "axe" => 0.8f,
+                    "ballista" => 0.9f,
+                    _ => form == PlayerFormType.Ranged ? 1.1f : 1f
+                };
+
+            case EnemyType.Tank:
+                return key switch
+                {
+                    "axe" => 1.3f,
+                    "ballista" => 1.35f,
+                    "magic" => 1.1f,
+                    "bow" => 0.8f,
+                    "spear" => 0.9f,
+                    _ => 1f
+                };
+
+            default:
+                return key switch
+                {
+                    "sword" => 1.1f,
+                    "bow" => 1.05f,
+                    _ => 1f
+                };
         }
     }
 

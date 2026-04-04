@@ -58,6 +58,12 @@ public class CircleDefinition : ScriptableObject
             return null;
         }
 
+        WeightedEnemyEntry corePoolEntry = PickFromCoreTypesIfAvailable(validEntries);
+        if (corePoolEntry != null)
+        {
+            return corePoolEntry;
+        }
+
         float totalWeight = validEntries.Sum(entry => Mathf.Max(0f, entry.weight));
         if (totalWeight <= 0f)
         {
@@ -77,6 +83,60 @@ public class CircleDefinition : ScriptableObject
         }
 
         return validEntries[validEntries.Count - 1];
+    }
+
+    private static WeightedEnemyEntry PickFromCoreTypesIfAvailable(List<WeightedEnemyEntry> validEntries)
+    {
+        List<EnemyType> availableTypes = validEntries
+            .Where(entry => entry.enemyDefinition != null)
+            .Select(entry => entry.enemyDefinition.enemyType)
+            .Distinct()
+            .ToList();
+
+        bool hasNormal = availableTypes.Contains(EnemyType.Normal);
+        bool hasFly = availableTypes.Contains(EnemyType.Fly);
+        bool hasTank = availableTypes.Contains(EnemyType.Tank);
+
+        if (!hasNormal || !hasFly || !hasTank)
+        {
+            return null;
+        }
+
+        EnemyType selectedType = UnityEngine.Random.value switch
+        {
+            < 0.3333f => EnemyType.Normal,
+            < 0.6666f => EnemyType.Fly,
+            _ => EnemyType.Tank
+        };
+
+        List<WeightedEnemyEntry> typeEntries = validEntries
+            .Where(entry => entry.enemyDefinition != null && entry.enemyDefinition.enemyType == selectedType)
+            .ToList();
+
+        if (typeEntries.Count == 0)
+        {
+            return null;
+        }
+
+        float totalWeight = typeEntries.Sum(entry => Mathf.Max(0f, entry.weight));
+        if (totalWeight <= 0f)
+        {
+            return typeEntries[UnityEngine.Random.Range(0, typeEntries.Count)];
+        }
+
+        float roll = UnityEngine.Random.value * totalWeight;
+        float cumulative = 0f;
+
+        foreach (WeightedEnemyEntry entry in typeEntries)
+        {
+            cumulative += Mathf.Max(0f, entry.weight);
+            if (roll <= cumulative)
+            {
+                return entry;
+            }
+        }
+
+        return typeEntries[typeEntries.Count - 1];
     }
 
     public GameObject PickEnemyPrefab(RoomType roomType)
