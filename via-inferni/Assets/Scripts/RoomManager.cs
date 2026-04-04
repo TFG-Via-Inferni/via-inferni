@@ -63,7 +63,7 @@ public class RoomManager : MonoBehaviour
         
             var spawnedRoom = Instantiate(roomPrefab, convertedPosition, Quaternion.identity);
         
-            spawnedRoom.enemyPrefab = PickEnemyPrefabForCell(currentCell);
+            spawnedRoom.ConfigureEnemySpawnEntry(PickEnemyEntryForCell(currentCell));
 
             spawnedRoom.SetupRoom(currentCell, foundRoom);
 
@@ -85,7 +85,7 @@ public class RoomManager : MonoBehaviour
         return rooms ?? Array.Empty<RoomScriptable>();
     }
 
-    private GameObject PickEnemyPrefabForCell(Cell cell)
+    private WeightedEnemyEntry PickEnemyEntryForCell(Cell cell)
     {
         CircleDefinition definition = CircleManager.instance != null
             ? CircleManager.instance.CurrentCircleDefinition
@@ -95,7 +95,7 @@ public class RoomManager : MonoBehaviour
         {
             // Si hay definicion del circulo, esa configuracion manda.
             // Si no hay enemigos en ese circulo, no se hace spawn.
-            return definition.PickEnemyPrefab(cell.roomType);
+            return definition.PickEnemyEntry(cell.roomType);
         }
 
         if (enemyPoolFallback != null && enemyPoolFallback.Length > 0)
@@ -103,11 +103,16 @@ public class RoomManager : MonoBehaviour
             List<GameObject> valid = enemyPoolFallback.Where(enemy => enemy != null).ToList();
             if (valid.Count > 0)
             {
-                return valid[UnityEngine.Random.Range(0, valid.Count)];
+                return new WeightedEnemyEntry
+                {
+                    enemyPrefab = valid[UnityEngine.Random.Range(0, valid.Count)]
+                };
             }
         }
 
-        return enemyPrefab;
+        return enemyPrefab != null
+            ? new WeightedEnemyEntry { enemyPrefab = enemyPrefab }
+            : null;
     }
 
     public Room GetRoomContainingPoint(Vector2 point)

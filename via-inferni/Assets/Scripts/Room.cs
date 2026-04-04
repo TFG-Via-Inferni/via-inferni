@@ -28,6 +28,7 @@ public class Room : MonoBehaviour
     public float spawnRadius = 5f;
 
     private List<EnemyController> activeEnemies = new List<EnemyController>();
+    private WeightedEnemyEntry enemySpawnEntry;
     private List<Door> roomDoors = new List<Door>();
     private List<IRoomSpawnProvider> spawnGrids = new List<IRoomSpawnProvider>();
     private bool playerHasEntered = false;
@@ -39,6 +40,11 @@ public class Room : MonoBehaviour
     public Transform CameraCenterTarget => cameraCenterTarget;
     public bool RequiresFixedCamera => currentCell != null && currentCell.roomShape == RoomShape.OneByOne;
     public Cell CellData => currentCell;
+
+    public void ConfigureEnemySpawnEntry(WeightedEnemyEntry spawnEntry)
+    {
+        enemySpawnEntry = spawnEntry;
+    }
 
     public void SetupRoom(Cell currentCell, RoomScriptable room)
     {
@@ -102,8 +108,11 @@ public class Room : MonoBehaviour
                 break;
         }
 
-        // Spawnear enemigos después de configurar la sala
-        SpawnEnemies();
+        // Spawnear enemigos después de configurar la sala, salvo en la sala inicial o salas no regulares
+        if (ShouldSpawnEnemies())
+        {
+            SpawnEnemies();
+        }
     }
 
     public bool ContainsPoint(Vector2 point)
@@ -408,8 +417,19 @@ public class Room : MonoBehaviour
 
     private void SpawnEnemies()
     {
-        // Solo spawnear si hay prefab asignado
-        if (enemyPrefab == null) return;
+        if (enemySpawnEntry == null || enemySpawnEntry.enemyPrefab == null)
+        {
+            if (enemyPrefab == null)
+            {
+                return;
+            }
+
+            enemySpawnEntry = new WeightedEnemyEntry
+            {
+                enemyPrefab = enemyPrefab
+            };
+        }
+
         if (spawnGrids.Count == 0) return;
 
         int enemyCount = Random.Range(minEnemies, maxEnemies + 1);
@@ -461,10 +481,12 @@ public class Room : MonoBehaviour
             selectedZone.Positions.RemoveAt(randomIndex);
 
             // Instanciar enemigo
-            GameObject enemyObj = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity, transform);
+            GameObject enemyObj = Instantiate(enemySpawnEntry.enemyPrefab, spawnPosition, Quaternion.identity, transform);
             EnemyController enemy = enemyObj.GetComponent<EnemyController>();
             if (enemy != null)
             {
+                enemy.Configure(enemySpawnEntry.enemyDefinition, this);
+                enemy.SetDormant(true);
                 activeEnemies.Add(enemy);
             }
         }
@@ -516,6 +538,7 @@ public class Room : MonoBehaviour
         if (!playerHasEntered)
         {
             playerHasEntered = true;
+            ActivateEnemies();
                         
             if (activeEnemies.Count > 0)
             {
@@ -532,6 +555,32 @@ public class Room : MonoBehaviour
         if (activeEnemies.Count == 0)
         {
             UnlockDoors();
+        }
+    }
+
+    private bool ShouldSpawnEnemies()
+    {
+        if (currentCell == null)
+        {
+            return false;
+        }
+
+        if (currentCell.roomType != RoomType.Regular)
+        {
+            return false;
+        }
+
+        return currentCell.cellList == null || !currentCell.cellList.Contains(45);
+    }
+
+    private void ActivateEnemies()
+    {
+        for (int i = 0; i < activeEnemies.Count; i++)
+        {
+            if (activeEnemies[i] != null)
+            {
+                activeEnemies[i].SetDormant(false);
+            }
         }
     }
 

@@ -28,7 +28,18 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e48273ecc2e38064d9708e034f22c968, type: 2}
   - {fileID: 11400000, guid: 1847d4b28ed317f4883ae8b95550f1ee, type: 2}
   enemyPool:
-  - enemyPrefab: {fileID: 1736370125707709183, guid: 88c1b017378c0c242ba6ccb361bf9b1c, type: 3}
+  - enemyPrefab: {fileID: 1736370125707709183, guid: 6ba0d6ebcb85e564c8c75237a8e8cf55, type: 3}
+    enemyDefinition: {fileID: 11400000, guid: dcb4e309097f4d343b4462d86f8fbd50, type: 2}
+    weight: 1
+    useRoomTypeFilter: 0
+    allowedRoomTypes: 00000000
+  - enemyPrefab: {fileID: 1736370125707709183, guid: 0b8f3d02882cf4e4b9516f9cca2fd5f5, type: 3}
+    enemyDefinition: {fileID: 11400000, guid: 36b281a70a347b84481f8b80956f97a7, type: 2}
+    weight: 1
+    useRoomTypeFilter: 0
+    allowedRoomTypes: 00000000
+  - enemyPrefab: {fileID: 1736370125707709183, guid: 4096dbd356c45584b9fd1a876b0bfdbc, type: 3}
+    enemyDefinition: {fileID: 11400000, guid: 8fb44508ffb12cf409ac5e77e38d60e9, type: 2}
     weight: 1
     useRoomTypeFilter: 0
     allowedRoomTypes: 00000000

@@ -7,6 +7,7 @@ using UnityEngine;
 public class WeightedEnemyEntry
 {
     public GameObject enemyPrefab;
+    public EnemyDefinition enemyDefinition;
     [Min(0f)] public float weight = 1f;
     public bool useRoomTypeFilter;
     public RoomType[] allowedRoomTypes;
@@ -46,7 +47,7 @@ public class CircleDefinition : ScriptableObject
         return roomPool ?? Array.Empty<RoomScriptable>();
     }
 
-    public GameObject PickEnemyPrefab(RoomType roomType)
+    public WeightedEnemyEntry PickEnemyEntry(RoomType roomType)
     {
         List<WeightedEnemyEntry> validEntries = (enemyPool ?? Array.Empty<WeightedEnemyEntry>())
             .Where(entry => entry != null && entry.IsValidFor(roomType))
@@ -60,7 +61,7 @@ public class CircleDefinition : ScriptableObject
         float totalWeight = validEntries.Sum(entry => Mathf.Max(0f, entry.weight));
         if (totalWeight <= 0f)
         {
-            return validEntries[UnityEngine.Random.Range(0, validEntries.Count)].enemyPrefab;
+            return validEntries[UnityEngine.Random.Range(0, validEntries.Count)];
         }
 
         float roll = UnityEngine.Random.value * totalWeight;
@@ -71,10 +72,16 @@ public class CircleDefinition : ScriptableObject
             cumulative += Mathf.Max(0f, entry.weight);
             if (roll <= cumulative)
             {
-                return entry.enemyPrefab;
+                return entry;
             }
         }
 
-        return validEntries[validEntries.Count - 1].enemyPrefab;
+        return validEntries[validEntries.Count - 1];
+    }
+
+    public GameObject PickEnemyPrefab(RoomType roomType)
+    {
+        WeightedEnemyEntry entry = PickEnemyEntry(roomType);
+        return entry != null ? entry.enemyPrefab : null;
     }
 }

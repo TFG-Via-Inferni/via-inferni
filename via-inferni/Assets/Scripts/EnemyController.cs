@@ -21,13 +21,21 @@ public class EnemyController : MonoBehaviour
     public float attackCooldown = 1f;
     public float attackDamage = 10f;
 
+    [Header("Runtime/Visuals")]
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private bool startDormant = true;
+
     private EnemyState currentState = EnemyState.Idle;
     private Transform player;
     private IDamageable playerDamageable;
     private Rigidbody2D rb;
+    private EnemyHealth health;
     private Vector2 movement;
     private float lastAttackTime;
     private Room parentRoom;
+    private bool aiEnabled;
+    private bool isDead;
+    private EnemyDefinition runtimeDefinition;
 
     private void TryFindPlayer()
     {
@@ -40,14 +48,127 @@ public class EnemyController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         parentRoom = GetComponentInParent<Room>();
+        health = GetComponent<EnemyHealth>();
+
+        if (spriteRenderer == null)
+        {
+            spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        }
+
+        if (health != null)
+        {
+            health.Died += HandleDeath;
+        }
 
         // Buscar al player por tag
         TryFindPlayer();
+        SetDormant(startDormant);
+    }
+
+    private void OnDestroy()
+    {
+        if (health != null)
+        {
+            health.Died -= HandleDeath;
+        }
+    }
+
+    public void Configure(EnemyDefinition definition, Room room)
+    {
+        runtimeDefinition = definition;
+        parentRoom = room != null ? room : parentRoom;
+
+        if (definition == null)
+        {
+            if (health != null)
+            {
+                health.Configure(health.MaxHealth, true);
+            }
+
+            return;
+        }
+
+        if (spriteRenderer == null)
+        {
+            spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        }
+
+        if (spriteRenderer != null && definition.overrideSprite != null)
+        {
+            spriteRenderer.sprite = definition.overrideSprite;
+        }
+
+        speed = definition.moveSpeed;
+        detectionRadius = definition.detectionRadius;
+        attackRange = definition.attackRange;
+        attackCooldown = definition.attackCooldown;
+        attackDamage = definition.attackDamage;
+        startDormant = definition.startDormant;
+
+        if (rb != null)
+        {
+            rb.gravityScale = definition.ignoreGravity ? 0f : rb.gravityScale;
+        }
+
+        if (health != null)
+        {
+            health.Configure(definition.maxHealth, true);
+        }
+    }
+
+    public void SetDormant(bool dormant)
+    {
+        aiEnabled = !dormant;
+
+        if (dormant)
+        {
+            movement = Vector2.zero;
+
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector2.zero;
+            }
+
+            currentState = EnemyState.Idle;
+        }
+    }
+
+    public void ActivateAI()
+    {
+        if (isDead)
+        {
+            return;
+        }
+
+        aiEnabled = true;
+    }
+
+    public void DeactivateAI()
+    {
+        aiEnabled = false;
+        movement = Vector2.zero;
+
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+        }
     }
 
     void Update()
     {
         if (PauseMenuController.IsPaused)
+        {
+            movement = Vector2.zero;
+            return;
+        }
+
+        if (isDead)
+        {
+            movement = Vector2.zero;
+            return;
+        }
+
+        if (!aiEnabled)
         {
             movement = Vector2.zero;
             return;
@@ -86,7 +207,12 @@ public class EnemyController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (PauseMenuController.IsPaused)
+        if (rb == null)
+        {
+            return;
+        }
+
+        if (PauseMenuController.IsPaused || isDead || !aiEnabled)
         {
             rb.linearVelocity = Vector2.zero;
             return;
@@ -154,14 +280,24 @@ public class EnemyController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        // Si toca al Player, notificar a la sala y destruirse
-        if (collision.CompareTag("Player"))
+        // La colision directa con el Player ya no destruye al enemigo.
+        // El daño se resuelve por ataque y por vida.
+    }
+
+    private void HandleDeath(EnemyHealth source, GameObject damageSource)
+    {
+        if (isDead)
         {
-            if (parentRoom != null)
-            {
-                parentRoom.OnEnemyDestroyed(this);
-            }
-            Destroy(gameObject);
+            return;
+        }
+
+        isDead = true;
+        movement = Vector2.zero;
+        DeactivateAI();
+
+        if (parentRoom != null)
+        {
+            parentRoom.OnEnemyDestroyed(this);
         }
     }
 
