@@ -14,5 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CircleDefinition
   circleNumber: 9
   displayName: Ninth Circle - Treachery
-  roomPool: []
+  roomPool:
+  - {fileID: 11400000, guid: 8fa6d9f8b8e7b0140a5d7cf2e4f3dc40, type: 2}
+  - {fileID: 11400000, guid: b9b0c88728822c14b9b53149ec9f5f39, type: 2}
+  - {fileID: 11400000, guid: 10726ddd00491c04887bd516e26eab4e, type: 2}
+  - {fileID: 11400000, guid: 90f099fe065f6eb49a30fccd9b587ab0, type: 2}
+  - {fileID: 11400000, guid: 6d1aa2f0d8f1f6d4895776a8688b7d8a, type: 2}
+  - {fileID: 11400000, guid: bba4035aae6abd74eb0c99963a429a10, type: 2}
+  - {fileID: 11400000, guid: a8291c93591607c4e8eaa86a42aa3eb6, type: 2}
+  - {fileID: 11400000, guid: 3d27708f31cda4841a8c554b4a646da1, type: 2}
+  - {fileID: 11400000, guid: 083e5d2b4e739984085b42c9a5439a3e, type: 2}
+  - {fileID: 11400000, guid: 34d3ee2403dd4b4428625af957552ffa, type: 2}
+  - {fileID: 11400000, guid: 4626ef2e885b27d4c980ba80105a0f43, type: 2}
+  - {fileID: 11400000, guid: e56c73156e8608442a723c280a92dd74, type: 2}
   enemyPool: []

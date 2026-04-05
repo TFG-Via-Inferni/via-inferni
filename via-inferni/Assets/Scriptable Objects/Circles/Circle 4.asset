@@ -14,5 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CircleDefinition
   circleNumber: 4
   displayName: Fourth Circle - Greed
-  roomPool: []
+  roomPool:
+  - {fileID: 11400000, guid: 3ea37cfaf945f1b4db403f6bc72cac77, type: 2}
+  - {fileID: 11400000, guid: 3eec8f9b64e59944991961e1c7fb4c40, type: 2}
+  - {fileID: 11400000, guid: 07cd7f580c1b7f443b217611a07c2fbf, type: 2}
+  - {fileID: 11400000, guid: 0e87e996821627349a93b7c5dcd8ad00, type: 2}
+  - {fileID: 11400000, guid: af350897b1df6ba4785e306faec61309, type: 2}
+  - {fileID: 11400000, guid: 055d7120da2986349b950fd8dbad4223, type: 2}
+  - {fileID: 11400000, guid: 066a46744e30e7a4396a51746a336eff, type: 2}
+  - {fileID: 11400000, guid: d0a4d3deb9f283f44b5ac4d3c081dddc, type: 2}
+  - {fileID: 11400000, guid: b60013ef786616f4cbc1ecbf208e1324, type: 2}
+  - {fileID: 11400000, guid: 5435f309d07fd264281f06930f377860, type: 2}
+  - {fileID: 11400000, guid: dc3e2ec2d7923c046b6c3cb41adb34ed, type: 2}
+  - {fileID: 11400000, guid: 33f445aa2b1f30b43a4c9a66e27fc8a7, type: 2}
   enemyPool: []

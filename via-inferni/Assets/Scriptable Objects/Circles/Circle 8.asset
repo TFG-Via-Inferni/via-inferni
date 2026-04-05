@@ -14,5 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CircleDefinition
   circleNumber: 8
   displayName: Eighth Circle - Fraud
-  roomPool: []
+  roomPool:
+  - {fileID: 11400000, guid: fa567e16ce094734f9f6b73144683965, type: 2}
+  - {fileID: 11400000, guid: 537e119b613a60f4ea9f053c3ace8007, type: 2}
+  - {fileID: 11400000, guid: 69ffc0f5b4c8f2f4bbd0f86e61ba25b3, type: 2}
+  - {fileID: 11400000, guid: b4a50edc2bb6ffe4fa6d7ab83c7eb650, type: 2}
+  - {fileID: 11400000, guid: f4c2555a5174ba84b8b09a14aec92554, type: 2}
+  - {fileID: 11400000, guid: dd6fb6beb65ea6c419ad87fca7697751, type: 2}
+  - {fileID: 11400000, guid: 79ffde3fe448d824a8ce5836fe931c40, type: 2}
+  - {fileID: 11400000, guid: 67e0358a3eccc2b48aa85e26a247f93e, type: 2}
+  - {fileID: 11400000, guid: d649ff9e5295a874b913fb735c3e6365, type: 2}
+  - {fileID: 11400000, guid: b83e6fd9c0d7a8045bf93d2c3be61869, type: 2}
+  - {fileID: 11400000, guid: 8b3d13436beb55c4cabeabc8517fb21e, type: 2}
+  - {fileID: 11400000, guid: 6c5c92dc24377d34aa7e280733a8c6df, type: 2}
   enemyPool: []

@@ -14,5 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CircleDefinition
   circleNumber: 5
   displayName: Fifth Circle - Wrath
-  roomPool: []
+  roomPool:
+  - {fileID: 11400000, guid: 8a4342f59834db44bbc37a09561cb0ca, type: 2}
+  - {fileID: 11400000, guid: 293e0e92c39322d4f90610ce4ce6e2ea, type: 2}
+  - {fileID: 11400000, guid: f48c146e9b391fc438216d22479dbfa2, type: 2}
+  - {fileID: 11400000, guid: 414dcf0612fc40b4db96747c8311fa30, type: 2}
+  - {fileID: 11400000, guid: e32f8a764f6a9d94c989701dde6c551a, type: 2}
+  - {fileID: 11400000, guid: cdb27650285def841a2146ce4fb4bcb1, type: 2}
+  - {fileID: 11400000, guid: c313c3c1ceb728e4aba2503b638a69fb, type: 2}
+  - {fileID: 11400000, guid: 76c436a6827cc7e44a1781bdfab02f7f, type: 2}
+  - {fileID: 11400000, guid: 28f3f978867af9b4db9b354c17bd1822, type: 2}
+  - {fileID: 11400000, guid: 3a4504798fad4ef40808395e4016aaf2, type: 2}
+  - {fileID: 11400000, guid: 1defac5df0cc4f741b9cdb27cf0f007f, type: 2}
+  - {fileID: 11400000, guid: 7dad57242deef8d46849958358d934f1, type: 2}
   enemyPool: []

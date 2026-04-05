@@ -14,5 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CircleDefinition
   circleNumber: 6
   displayName: Sixth Circle - Heresy
-  roomPool: []
+  roomPool:
+  - {fileID: 11400000, guid: f48d34fc4b335dc46a25910159f8c8f8, type: 2}
+  - {fileID: 11400000, guid: 1734a92f61548114e848d95554a71909, type: 2}
+  - {fileID: 11400000, guid: e368d36e071c5d943ab079ff38ccfc11, type: 2}
+  - {fileID: 11400000, guid: 4ae0f9e4d604c7649b445edd3a2a5ee5, type: 2}
+  - {fileID: 11400000, guid: f910b677993341949adeff5a01cc6076, type: 2}
+  - {fileID: 11400000, guid: f910b677993341949adeff5a01cc6076, type: 2}
+  - {fileID: 11400000, guid: 66159787d711fdb41b75316bca9a24fe, type: 2}
+  - {fileID: 11400000, guid: c217c87c6ccfdf64689ddd2a215980d3, type: 2}
+  - {fileID: 11400000, guid: 24eb37edab66d9042ba73840fd82b4bb, type: 2}
+  - {fileID: 11400000, guid: 5d7441962c34ffa4292c23866729ddff, type: 2}
+  - {fileID: 11400000, guid: 05ea67e1123f7424ebec9b93cc77cff6, type: 2}
+  - {fileID: 11400000, guid: e3df210b71fbafc46a2dd7c6fd3d4690, type: 2}
   enemyPool: []

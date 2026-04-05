@@ -23,11 +23,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: dfa9bf89d370c824baae448571f6107f, type: 2}
   - {fileID: 11400000, guid: e64c50fe32459d547b1e4f9123c2cc44, type: 2}
   - {fileID: 11400000, guid: 5ae27cd6f9f9e4649841aa2ee9a98f20, type: 2}
+  - {fileID: 11400000, guid: d44f47e6980a4f449b557ec03ff05efa, type: 2}
   - {fileID: 11400000, guid: 523cdbccea0897048b75dd3076775477, type: 2}
   - {fileID: 11400000, guid: 54ec7f030d2752b488ebead29e633d4e, type: 2}
   - {fileID: 11400000, guid: 5c270d6be5f85e141bdb61eee01c70fd, type: 2}
   enemyPool:
   - enemyPrefab: {fileID: 1736370125707709183, guid: 88c1b017378c0c242ba6ccb361bf9b1c, type: 3}
+    enemyDefinition: {fileID: 0}
     weight: 1
     useRoomTypeFilter: 0
     allowedRoomTypes: 

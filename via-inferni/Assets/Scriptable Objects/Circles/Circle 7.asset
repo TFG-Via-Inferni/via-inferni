@@ -14,5 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CircleDefinition
   circleNumber: 7
   displayName: Seventh Circle - Violence
-  roomPool: []
+  roomPool:
+  - {fileID: 11400000, guid: c8dab500e49d4e24b8d540802a5be8a8, type: 2}
+  - {fileID: 11400000, guid: 98f3958ff798fc1459a8d93f204a2504, type: 2}
+  - {fileID: 11400000, guid: 69e8607761d89954b842e5534362f0f2, type: 2}
+  - {fileID: 11400000, guid: 6e82ffa0190fb304b8a8c79259667b39, type: 2}
+  - {fileID: 11400000, guid: 8a14b978af2448e418aeea26760a08fe, type: 2}
+  - {fileID: 11400000, guid: dcd54b8412976d843ae43e696c1cce1c, type: 2}
+  - {fileID: 11400000, guid: 34dd3d8d1140eed4aa51d7b7dc0f8ff5, type: 2}
+  - {fileID: 11400000, guid: f11ef3435776f6241baa4e2ce484dffb, type: 2}
+  - {fileID: 11400000, guid: 5e5babdf99e29c846a12cd71209897e2, type: 2}
+  - {fileID: 11400000, guid: cd52590f5325c1c4b977de12bb78fb12, type: 2}
+  - {fileID: 11400000, guid: fa446548be670f44f92ffe5063d7cd7e, type: 2}
+  - {fileID: 11400000, guid: 642d270e04d23a6479801064268d751c, type: 2}
   enemyPool: []
