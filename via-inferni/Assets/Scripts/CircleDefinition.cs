@@ -39,12 +39,20 @@ public class CircleDefinition : ScriptableObject
     [Tooltip("Pool de salas disponible para este círculo. Pueden compartir shape/tipo con distintos tilesets.")]
     public RoomScriptable[] roomPool;
 
+    [Tooltip("Pool de puertas/muros para este círculo por tipo de sala.")]
+    public DoorScriptable[] doorPool;
+
     [Tooltip("Pool de enemigos ponderado para este círculo.")]
     public WeightedEnemyEntry[] enemyPool;
 
     public RoomScriptable[] GetRoomPoolOrEmpty()
     {
         return roomPool ?? Array.Empty<RoomScriptable>();
+    }
+
+    public DoorScriptable[] GetDoorPoolOrEmpty()
+    {
+        return doorPool ?? Array.Empty<DoorScriptable>();
     }
 
     public WeightedEnemyEntry PickEnemyEntry(RoomType roomType)

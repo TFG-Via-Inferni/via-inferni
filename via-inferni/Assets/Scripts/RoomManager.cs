@@ -85,6 +85,37 @@ public class RoomManager : MonoBehaviour
         return rooms ?? Array.Empty<RoomScriptable>();
     }
 
+    public DoorScriptable GetDoorOptions(RoomType roomType)
+    {
+        DoorScriptable[] activeDoorPool = GetActiveDoorPool();
+
+        DoorScriptable exact = activeDoorPool.FirstOrDefault(x => x != null && x.roomType == roomType);
+        if (exact != null)
+        {
+            return exact;
+        }
+
+        return activeDoorPool.FirstOrDefault(x => x != null && x.roomType == RoomType.Regular);
+    }
+
+    private DoorScriptable[] GetActiveDoorPool()
+    {
+        CircleDefinition definition = CircleManager.instance != null
+            ? CircleManager.instance.CurrentCircleDefinition
+            : null;
+
+        if (definition != null)
+        {
+            DoorScriptable[] circleDoorPool = definition.GetDoorPoolOrEmpty();
+            if (circleDoorPool.Length > 0)
+            {
+                return circleDoorPool;
+            }
+        }
+
+        return doors ?? Array.Empty<DoorScriptable>();
+    }
+
     private WeightedEnemyEntry PickEnemyEntryForCell(Cell cell)
     {
         CircleDefinition definition = CircleManager.instance != null

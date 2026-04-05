@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd4970a560f9d964e830f4b9ffd8f68f, type: 3}
+  m_Name: Shop Door
+  m_EditorClassIdentifier: Assembly-CSharp::DoorScriptable
+  roomType: 2
+  upDoor: {fileID: 7869297327037171724, guid: 2882f09be03d62c4f891e7c87054733f, type: 3}
+  downDoor: {fileID: 5742197241133775344, guid: bddfbfab19803f94ebec2703d2efca0f, type: 3}
+  leftDoor: {fileID: 8665595592013264028, guid: d5bc8e5031cf6fa4597bfdffca5ab25a, type: 3}
+  rightDoor: {fileID: 7811437471727686861, guid: 55878dec1fe5bd14da668e05d165bf8d, type: 3}
+  upWall: {fileID: 4867734710691863218, guid: dac2f18d971f9ea45acf39614e2913aa, type: 3}
+  downWall: {fileID: 4867734710691863218, guid: dac2f18d971f9ea45acf39614e2913aa, type: 3}
+  leftWall: {fileID: 4867734710691863218, guid: dac2f18d971f9ea45acf39614e2913aa, type: 3}
+  rightWall: {fileID: 4867734710691863218, guid: dac2f18d971f9ea45acf39614e2913aa, type: 3}

@@ -417,18 +417,12 @@ public class Room : MonoBehaviour
 
     private DoorScriptable GetDoorOptions(RoomType roomType)
     {
-        if (RoomManager.instance == null || RoomManager.instance.doors == null)
+        if (RoomManager.instance == null)
         {
             return null;
         }
 
-        DoorScriptable exact = RoomManager.instance.doors.FirstOrDefault(x => x != null && x.roomType == roomType);
-        if (exact != null)
-        {
-            return exact;
-        }
-
-        return RoomManager.instance.doors.FirstOrDefault(x => x != null && x.roomType == RoomType.Regular);
+        return RoomManager.instance.GetDoorOptions(roomType);
     }
 
     private int GetOffset(EdgeDirection direction)
