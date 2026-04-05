@@ -27,4 +27,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3a4504798fad4ef40808395e4016aaf2, type: 2}
   - {fileID: 11400000, guid: 1defac5df0cc4f741b9cdb27cf0f007f, type: 2}
   - {fileID: 11400000, guid: 7dad57242deef8d46849958358d934f1, type: 2}
+  doorPool:
+  - {fileID: 11400000, guid: f416ee87734f66247b55d20942695e88, type: 2}
+  - {fileID: 11400000, guid: 0a466da723ac878439ccd189fbf567c9, type: 2}
+  - {fileID: 11400000, guid: aa564e78dc8a16a4ebc27c4f5e5dd5e1, type: 2}
+  - {fileID: 11400000, guid: 35cc347970cfe974987f621a685bd8c1, type: 2}
   enemyPool: []
