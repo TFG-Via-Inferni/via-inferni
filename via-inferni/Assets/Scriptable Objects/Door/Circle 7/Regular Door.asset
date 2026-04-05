@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Regular Door
   m_EditorClassIdentifier: Assembly-CSharp::DoorScriptable
   roomType: 0
-  upDoor: {fileID: 7869297327037171724, guid: 2882f09be03d62c4f891e7c87054733f, type: 3}
-  downDoor: {fileID: 5742197241133775344, guid: bddfbfab19803f94ebec2703d2efca0f, type: 3}
-  leftDoor: {fileID: 8665595592013264028, guid: d5bc8e5031cf6fa4597bfdffca5ab25a, type: 3}
-  rightDoor: {fileID: 7811437471727686861, guid: 55878dec1fe5bd14da668e05d165bf8d, type: 3}
-  upWall: {fileID: 4867734710691863218, guid: dac2f18d971f9ea45acf39614e2913aa, type: 3}
-  downWall: {fileID: 4867734710691863218, guid: dac2f18d971f9ea45acf39614e2913aa, type: 3}
-  leftWall: {fileID: 4867734710691863218, guid: dac2f18d971f9ea45acf39614e2913aa, type: 3}
-  rightWall: {fileID: 4867734710691863218, guid: dac2f18d971f9ea45acf39614e2913aa, type: 3}
+  upDoor: {fileID: 7869297327037171724, guid: a96f02a87d76ea649b21f25bfe55f22b, type: 3}
+  downDoor: {fileID: 5742197241133775344, guid: 80c4d7c8876b83243abb2f7d099e848b, type: 3}
+  leftDoor: {fileID: 8665595592013264028, guid: f1c177e1937e86a4c9c9c82d63f3b4d1, type: 3}
+  rightDoor: {fileID: 7811437471727686861, guid: 6d1b20adcf8cb6a42b9d1f1767b41849, type: 3}
+  upWall: {fileID: 4867734710691863218, guid: c62b3ca86dc90d74d916c0654706d156, type: 3}
+  downWall: {fileID: 4867734710691863218, guid: c62b3ca86dc90d74d916c0654706d156, type: 3}
+  leftWall: {fileID: 4867734710691863218, guid: c62b3ca86dc90d74d916c0654706d156, type: 3}
+  rightWall: {fileID: 4867734710691863218, guid: c62b3ca86dc90d74d916c0654706d156, type: 3}
