@@ -35,7 +35,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private GameObject flyProjectilePrefab;
     [SerializeField] private float tankSpeedMultiplier = 0.7f;
     [SerializeField] private float tankAttackWindup = 0.45f;
-    [SerializeField] private float tankAttackDamageMultiplier = 1.35f;
+    [SerializeField] private float tankAttackDamageMultiplier = 2f;
 
     private EnemyState currentState = EnemyState.Idle;
     private Transform player;

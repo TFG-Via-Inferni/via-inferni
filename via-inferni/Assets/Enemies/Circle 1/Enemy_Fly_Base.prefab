@@ -197,7 +197,7 @@ MonoBehaviour:
   flyProjectilePrefab: {fileID: 1835126340686643829, guid: c4522ea733e295f4fa8383dec4a6a879, type: 3}
   tankSpeedMultiplier: 0.7
   tankAttackWindup: 0.45
-  tankAttackDamageMultiplier: 1.35
+  tankAttackDamageMultiplier: 2
 --- !u!61 &8029814907209707987
 BoxCollider2D:
   m_ObjectHideFlags: 0
