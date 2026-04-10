@@ -15,10 +15,6 @@ public class Player : MonoBehaviour, IDamageable
     [SerializeField] private float acceleration = 28f;
     [SerializeField] private float deceleration = 36f;
 
-    [Header("Vital")]
-    [SerializeField] private float maxHealth = 100f;
-    [SerializeField] private float currentHealth = 100f;
-
     [Header("Form Swap")]
     [SerializeField] private PlayerFormType startingForm = PlayerFormType.Melee;
     [SerializeField] private float swapCooldown = 0.35f;
@@ -44,10 +40,10 @@ public class Player : MonoBehaviour, IDamageable
     public event Action<PlayerFormType> OnFormChanged;
 
     public PlayerFormType CurrentForm { get; private set; }
-    public float CurrentHealth => currentHealth;
-    public float MaxHealth => maxHealth;
+    public float CurrentHealth => playerStats != null ? playerStats.CurrentHealth : 0f;
+    public float MaxHealth => playerStats != null ? playerStats.MaxHealth : 0f;
     public PlayerStats Stats => playerStats;
-    public bool CanTakeDamage => currentHealth > 0f;
+    public bool CanTakeDamage => playerStats != null && playerStats.IsAlive;
     public Vector2 MovementInput => movement;
     public bool IsMoving => movement.sqrMagnitude > 0.0001f;
     public Vector2 FacingDirection => facingDirection;
@@ -69,7 +65,6 @@ public class Player : MonoBehaviour, IDamageable
         }
 
         ConfigureInputActions();
-        InitializeHealth();
         SetForm(startingForm, force: true);
     }
 
@@ -208,12 +203,12 @@ public class Player : MonoBehaviour, IDamageable
 
     public void TakeDamage(float amount, GameObject source = null)
     {
-        if (amount <= 0f)
+        if (playerStats == null || amount <= 0f)
         {
             return;
         }
 
-        currentHealth = Mathf.Max(0f, currentHealth - amount);
+        playerStats.TakeDamage(amount);
     }
 
     public void ApplyDamage(float amount)
@@ -223,31 +218,24 @@ public class Player : MonoBehaviour, IDamageable
 
     public void RestoreHealth(float amount)
     {
-        if (amount <= 0f)
+        if (playerStats == null || amount <= 0f)
         {
             return;
         }
 
-        currentHealth = Mathf.Min(maxHealth, currentHealth + amount);
+        playerStats.RestoreHealth(amount);
     }
 
     public bool IsDead()
     {
-        return currentHealth <= 0f;
+        return playerStats == null || !playerStats.IsAlive;
     }
 
     public void HealToFull()
     {
-        currentHealth = maxHealth;
-    }
-
-    private void InitializeHealth()
-    {
-        maxHealth = Mathf.Max(1f, maxHealth);
-        currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
-        if (currentHealth <= 0f)
+        if (playerStats != null)
         {
-            currentHealth = maxHealth;
+            playerStats.HealToFull();
         }
     }
 

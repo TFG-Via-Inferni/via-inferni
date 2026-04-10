@@ -152,8 +152,9 @@ public class CircleUI : MonoBehaviour
             .Append(stats.MoveSpeedMultiplier.ToString("0.00"))
             .AppendLine();
 
-        statsBuilder.Append("Luck: x")
-            .Append(stats.LuckMultiplier.ToString("0.00"))
+        statsBuilder.Append("Soul: ")
+            .Append(stats.CollectedSoul)
+            .Append("/100")
             .AppendLine();
 
         statsBuilder.Append("Crit: ")
@@ -162,9 +163,7 @@ public class CircleUI : MonoBehaviour
             .Append((stats.DodgeChance * 100f).ToString("0"))
             .AppendLine("%");
 
-        statsBuilder.Append("Coins: ")
-            .Append(stats.Coins)
-            .Append("   Bag: ")
+        statsBuilder.Append("Bag: ")
             .Append(stats.InventoryCapacity)
             .AppendLine();
 

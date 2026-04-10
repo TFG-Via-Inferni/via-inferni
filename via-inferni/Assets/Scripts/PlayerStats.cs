@@ -3,9 +3,13 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class PlayerStats : MonoBehaviour
 {
+    [Header("Vitals")]
+    [Min(1f)] [SerializeField] private float maxHealth = 12f;
+    private float currentHealth;
+
     [Header("Combat")]
     [Min(0.01f)] [SerializeField] private float damageMultiplier = 1f;
-    [Range(0f, 1f)] [SerializeField] private float critChance = 0.1f;
+    [Range(0f, 1f)] [SerializeField] private float critChance = 0.05f;
     [Range(0f, 1f)] [SerializeField] private float dodgeChance = 0.05f;
 
     [Header("Weapons")]
@@ -18,17 +22,21 @@ public class PlayerStats : MonoBehaviour
     [Min(0.01f)] [SerializeField] private float moveSpeedMultiplier = 1f;
 
     [Header("Progression")]
-    [Min(0.01f)] [SerializeField] private float luckMultiplier = 1f;
     [Range(3, 12)] [SerializeField] private int inventoryCapacity = 3;
-    [Min(0)] [SerializeField] private int coins;
+    [Range(0, 100)] [SerializeField] private int collectedSoul = 0;
 
+    // Health Properties
+    public float MaxHealth => maxHealth;
+    public float CurrentHealth => currentHealth;
+    public bool IsAlive => currentHealth > 0f;
+
+    // Combat Properties
     public float DamageMultiplier => damageMultiplier;
     public float CritChance => critChance;
     public float DodgeChance => dodgeChance;
     public float MoveSpeedMultiplier => moveSpeedMultiplier;
-    public float LuckMultiplier => luckMultiplier;
     public int InventoryCapacity => inventoryCapacity;
-    public int Coins => coins;
+    public int CollectedSoul => collectedSoul;
 
     private void Awake()
     {
@@ -42,13 +50,20 @@ public class PlayerStats : MonoBehaviour
 
     public void InitializeRuntime()
     {
+        // Health initialization
+        maxHealth = Mathf.Max(1f, maxHealth);
+        currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
+        if (currentHealth <= 0f)
+        {
+            currentHealth = maxHealth;
+        }
+
         damageMultiplier = Mathf.Max(0.01f, damageMultiplier);
         critChance = Mathf.Clamp01(critChance);
         dodgeChance = Mathf.Clamp01(dodgeChance);
         moveSpeedMultiplier = Mathf.Max(0.01f, moveSpeedMultiplier);
-        luckMultiplier = Mathf.Max(0.01f, luckMultiplier);
         inventoryCapacity = Mathf.Clamp(inventoryCapacity, 3, 12);
-        coins = Mathf.Max(0, coins);
+        collectedSoul = Mathf.Clamp(collectedSoul, 0, 100);
 
         EnsureWeaponArray(ref meleeWeaponBaseDamage, 10f, 12f, 15f);
         EnsureWeaponArray(ref rangedWeaponBaseDamage, 9f, 11f, 14f);
@@ -133,30 +148,75 @@ public class PlayerStats : MonoBehaviour
         return inventoryCapacity != previous;
     }
 
-    public bool AddCoins(int amount)
+    /// <summary>
+    /// Restore health by the given amount. Returns the actual amount healed.
+    /// </summary>
+    public float RestoreHealth(float amount)
+    {
+        if (amount <= 0f || !IsAlive)
+        {
+            return 0f;
+        }
+
+        float previousHealth = currentHealth;
+        currentHealth = Mathf.Min(maxHealth, currentHealth + amount);
+        return currentHealth - previousHealth;
+    }
+
+    /// <summary>
+    /// Reduce health by the given amount. Returns the actual amount of damage taken.
+    /// </summary>
+    public float TakeDamage(float amount)
+    {
+        if (amount <= 0f)
+        {
+            return 0f;
+        }
+
+        float previousHealth = currentHealth;
+        currentHealth = Mathf.Max(0f, currentHealth - amount);
+        return previousHealth - currentHealth;
+    }
+
+    /// <summary>
+    /// Reset health to full.
+    /// </summary>
+    public void HealToFull()
+    {
+        currentHealth = maxHealth;
+    }
+
+    /// <summary>
+    /// Add soul points. Returns actual amount added (capped at 100).
+    /// </summary>
+    public int AddSoul(int amount)
     {
         if (amount <= 0)
         {
-            return false;
+            return 0;
         }
 
-        coins += amount;
-        return true;
+        int previousSoul = collectedSoul;
+        collectedSoul = Mathf.Clamp(collectedSoul + amount, 0, 100);
+        return collectedSoul - previousSoul;
     }
 
-    public bool SpendCoins(int amount)
+    /// <summary>
+    /// Spend soul points (used for purchases/healing). Returns true if successful.
+    /// </summary>
+    public bool SpendSoul(int amount)
     {
         if (amount <= 0)
         {
             return true;
         }
 
-        if (coins < amount)
+        if (collectedSoul < amount)
         {
             return false;
         }
 
-        coins -= amount;
+        collectedSoul -= amount;
         return true;
     }
 
