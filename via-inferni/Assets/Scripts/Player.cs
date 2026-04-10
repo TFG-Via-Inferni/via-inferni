@@ -10,6 +10,10 @@ public enum PlayerFormType
 
 public class Player : MonoBehaviour, IDamageable
 {
+    private const int SoulHealCost = 10;
+    private const float SoulHealAmount = 1f;
+    private const int SoulDebugStep = 10;
+
     [SerializeField] private float moveSpeed = 5f;
     [Header("Movement Feel")]
     [SerializeField] private float acceleration = 28f;
@@ -103,6 +107,7 @@ public class Player : MonoBehaviour, IDamageable
         UpdateFacingDirection(movement);
 
         HandleWeaponSlotInput();
+        HandleSoulInput();
 
         if (swapAction != null && swapAction.WasPressedThisFrame())
         {
@@ -176,6 +181,46 @@ public class Player : MonoBehaviour, IDamageable
         if (keyboard.digit3Key.wasPressedThisFrame)
         {
             playerStats.SelectWeaponSlot(CurrentForm, 3);
+        }
+    }
+
+    private void HandleSoulInput()
+    {
+        if (playerStats == null)
+        {
+            return;
+        }
+
+        Keyboard keyboard = Keyboard.current;
+        if (keyboard == null)
+        {
+            return;
+        }
+
+        if (keyboard.zKey.wasPressedThisFrame)
+        {
+            playerStats.AddSoul(SoulDebugStep);
+        }
+
+        if (keyboard.xKey.wasPressedThisFrame)
+        {
+            playerStats.SpendSoul(SoulDebugStep);
+        }
+
+        bool ctrlPressedThisFrame = keyboard.leftCtrlKey.wasPressedThisFrame || keyboard.rightCtrlKey.wasPressedThisFrame;
+        if (!ctrlPressedThisFrame)
+        {
+            return;
+        }
+
+        if (CurrentHealth >= MaxHealth)
+        {
+            return;
+        }
+
+        if (playerStats.SpendSoul(SoulHealCost))
+        {
+            playerStats.RestoreHealth(SoulHealAmount);
         }
     }
 

@@ -1114,9 +1114,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1681605969}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 32, y: -64}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -1140, y: -64}
   m_SizeDelta: {x: 650, y: 320}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &958170166
@@ -1893,9 +1893,9 @@ MonoBehaviour:
   circleText: {fileID: 2023371433}
   showStatsOverlay: 1
   statsText: {fileID: 913163982}
-  statsColor: {r: 0.72, g: 0.72, b: 0.72, a: 0.62}
+  statsColor: {r: 0.6698113, g: 0.6698113, b: 0.6698113, a: 0.62}
   statsFontSize: 24
-  statsAnchoredPosition: {x: 32, y: -64}
+  statsAnchoredPosition: {x: 64, y: 64}
   showSelectionHud: 1
   selectedCharacterImage: {fileID: 0}
   selectedWeaponImage: {fileID: 0}
@@ -1913,6 +1913,20 @@ MonoBehaviour:
   - {fileID: 21300000, guid: d5d1007dbc04c4e41b96ffcef8b76dd2, type: 3}
   - {fileID: 21300000, guid: b46adc87292de5541a6fed12ae6482d6, type: 3}
   - {fileID: 21300000, guid: aa87c3d984615864aac7c2e51e453123, type: 3}
+  showVitalsHud: 1
+  heartEmptySprite: {fileID: 792253941, guid: a9692e2465107a04693416150647841d, type: 3}
+  heartHalfOverlaySprite: {fileID: 1257213875, guid: a9692e2465107a04693416150647841d, type: 3}
+  heartFullOverlaySprite: {fileID: -1083818220, guid: a9692e2465107a04693416150647841d, type: 3}
+  soulCruetSprites:
+  - {fileID: -1884496735, guid: 78bbd2a7435f1d54d8b0d9d8cfaca71c, type: 3}
+  - {fileID: 979411646, guid: 78bbd2a7435f1d54d8b0d9d8cfaca71c, type: 3}
+  - {fileID: 332920794, guid: 78bbd2a7435f1d54d8b0d9d8cfaca71c, type: 3}
+  - {fileID: 725785400, guid: 78bbd2a7435f1d54d8b0d9d8cfaca71c, type: 3}
+  - {fileID: -668135714, guid: 78bbd2a7435f1d54d8b0d9d8cfaca71c, type: 3}
+  cruetHeightPercentOfScreen: 0.2
+  heartHeightPercentOfScreen: 0.1
+  heartsSpacingPercentOfHeartSize: 0.05
+  vitalsGapPercentOfCruet: 0.05
 --- !u!1 &1821470861
 GameObject:
   m_ObjectHideFlags: 0

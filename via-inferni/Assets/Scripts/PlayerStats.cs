@@ -153,7 +153,7 @@ public class PlayerStats : MonoBehaviour
     /// </summary>
     public float RestoreHealth(float amount)
     {
-        if (amount <= 0f || !IsAlive)
+        if (amount <= 0f)
         {
             return 0f;
         }
