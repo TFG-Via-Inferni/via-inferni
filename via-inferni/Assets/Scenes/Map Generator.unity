@@ -1895,7 +1895,7 @@ MonoBehaviour:
   statsText: {fileID: 913163982}
   statsColor: {r: 0.6698113, g: 0.6698113, b: 0.6698113, a: 0.62}
   statsFontSize: 24
-  statsAnchoredPosition: {x: 64, y: 64}
+  statsAnchoredPosition: {x: 0, y: 0}
   showSelectionHud: 1
   selectedCharacterImage: {fileID: 0}
   selectedWeaponImage: {fileID: 0}
@@ -1924,7 +1924,7 @@ MonoBehaviour:
   - {fileID: 725785400, guid: 78bbd2a7435f1d54d8b0d9d8cfaca71c, type: 3}
   - {fileID: -668135714, guid: 78bbd2a7435f1d54d8b0d9d8cfaca71c, type: 3}
   cruetHeightPercentOfScreen: 0.2
-  heartHeightPercentOfScreen: 0.1
+  heartHeightPercentOfScreen: 0.08
   heartsSpacingPercentOfHeartSize: 0.05
   vitalsGapPercentOfCruet: 0.05
 --- !u!1 &1821470861
