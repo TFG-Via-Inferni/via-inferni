@@ -261,6 +261,27 @@ public class Player : MonoBehaviour, IDamageable
         TakeDamage(amount);
     }
 
+    public void TeleportTo(Vector2 position)
+    {
+        if (rb == null)
+        {
+            rb = GetComponent<Rigidbody2D>();
+        }
+
+        movement = Vector2.zero;
+        currentVelocity = Vector2.zero;
+
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+            rb.angularVelocity = 0f;
+            rb.position = position;
+            return;
+        }
+
+        transform.position = position;
+    }
+
     public void RestoreHealth(float amount)
     {
         if (playerStats == null || amount <= 0f)

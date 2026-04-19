@@ -111,12 +111,6 @@ public class MapGenerator : MonoBehaviour
 
     public void SetupDungeon()
     {
-        if (playerInstance != null)
-        {
-            Destroy(playerInstance.gameObject);
-            playerInstance = null;
-        }
-
         for (int i = 0; i < spawnedCells.Count; i++)
         {
             Destroy(spawnedCells[i].gameObject);
@@ -317,15 +311,30 @@ public class MapGenerator : MonoBehaviour
             // Fallback: calcular posición manualmente si no se encuentra la celda
             position = new UnityEngine.Vector2(5 * cellSize, -4 * cellSize);
         }
-        
-        GameObject playerObj = Instantiate(playerPrefab, position, UnityEngine.Quaternion.identity);
-        
-        Player player = playerObj.GetComponent<Player>();
-        if (player == null)
+
+        GameObject playerObj;
+        Player player;
+
+        if (playerInstance != null)
         {
-            player = playerObj.AddComponent<Player>();
+            player = playerInstance;
+            player.TeleportTo(position);
+            playerObj = player.gameObject;
         }
-        
+        else
+        {
+            playerObj = Instantiate(playerPrefab, position, UnityEngine.Quaternion.identity);
+
+            player = playerObj.GetComponent<Player>();
+            if (player == null)
+            {
+                player = playerObj.AddComponent<Player>();
+            }
+
+            player.TeleportTo(position);
+            playerInstance = player;
+        }
+
         playerInstance = player;
 
         if (centralCell != null)
