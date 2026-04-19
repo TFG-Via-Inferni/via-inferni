@@ -18,10 +18,15 @@ MonoBehaviour:
   attackType: 0
   baseDamage: 10
   cooldown: 0.4
-  range: 1.2
-  hitboxSize: {x: 1.2, y: 1.2}
-  hitboxOffset: {x: 0.9, y: 0}
+  range: 1.9
+  hitboxSize: {x: 1.1, y: 1.0}
+  hitboxOffset: {x: 1.35, y: 0}
+  meleeAppliesKnockback: 0
+  meleeKnockbackForce: 0
   projectilePrefab: {fileID: 0}
   projectileSpeed: 12
   projectileLifetime: 3
   projectileSpawnOffset: {x: 0.9, y: 0}
+  projectileHoming: 0
+  projectileHomingTurnSpeed: 0
+  projectileHomingSearchRadius: 0

@@ -10,12 +10,16 @@ public class MeleeHitbox : MonoBehaviour
     private readonly HashSet<Collider2D> hitColliders = new HashSet<Collider2D>();
     private float damage;
     private GameObject source;
+    private bool appliesKnockback;
+    private float knockbackForce;
 
-    public void Initialize(float damageAmount, GameObject damageSource, LayerMask allowedLayers)
+    public void Initialize(float damageAmount, GameObject damageSource, LayerMask allowedLayers, bool applyKnockback, float knockbackAmount)
     {
         damage = damageAmount;
         source = damageSource;
         hittableLayers = allowedLayers;
+        appliesKnockback = applyKnockback;
+        knockbackForce = knockbackAmount;
         Destroy(gameObject, lifetime);
     }
 
@@ -40,7 +44,42 @@ public class MeleeHitbox : MonoBehaviour
         if (damageable != null && damageable.CanTakeDamage)
         {
             damageable.TakeDamage(damage, source);
+            ApplyKnockback(other);
         }
+    }
+
+    private void ApplyKnockback(Collider2D other)
+    {
+        if (!appliesKnockback || knockbackForce <= 0f || other == null || source == null)
+        {
+            return;
+        }
+
+        Rigidbody2D body = other.attachedRigidbody != null ? other.attachedRigidbody : other.GetComponentInParent<Rigidbody2D>();
+        if (body == null)
+        {
+            return;
+        }
+
+        Transform knockbackOrigin = source.transform;
+        DamageSourceContext context = source.GetComponent<DamageSourceContext>();
+        if (context != null && context.OwnerRoot != null)
+        {
+            knockbackOrigin = context.OwnerRoot;
+        }
+
+        Vector2 knockbackDirection = (body.worldCenterOfMass - (Vector2)knockbackOrigin.position);
+        if (knockbackDirection.sqrMagnitude <= 0.0001f)
+        {
+            knockbackDirection = (Vector2)body.transform.position - (Vector2)knockbackOrigin.position;
+        }
+
+        if (knockbackDirection.sqrMagnitude <= 0.0001f)
+        {
+            knockbackDirection = Vector2.up;
+        }
+
+        body.AddForce(knockbackDirection.normalized * knockbackForce, ForceMode2D.Impulse);
     }
 
     private bool ShouldIgnoreSelfHit(Collider2D other)

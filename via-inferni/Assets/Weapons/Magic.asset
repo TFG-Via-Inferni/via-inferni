@@ -25,3 +25,6 @@ MonoBehaviour:
   projectileSpeed: 12
   projectileLifetime: 3
   projectileSpawnOffset: {x: 0.9, y: 0}
+  projectileHoming: 0
+  projectileHomingTurnSpeed: 0
+  projectileHomingSearchRadius: 0

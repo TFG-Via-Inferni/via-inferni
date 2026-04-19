@@ -20,9 +20,20 @@ public class PlayerCombatController : MonoBehaviour
     private Player player;
     private PlayerStats stats;
     private InputAction attackAction;
-    private bool attackRequested;
-    private Vector2 queuedAttackDirection = Vector2.right;
     private float lastAttackTime = -999f;
+    private bool isChargingAttack;
+    private float chargeStartedAt;
+    private WeaponDefinition chargingWeapon;
+    private Vector2 chargingDirection = Vector2.right;
+    private string chargingWeaponId;
+    private PlayerFormType chargingForm;
+
+    private struct AttackInputState
+    {
+        public bool PressedThisFrame;
+        public bool Held;
+        public Vector2 Direction;
+    }
 
     private void Awake()
     {
@@ -54,28 +65,36 @@ public class PlayerCombatController : MonoBehaviour
     {
         if (PauseMenuController.IsPaused)
         {
-            attackRequested = false;
+            ResetChargeState();
             return;
         }
 
-        if (TryReadArrowAttackInput(out Vector2 attackDirection))
+        WeaponDefinition weapon = GetCurrentWeaponDefinition();
+        if (weapon == null)
         {
-            attackRequested = true;
-            queuedAttackDirection = attackDirection;
-        }
-        else if (attackAction != null && attackAction.WasPressedThisFrame())
-        {
-            attackRequested = true;
-            queuedAttackDirection = GetDefaultAttackDirection();
+            ResetChargeState();
+            return;
         }
 
-        if (!attackRequested)
+        AttackInputState input = ReadAttackInputState();
+
+        if (weapon.RequiresChargeAttack)
+        {
+            HandleChargeAttackInput(weapon, input);
+            return;
+        }
+
+        if (isChargingAttack)
+        {
+            ResetChargeState();
+        }
+
+        if (!input.PressedThisFrame)
         {
             return;
         }
 
-        attackRequested = false;
-        TryAttack(queuedAttackDirection);
+        TryAttack(input.Direction);
     }
 
     public bool TryAttack(Vector2 attackDirection)
@@ -120,7 +139,7 @@ public class PlayerCombatController : MonoBehaviour
         SpawnMeleeSlashVisual(facingDirection, weapon);
 
         GameObject hitboxObject = new GameObject($"{weapon.DisplayName}_Hitbox");
-        Vector2 offset = GetDirectionalOffset(weapon.HitboxOffset, facingDirection);
+        Vector2 offset = GetMeleeAttackOffset(weapon, facingDirection);
 
         hitboxObject.transform.position = player.transform.position + (Vector3)offset;
         hitboxObject.transform.rotation = Quaternion.identity;
@@ -134,7 +153,7 @@ public class PlayerCombatController : MonoBehaviour
         context.Configure(player.transform.root, weaponId, form);
 
         MeleeHitbox hitbox = hitboxObject.AddComponent<MeleeHitbox>();
-        hitbox.Initialize(damageAmount, hitboxObject, damageLayers);
+        hitbox.Initialize(damageAmount, hitboxObject, damageLayers, weapon.MeleeAppliesKnockback, weapon.MeleeKnockbackForce);
     }
 
     private void PerformProjectileAttack(WeaponDefinition weapon, float damageAmount, Vector2 facingDirection, string weaponId, PlayerFormType form)
@@ -163,7 +182,87 @@ public class PlayerCombatController : MonoBehaviour
 
         context.Configure(player.transform.root, weaponId, form);
 
-        projectile.Initialize(damageAmount, weapon.ProjectileSpeed, weapon.ProjectileLifetime, facingDirection, projectileObject);
+        projectile.Initialize(
+            damageAmount,
+            weapon.ProjectileSpeed,
+            weapon.ProjectileLifetime,
+            facingDirection,
+            projectileObject,
+            weapon.ProjectileHoming,
+            weapon.ProjectileHomingTurnSpeed,
+            weapon.ProjectileHomingSearchRadius
+        );
+    }
+
+    private void HandleChargeAttackInput(WeaponDefinition weapon, AttackInputState input)
+    {
+        if (!isChargingAttack)
+        {
+            if (!input.PressedThisFrame)
+            {
+                return;
+            }
+
+            if (Time.time < lastAttackTime + weapon.Cooldown)
+            {
+                return;
+            }
+
+            isChargingAttack = true;
+            chargeStartedAt = Time.time;
+            chargingWeapon = weapon;
+            chargingDirection = input.Direction;
+            chargingWeaponId = stats != null
+                ? stats.GetSelectedWeaponId(player.CurrentForm)
+                : weapon.WeaponId;
+            chargingForm = player.CurrentForm;
+            return;
+        }
+
+        if (chargingWeapon != weapon || chargingForm != player.CurrentForm)
+        {
+            ResetChargeState();
+            return;
+        }
+
+        if (input.Held)
+        {
+            chargingDirection = input.Direction.sqrMagnitude > 0.0001f
+                ? input.Direction.normalized
+                : GetDefaultAttackDirection();
+            return;
+        }
+
+        FireChargedAttack();
+    }
+
+    private void FireChargedAttack()
+    {
+        if (!isChargingAttack || chargingWeapon == null || player == null)
+        {
+            ResetChargeState();
+            return;
+        }
+
+        float chargeDuration = Time.time - chargeStartedAt;
+        float normalizedCharge = Mathf.Clamp01(chargeDuration / Mathf.Max(0.1f, chargingWeapon.ChargeTimeToMax));
+        float chargeMultiplier = Mathf.Lerp(chargingWeapon.ChargeMinDamageMultiplier, chargingWeapon.ChargeMaxDamageMultiplier, normalizedCharge);
+        float baseDamage = stats != null ? stats.GetFinalDamage(chargingForm) : chargingWeapon.BaseDamage;
+        float chargedDamage = baseDamage * chargeMultiplier;
+
+        PerformProjectileAttack(chargingWeapon, chargedDamage, chargingDirection, chargingWeaponId, chargingForm);
+        lastAttackTime = Time.time;
+        ResetChargeState();
+    }
+
+    private void ResetChargeState()
+    {
+        isChargingAttack = false;
+        chargeStartedAt = 0f;
+        chargingWeapon = null;
+        chargingDirection = Vector2.right;
+        chargingWeaponId = string.Empty;
+        chargingForm = PlayerFormType.Melee;
     }
 
     private WeaponDefinition GetCurrentWeaponDefinition()
@@ -183,6 +282,49 @@ public class PlayerCombatController : MonoBehaviour
 
         index = Mathf.Clamp(index, 0, pool.Length - 1);
         return pool[index];
+    }
+
+    private AttackInputState ReadAttackInputState()
+    {
+        AttackInputState state = new AttackInputState
+        {
+            Direction = GetDefaultAttackDirection()
+        };
+
+        bool hasDirectionalInput = TryReadArrowAttackInput(out Vector2 arrowDirection);
+        if (hasDirectionalInput)
+        {
+            state.Direction = arrowDirection;
+        }
+
+        Keyboard keyboard = Keyboard.current;
+        bool keyboardAttackHeld = false;
+        bool keyboardDirectionPressedThisFrame = false;
+        if (keyboard != null)
+        {
+            keyboardDirectionPressedThisFrame = keyboard.upArrowKey.wasPressedThisFrame
+                || keyboard.downArrowKey.wasPressedThisFrame
+                || keyboard.leftArrowKey.wasPressedThisFrame
+                || keyboard.rightArrowKey.wasPressedThisFrame;
+
+            keyboardAttackHeld = keyboard.upArrowKey.isPressed
+                || keyboard.downArrowKey.isPressed
+                || keyboard.leftArrowKey.isPressed
+                || keyboard.rightArrowKey.isPressed;
+        }
+
+        bool actionPressedThisFrame = attackAction != null && attackAction.WasPressedThisFrame();
+        bool actionHeld = attackAction != null && attackAction.IsPressed();
+
+        state.PressedThisFrame = keyboardDirectionPressedThisFrame || actionPressedThisFrame;
+        state.Held = keyboardAttackHeld || actionHeld;
+
+        if (state.Direction.sqrMagnitude <= 0.0001f)
+        {
+            state.Direction = GetDefaultAttackDirection();
+        }
+
+        return state;
     }
 
     private void ConfigureAttackInput()
@@ -247,12 +389,12 @@ public class PlayerCombatController : MonoBehaviour
             return false;
         }
 
-        bool pressedThisFrame = keyboard.upArrowKey.wasPressedThisFrame
-            || keyboard.downArrowKey.wasPressedThisFrame
-            || keyboard.leftArrowKey.wasPressedThisFrame
-            || keyboard.rightArrowKey.wasPressedThisFrame;
+        bool anyDirectionPressed = keyboard.upArrowKey.isPressed
+            || keyboard.downArrowKey.isPressed
+            || keyboard.leftArrowKey.isPressed
+            || keyboard.rightArrowKey.isPressed;
 
-        if (!pressedThisFrame)
+        if (!anyDirectionPressed)
         {
             attackDirection = Vector2.zero;
             return false;
@@ -318,7 +460,22 @@ public class PlayerCombatController : MonoBehaviour
 
         MeleeSlashVisual slashVisual = slashObject.AddComponent<MeleeSlashVisual>();
         float slashLength = Mathf.Max(weapon.HitboxSize.x, weapon.HitboxSize.y, weapon.Range, 0.5f);
-        slashVisual.Initialize(player.transform.position + (Vector3)GetDirectionalOffset(weapon.HitboxOffset, facingDirection), facingDirection, slashLength);
+        slashVisual.Initialize(player.transform.position + (Vector3)GetMeleeAttackOffset(weapon, facingDirection), facingDirection, slashLength);
+    }
+
+    private static Vector2 GetMeleeAttackOffset(WeaponDefinition weapon, Vector2 direction)
+    {
+        if (weapon == null)
+        {
+            return Vector2.zero;
+        }
+
+        Vector2 normalizedDirection = direction.sqrMagnitude > 0.0001f
+            ? direction.normalized
+            : Vector2.right;
+
+        float reach = Mathf.Max(weapon.Range, weapon.HitboxOffset.magnitude, 0.1f);
+        return normalizedDirection * reach;
     }
 
 }
