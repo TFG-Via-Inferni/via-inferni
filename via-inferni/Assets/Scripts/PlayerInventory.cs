@@ -202,3 +202,33 @@ public class PlayerInventory : MonoBehaviour
         public InventoryItemDefinition item;
     }
 }
+
+public interface IInventoryPickup
+{
+    Transform PickupTransform { get; }
+    bool TryPickup(PlayerInventory inventory, out string reason);
+}
+
+public static class InventoryPickupColliderExtensions
+{
+    public static bool TryGetInventoryPickup(this Collider2D collider, out IInventoryPickup pickup)
+    {
+        pickup = null;
+        if (collider == null)
+        {
+            return false;
+        }
+
+        MonoBehaviour[] behaviours = collider.GetComponents<MonoBehaviour>();
+        for (int i = 0; i < behaviours.Length; i++)
+        {
+            if (behaviours[i] is IInventoryPickup inventoryPickup)
+            {
+                pickup = inventoryPickup;
+                return true;
+            }
+        }
+
+        return false;
+    }
+}

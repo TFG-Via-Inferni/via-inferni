@@ -30,15 +30,21 @@ public class Player : MonoBehaviour, IDamageable
     [SerializeField] private string playerActionMapName = "Player";
     [SerializeField] private string moveActionName = "Move";
     [SerializeField] private string swapActionName = "Swap";
+    [SerializeField] private string interactActionName = "Interact";
+
+    [Header("Inventory Input")]
+    [SerializeField] private float pickupInteractionRadius = 1.5f;
 
     private Rigidbody2D rb;
     private Vector2 movement;
     private Vector2 currentVelocity;
     private InputAction moveAction;
     private InputAction swapAction;
+    private InputAction interactAction;
     private bool swapRequested;
     private float lastSwapTime = -999f;
     private PlayerStats playerStats;
+    private PlayerInventory playerInventory;
     private Vector2 facingDirection = Vector2.right;
 
     public event Action<PlayerFormType> OnFormChanged;
@@ -68,6 +74,12 @@ public class Player : MonoBehaviour, IDamageable
             playerStats = gameObject.AddComponent<PlayerStats>();
         }
 
+        playerInventory = GetComponent<PlayerInventory>();
+        if (playerInventory == null)
+        {
+            playerInventory = gameObject.AddComponent<PlayerInventory>();
+        }
+
         ConfigureInputActions();
         SetForm(startingForm, force: true);
     }
@@ -76,12 +88,14 @@ public class Player : MonoBehaviour, IDamageable
     {
         moveAction?.Enable();
         swapAction?.Enable();
+        interactAction?.Enable();
     }
 
     private void OnDisable()
     {
         moveAction?.Disable();
         swapAction?.Disable();
+        interactAction?.Disable();
     }
 
     private void OnDestroy()
@@ -91,6 +105,7 @@ public class Player : MonoBehaviour, IDamageable
         {
             moveAction?.Dispose();
             swapAction?.Dispose();
+            interactAction?.Dispose();
         }
     }
 
@@ -107,6 +122,7 @@ public class Player : MonoBehaviour, IDamageable
         UpdateFacingDirection(movement);
 
         HandleWeaponSlotInput();
+        HandleInventoryInput();
         HandleSoulInput();
 
         if (swapAction != null && swapAction.WasPressedThisFrame())
@@ -222,6 +238,85 @@ public class Player : MonoBehaviour, IDamageable
         {
             playerStats.RestoreHealth(SoulHealAmount);
         }
+    }
+
+    private void HandleInventoryInput()
+    {
+        if (playerInventory == null)
+        {
+            return;
+        }
+
+        Keyboard keyboard = Keyboard.current;
+        if (keyboard == null)
+        {
+            return;
+        }
+
+        bool shiftPressedThisFrame = keyboard.leftShiftKey.wasPressedThisFrame || keyboard.rightShiftKey.wasPressedThisFrame;
+        if (shiftPressedThisFrame)
+        {
+            playerInventory.SelectNextSlotCyclic();
+        }
+
+        if (keyboard.qKey.wasPressedThisFrame)
+        {
+            playerInventory.TryDropSelected(out _, out _);
+        }
+
+        bool interactPressed = (interactAction != null && interactAction.WasPressedThisFrame()) || keyboard.eKey.wasPressedThisFrame;
+        if (!interactPressed)
+        {
+            return;
+        }
+
+        TryCollectNearestInventoryPickup();
+    }
+
+    private bool TryCollectNearestInventoryPickup()
+    {
+        if (playerInventory == null)
+        {
+            return false;
+        }
+
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, pickupInteractionRadius);
+        if (hitColliders == null || hitColliders.Length == 0)
+        {
+            return false;
+        }
+
+        IInventoryPickup nearestPickup = null;
+        float nearestDistanceSq = float.MaxValue;
+
+        for (int i = 0; i < hitColliders.Length; i++)
+        {
+            Collider2D hit = hitColliders[i];
+            if (hit == null || !hit.TryGetInventoryPickup(out IInventoryPickup pickup))
+            {
+                continue;
+            }
+
+            Vector3 pickupPosition = pickup.PickupTransform != null
+                ? pickup.PickupTransform.position
+                : hit.transform.position;
+
+            float distanceSq = (pickupPosition - transform.position).sqrMagnitude;
+            if (distanceSq >= nearestDistanceSq)
+            {
+                continue;
+            }
+
+            nearestDistanceSq = distanceSq;
+            nearestPickup = pickup;
+        }
+
+        if (nearestPickup == null)
+        {
+            return false;
+        }
+
+        return nearestPickup.TryPickup(playerInventory, out _);
     }
 
     public bool TrySwapForm()
@@ -365,6 +460,10 @@ public class Player : MonoBehaviour, IDamageable
         swapAction = new InputAction(name: "Swap", type: InputActionType.Button);
         swapAction.AddBinding("<Keyboard>/tab");
         swapAction.AddBinding("<Gamepad>/rightShoulder");
+
+        interactAction = new InputAction(name: "Interact", type: InputActionType.Button);
+        interactAction.AddBinding("<Keyboard>/e");
+        interactAction.AddBinding("<Gamepad>/buttonNorth");
     }
 
     private bool TryBindFromAsset()
@@ -383,6 +482,7 @@ public class Player : MonoBehaviour, IDamageable
 
         moveAction = actionMap.FindAction(moveActionName, throwIfNotFound: false);
         swapAction = actionMap.FindAction(swapActionName, throwIfNotFound: false);
+        interactAction = actionMap.FindAction(interactActionName, throwIfNotFound: false);
 
         if (moveAction == null)
         {
@@ -399,6 +499,20 @@ public class Player : MonoBehaviour, IDamageable
             swapAction.AddBinding("<Gamepad>/rightShoulder");
         }
 
+        if (interactAction == null)
+        {
+            Debug.LogWarning($"Player: action '{interactActionName}' no encontrada. Se usará fallback runtime para Interact.");
+            interactAction = new InputAction(name: "Interact", type: InputActionType.Button);
+            interactAction.AddBinding("<Keyboard>/e");
+            interactAction.AddBinding("<Gamepad>/buttonNorth");
+        }
+
         return true;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = new Color(0.4f, 0.9f, 1f, 0.8f);
+        Gizmos.DrawWireSphere(transform.position, pickupInteractionRadius);
     }
 }
