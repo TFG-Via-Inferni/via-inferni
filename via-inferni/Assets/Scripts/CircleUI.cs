@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System.Text;
+using System;
 using UnityEngine.UI;
 
 public class CircleUI : MonoBehaviour
@@ -53,6 +54,18 @@ public class CircleUI : MonoBehaviour
     [Range(0.05f, 0.6f)] [SerializeField] private float heartsSpacingPercentOfHeartSize = 0.05f;
     [Range(0.02f, 0.5f)] [SerializeField] private float vitalsGapPercentOfCruet = 0.05f;
 
+    [Header("Inventory HUD")]
+    [SerializeField] private bool showInventoryHud = true;
+    [SerializeField] private Sprite inventoryBackgroundSprite;
+    [SerializeField] private Sprite inventoryLockSprite;
+    [SerializeField] private Vector2 inventoryHudSize = new Vector2(500f, 220f);
+    [Range(0.05f, 0.35f)] [SerializeField] private float inventoryHeightPercentOfScreen = 0.2f;
+    [SerializeField] private Color inventoryLockedColor = new Color(0.22f, 0.22f, 0.22f, 0.82f);
+    [SerializeField] private Color inventoryUnlockedColor = new Color(1f, 1f, 1f, 0.12f);
+    [SerializeField] private Color inventorySelectedColor = new Color(0.95f, 0.8f, 0.25f, 0.8f);
+    [SerializeField] private Color inventoryFeedbackColor = new Color(1f, 0.75f, 0.35f, 0.95f);
+    [SerializeField] private float inventoryFeedbackDuration = 1.2f;
+
     private readonly StringBuilder statsBuilder = new StringBuilder(256);
     private Player trackedPlayer;
     private float nextPlayerLookupTime;
@@ -65,6 +78,13 @@ public class CircleUI : MonoBehaviour
     private Image[] heartOverlayImages = new Image[0];
     private float currentHeartSize;
     private float currentHeartSpacing;
+    private RectTransform inventoryHudRoot;
+    private Image inventoryBackgroundImage;
+    private Image inventoryFrameOverlayImage;
+    private RectTransform inventorySlotsRoot;
+    private TextMeshProUGUI inventoryFeedbackText;
+    private InventorySlotUi[] inventorySlotUis = Array.Empty<InventorySlotUi>();
+    private Vector2 currentInventoryHudSize;
 
     private void Awake()
     {
@@ -83,6 +103,7 @@ public class CircleUI : MonoBehaviour
         EnsureSelectionSpritesLoaded();
         EnsureVitalsHudReferences();
         EnsureVitalsSpritesLoaded();
+        EnsureInventoryHudReferences();
     }
 
     private void Start()
@@ -91,6 +112,7 @@ public class CircleUI : MonoBehaviour
         UpdateStatsDisplay();
         UpdateSelectionHudDisplay();
         UpdateVitalsHudDisplay();
+        UpdateInventoryHudDisplay();
     }
 
     private void Update()
@@ -112,6 +134,7 @@ public class CircleUI : MonoBehaviour
             UpdateStatsDisplay();
             UpdateSelectionHudDisplay();
             UpdateVitalsHudDisplay();
+            UpdateInventoryHudDisplay();
         }
     }
 
@@ -251,7 +274,7 @@ public class CircleUI : MonoBehaviour
 
         float baseHeight = safeScreenHeight * iconHeightPercentOfScreen;
         float characterAspect = characterSize.y > 0f ? characterSize.x / characterSize.y : 1f;
-        float weaponAspect = weaponSize.y > 0f ? weaponSize.x / weaponSize.y : 1f;
+        float weaponAspect = GetCurrentWeaponAspectRatio();
 
         Vector2 scaledCharacterSize = new Vector2(baseHeight * characterAspect, baseHeight);
         Vector2 scaledWeaponSize = new Vector2(baseHeight * weaponAspect, baseHeight);
@@ -362,6 +385,15 @@ public class CircleUI : MonoBehaviour
         {
             selectedWeaponImage.sprite = weaponSprite;
             selectedWeaponImage.enabled = weaponSprite != null;
+
+            if (weaponSprite != null)
+            {
+                float safeScreenHeight = Mathf.Max(1f, Screen.height);
+                float baseHeight = safeScreenHeight * iconHeightPercentOfScreen;
+                float weaponAspect = GetSpriteAspectRatio(weaponSprite);
+                Vector2 size = new Vector2(baseHeight * weaponAspect, baseHeight);
+                ConfigureImageRect(selectedWeaponImage, selectedWeaponImage.rectTransform.anchoredPosition, size);
+            }
         }
     }
 
@@ -442,6 +474,342 @@ public class CircleUI : MonoBehaviour
 
         soulCruetImage.raycastTarget = false;
         soulCruetImage.preserveAspect = true;
+    }
+
+    private void EnsureInventoryHudReferences()
+    {
+        if (inventoryHudRoot == null)
+        {
+            Transform existing = transform.Find("InventoryHudRoot");
+            if (existing != null)
+            {
+                inventoryHudRoot = existing.GetComponent<RectTransform>();
+            }
+
+            if (inventoryHudRoot == null)
+            {
+                GameObject root = new GameObject("InventoryHudRoot", typeof(RectTransform));
+                root.transform.SetParent(transform, false);
+                inventoryHudRoot = root.GetComponent<RectTransform>();
+            }
+        }
+
+        EnsureSelectionHudReferences();
+
+        float safeScreenHeight = Mathf.Max(1f, Screen.height);
+        float safeScreenWidth = Mathf.Max(1f, Screen.width);
+        float shorterSide = Mathf.Min(safeScreenWidth, safeScreenHeight);
+
+        float targetHeight = Mathf.Max(64f, safeScreenHeight * inventoryHeightPercentOfScreen);
+        float baseAspect = inventoryHudSize.y > 0.001f ? inventoryHudSize.x / inventoryHudSize.y : (500f / 220f);
+        float targetWidth = targetHeight * Mathf.Max(0.1f, baseAspect);
+
+        if (inventoryBackgroundSprite != null && inventoryBackgroundSprite.rect.height > 0f)
+        {
+            float spriteAspect = inventoryBackgroundSprite.rect.width / inventoryBackgroundSprite.rect.height;
+            targetWidth = targetHeight * Mathf.Max(0.1f, spriteAspect);
+        }
+
+        currentInventoryHudSize = new Vector2(targetWidth, targetHeight);
+
+        Vector2 anchorPosition = new Vector2(shorterSide * marginPercentOfScreen, shorterSide * marginPercentOfScreen);
+        if (selectedWeaponImage != null)
+        {
+            RectTransform weaponRect = selectedWeaponImage.rectTransform;
+            anchorPosition = new Vector2(
+                weaponRect.anchoredPosition.x + weaponRect.sizeDelta.x,
+                weaponRect.anchoredPosition.y
+            );
+        }
+
+        ConfigureBottomLeftRect(inventoryHudRoot, anchorPosition, currentInventoryHudSize);
+
+        if (inventoryBackgroundImage == null)
+        {
+            Image image = inventoryHudRoot.GetComponent<Image>();
+            if (image == null)
+            {
+                image = inventoryHudRoot.gameObject.AddComponent<Image>();
+            }
+
+            inventoryBackgroundImage = image;
+            inventoryBackgroundImage.raycastTarget = false;
+            inventoryBackgroundImage.preserveAspect = false;
+        }
+
+        inventoryBackgroundImage.sprite = inventoryBackgroundSprite;
+        inventoryBackgroundImage.color = inventoryBackgroundSprite != null
+            ? new Color(1f, 1f, 1f, 0f)
+            : new Color(0f, 0f, 0f, 0.28f);
+
+        if (inventoryFrameOverlayImage == null)
+        {
+            Transform existingFrame = inventoryHudRoot.Find("InventoryFrameOverlay");
+            if (existingFrame != null)
+            {
+                inventoryFrameOverlayImage = existingFrame.GetComponent<Image>();
+            }
+
+            if (inventoryFrameOverlayImage == null)
+            {
+                GameObject frameObject = new GameObject("InventoryFrameOverlay", typeof(RectTransform), typeof(Image));
+                frameObject.transform.SetParent(inventoryHudRoot, false);
+                inventoryFrameOverlayImage = frameObject.GetComponent<Image>();
+            }
+        }
+
+        ConfigureCenterRect(inventoryFrameOverlayImage.rectTransform, Vector2.zero, currentInventoryHudSize);
+        inventoryFrameOverlayImage.sprite = inventoryBackgroundSprite;
+        inventoryFrameOverlayImage.color = inventoryBackgroundSprite != null
+            ? Color.white
+            : new Color(1f, 1f, 1f, 0f);
+        inventoryFrameOverlayImage.raycastTarget = false;
+        inventoryFrameOverlayImage.preserveAspect = false;
+        inventoryFrameOverlayImage.transform.SetAsLastSibling();
+
+        if (inventorySlotsRoot == null)
+        {
+            Transform existing = inventoryHudRoot.Find("InventorySlotsRoot");
+            if (existing != null)
+            {
+                inventorySlotsRoot = existing.GetComponent<RectTransform>();
+            }
+
+            if (inventorySlotsRoot == null)
+            {
+                GameObject slotsRootObject = new GameObject("InventorySlotsRoot", typeof(RectTransform));
+                slotsRootObject.transform.SetParent(inventoryHudRoot, false);
+                inventorySlotsRoot = slotsRootObject.GetComponent<RectTransform>();
+            }
+        }
+
+        Vector2 slotsAreaSize = new Vector2(
+            Mathf.Max(1f, currentInventoryHudSize.x),
+            Mathf.Max(1f, currentInventoryHudSize.y)
+        );
+        ConfigureCenterRect(inventorySlotsRoot, Vector2.zero, slotsAreaSize);
+
+        EnsureInventorySlotsUi();
+
+        if (inventoryFeedbackText == null)
+        {
+            Transform existingFeedback = inventoryHudRoot.Find("InventoryFeedbackText");
+            if (existingFeedback != null)
+            {
+                inventoryFeedbackText = existingFeedback.GetComponent<TextMeshProUGUI>();
+            }
+
+            if (inventoryFeedbackText == null)
+            {
+                GameObject feedbackObject = new GameObject("InventoryFeedbackText", typeof(RectTransform));
+                feedbackObject.transform.SetParent(inventoryHudRoot, false);
+                inventoryFeedbackText = feedbackObject.AddComponent<TextMeshProUGUI>();
+            }
+        }
+
+        RectTransform feedbackRect = inventoryFeedbackText.rectTransform;
+        feedbackRect.anchorMin = new Vector2(0.5f, 1f);
+        feedbackRect.anchorMax = new Vector2(0.5f, 1f);
+        feedbackRect.pivot = new Vector2(0.5f, 0f);
+        feedbackRect.anchoredPosition = new Vector2(0f, 8f);
+        feedbackRect.sizeDelta = new Vector2(Mathf.Max(220f, currentInventoryHudSize.x), 38f * Mathf.Max(1f, currentInventoryHudSize.y / 220f));
+
+        inventoryFeedbackText.alignment = TextAlignmentOptions.Center;
+        inventoryFeedbackText.fontSize = Mathf.RoundToInt(20f * Mathf.Max(1f, currentInventoryHudSize.y / 220f));
+        inventoryFeedbackText.color = inventoryFeedbackColor;
+        inventoryFeedbackText.raycastTarget = false;
+        inventoryFeedbackText.text = string.Empty;
+
+        if (inventoryFeedbackText.font == null && circleText != null)
+        {
+            inventoryFeedbackText.font = circleText.font;
+        }
+    }
+
+    private void EnsureInventorySlotsUi()
+    {
+        if (inventorySlotsRoot == null)
+        {
+            return;
+        }
+
+        const int totalSlots = PlayerInventory.MaxSlots;
+        if (inventorySlotUis.Length == totalSlots)
+        {
+            LayoutInventorySlots();
+            return;
+        }
+
+        for (int i = inventorySlotsRoot.childCount - 1; i >= 0; i--)
+        {
+            Destroy(inventorySlotsRoot.GetChild(i).gameObject);
+        }
+
+        inventorySlotUis = new InventorySlotUi[totalSlots];
+        for (int i = 0; i < totalSlots; i++)
+        {
+            GameObject slotObject = new GameObject($"Slot_{i + 1}", typeof(RectTransform), typeof(Image));
+            slotObject.transform.SetParent(inventorySlotsRoot, false);
+
+            Image slotBg = slotObject.GetComponent<Image>();
+            slotBg.raycastTarget = false;
+            slotBg.color = inventoryUnlockedColor;
+
+            GameObject iconObject = new GameObject("Icon", typeof(RectTransform), typeof(Image));
+            iconObject.transform.SetParent(slotObject.transform, false);
+            Image iconImage = iconObject.GetComponent<Image>();
+            iconImage.raycastTarget = false;
+            iconImage.preserveAspect = true;
+
+            GameObject lockObject = new GameObject("Lock", typeof(RectTransform), typeof(Image));
+            lockObject.transform.SetParent(slotObject.transform, false);
+            Image lockImage = lockObject.GetComponent<Image>();
+            lockImage.raycastTarget = false;
+            lockImage.preserveAspect = true;
+
+            inventorySlotUis[i] = new InventorySlotUi
+            {
+                root = slotObject.GetComponent<RectTransform>(),
+                background = slotBg,
+                icon = iconImage,
+                lockImage = lockImage,
+                selectionOutline = null
+            };
+        }
+
+        LayoutInventorySlots();
+    }
+
+    private void LayoutInventorySlots()
+    {
+        if (inventorySlotsRoot == null || inventorySlotUis.Length == 0)
+        {
+            return;
+        }
+
+        const int columns = 6;
+        const int rows = 2;
+
+        Rect rect = inventorySlotsRoot.rect;
+        float availableWidth = Mathf.Max(1f, rect.width);
+        float availableHeight = Mathf.Max(1f, rect.height);
+
+        float slotWidth = Mathf.Max(16f, availableWidth / columns);
+        float slotHeight = Mathf.Max(16f, availableHeight / rows);
+        float slotSize = Mathf.Min(slotWidth, slotHeight);
+
+        float gridWidth = columns * slotSize;
+        float gridHeight = rows * slotSize;
+        float startX = -gridWidth * 0.5f;
+        float startY = gridHeight * 0.5f;
+
+        for (int i = 0; i < inventorySlotUis.Length; i++)
+        {
+            int col = i % columns;
+            int row = i / columns;
+
+            float x = startX + (col * slotSize);
+            float y = startY - (row * slotSize);
+
+            RectTransform slotRect = inventorySlotUis[i].root;
+            slotRect.anchorMin = new Vector2(0.5f, 0.5f);
+            slotRect.anchorMax = new Vector2(0.5f, 0.5f);
+            slotRect.pivot = new Vector2(0f, 1f);
+            slotRect.anchoredPosition = new Vector2(x, y);
+            slotRect.sizeDelta = new Vector2(slotSize, slotSize);
+
+            ConfigureCenterRect(inventorySlotUis[i].icon.rectTransform, Vector2.zero, new Vector2(slotSize * 0.76f, slotSize * 0.76f));
+            ConfigureCenterRect(inventorySlotUis[i].lockImage.rectTransform, Vector2.zero, new Vector2(slotSize * 0.56f, slotSize * 0.56f));
+        }
+    }
+
+    private void UpdateInventoryHudDisplay()
+    {
+        EnsureInventoryHudReferences();
+
+        if (inventoryHudRoot == null)
+        {
+            return;
+        }
+
+        inventoryHudRoot.gameObject.SetActive(showInventoryHud);
+        if (!showInventoryHud)
+        {
+            return;
+        }
+
+        if (!TryResolveTrackedPlayer())
+        {
+            SetInventoryFeedback(string.Empty);
+            return;
+        }
+
+        PlayerInventory inventory = trackedPlayer.GetComponent<PlayerInventory>();
+        if (inventory == null)
+        {
+            SetInventoryFeedback(string.Empty);
+            return;
+        }
+
+        for (int i = 0; i < inventorySlotUis.Length; i++)
+        {
+            PlayerInventory.InventorySlotState slotState = inventory.GetSlotState(i);
+            InventorySlotUi slotUi = inventorySlotUis[i];
+
+            if (slotUi.background != null)
+            {
+                Color slotColor = slotState.unlocked ? inventoryUnlockedColor : inventoryLockedColor;
+                if (slotState.selected)
+                {
+                    slotColor = inventorySelectedColor;
+                }
+
+                slotUi.background.color = slotColor;
+            }
+
+            if (slotUi.icon != null)
+            {
+                slotUi.icon.sprite = slotState.occupied && slotState.item != null ? slotState.item.Icon : null;
+                slotUi.icon.enabled = slotUi.icon.sprite != null;
+            }
+
+            if (slotUi.lockImage != null)
+            {
+                slotUi.lockImage.sprite = inventoryLockSprite;
+                slotUi.lockImage.enabled = !slotState.unlocked && inventoryLockSprite != null;
+            }
+
+            if (slotUi.selectionOutline != null)
+            {
+                slotUi.selectionOutline.enabled = false;
+            }
+        }
+
+        bool hasRecentFailure = !string.IsNullOrWhiteSpace(inventory.LastFailureReason)
+            && Time.unscaledTime - inventory.LastFailureTimestamp <= inventoryFeedbackDuration;
+
+        if (!hasRecentFailure)
+        {
+            SetInventoryFeedback(string.Empty);
+            return;
+        }
+
+        string message = inventory.LastFailureReason == "No free unlocked slots."
+            ? "Inventario lleno"
+            : string.Empty;
+
+        SetInventoryFeedback(message);
+    }
+
+    private void SetInventoryFeedback(string message)
+    {
+        if (inventoryFeedbackText == null)
+        {
+            return;
+        }
+
+        inventoryFeedbackText.text = message ?? string.Empty;
+        inventoryFeedbackText.enabled = !string.IsNullOrWhiteSpace(inventoryFeedbackText.text);
     }
 
     private void UpdateVitalsHudDisplay()
@@ -635,6 +1003,26 @@ public class CircleUI : MonoBehaviour
         return pool[safeIndex];
     }
 
+    private float GetCurrentWeaponAspectRatio()
+    {
+        if (selectedWeaponImage != null && selectedWeaponImage.sprite != null)
+        {
+            return GetSpriteAspectRatio(selectedWeaponImage.sprite);
+        }
+
+        return weaponSize.y > 0f ? weaponSize.x / weaponSize.y : 1f;
+    }
+
+    private static float GetSpriteAspectRatio(Sprite sprite)
+    {
+        if (sprite == null || sprite.rect.height <= 0f)
+        {
+            return 1f;
+        }
+
+        return sprite.rect.width / sprite.rect.height;
+    }
+
     private static void ConfigureTopLeftRect(RectTransform rect, Vector2 anchoredPosition, Vector2 size)
     {
         if (rect == null)
@@ -645,6 +1033,34 @@ public class CircleUI : MonoBehaviour
         rect.anchorMin = new Vector2(0f, 1f);
         rect.anchorMax = new Vector2(0f, 1f);
         rect.pivot = new Vector2(0f, 1f);
+        rect.anchoredPosition = anchoredPosition;
+        rect.sizeDelta = size;
+    }
+
+    private static void ConfigureBottomLeftRect(RectTransform rect, Vector2 anchoredPosition, Vector2 size)
+    {
+        if (rect == null)
+        {
+            return;
+        }
+
+        rect.anchorMin = new Vector2(0f, 0f);
+        rect.anchorMax = new Vector2(0f, 0f);
+        rect.pivot = new Vector2(0f, 0f);
+        rect.anchoredPosition = anchoredPosition;
+        rect.sizeDelta = size;
+    }
+
+    private static void ConfigureCenterRect(RectTransform rect, Vector2 anchoredPosition, Vector2 size)
+    {
+        if (rect == null)
+        {
+            return;
+        }
+
+        rect.anchorMin = new Vector2(0.5f, 0.5f);
+        rect.anchorMax = new Vector2(0.5f, 0.5f);
+        rect.pivot = new Vector2(0.5f, 0.5f);
         rect.anchoredPosition = anchoredPosition;
         rect.sizeDelta = size;
     }
@@ -741,4 +1157,13 @@ public class CircleUI : MonoBehaviour
         pool[index] = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
     }
 #endif
+
+    private struct InventorySlotUi
+    {
+        public RectTransform root;
+        public Image background;
+        public Image icon;
+        public Image lockImage;
+        public Outline selectionOutline;
+    }
 }

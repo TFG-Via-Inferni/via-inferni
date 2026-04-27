@@ -10,6 +10,8 @@ public class PlayerInventory : MonoBehaviour
     private readonly InventoryItemDefinition[] slots = new InventoryItemDefinition[MaxSlots];
     private PlayerStats playerStats;
     private int selectedSlotIndex;
+    private string lastFailureReason = string.Empty;
+    private float lastFailureTimestamp = -999f;
 
     [Header("Debug")]
     [SerializeField] private bool enableDebugItemInjection;
@@ -21,6 +23,8 @@ public class PlayerInventory : MonoBehaviour
     public event Action<int> OnSelectedSlotChanged;
 
     public int SelectedSlotIndex => selectedSlotIndex;
+    public string LastFailureReason => lastFailureReason;
+    public float LastFailureTimestamp => lastFailureTimestamp;
 
     private void Awake()
     {
@@ -85,17 +89,20 @@ public class PlayerInventory : MonoBehaviour
         if (item == null)
         {
             reason = "Item is null.";
+            RegisterFailure(reason);
             return false;
         }
 
         if (!item.IsValid(out reason))
         {
+            RegisterFailure(reason);
             return false;
         }
 
         if (ContainsItemId(item.ItemId))
         {
             reason = "Item already exists in inventory (unique non-stack rule).";
+            RegisterFailure(reason);
             return false;
         }
 
@@ -103,10 +110,12 @@ public class PlayerInventory : MonoBehaviour
         if (freeSlotIndex < 0)
         {
             reason = "No free unlocked slots.";
+            RegisterFailure(reason);
             return false;
         }
 
         slots[freeSlotIndex] = item;
+        ClearFailure();
         OnInventoryChanged?.Invoke();
         return true;
     }
@@ -119,12 +128,14 @@ public class PlayerInventory : MonoBehaviour
         if (!IsValidSlotIndex(selectedSlotIndex))
         {
             reason = "Selected slot index is invalid.";
+            RegisterFailure(reason);
             return false;
         }
 
         if (!IsUnlocked(selectedSlotIndex))
         {
             reason = "Selected slot is locked.";
+            RegisterFailure(reason);
             return false;
         }
 
@@ -132,10 +143,12 @@ public class PlayerInventory : MonoBehaviour
         if (current == null)
         {
             reason = "Selected slot is empty.";
+            RegisterFailure(reason);
             return false;
         }
 
         slots[selectedSlotIndex] = null;
+        ClearFailure();
         droppedItem = current;
         OnInventoryChanged?.Invoke();
         return true;
@@ -218,6 +231,18 @@ public class PlayerInventory : MonoBehaviour
     private bool IsUnlocked(int slotIndex)
     {
         return slotIndex >= 0 && slotIndex < GetUnlockedSlotCount();
+    }
+
+    private void RegisterFailure(string reason)
+    {
+        lastFailureReason = reason ?? string.Empty;
+        lastFailureTimestamp = Time.unscaledTime;
+    }
+
+    private void ClearFailure()
+    {
+        lastFailureReason = string.Empty;
+        lastFailureTimestamp = -999f;
     }
 
     private bool TryAddNextDebugItem()
