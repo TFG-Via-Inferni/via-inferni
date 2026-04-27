@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using UnityEngine.InputSystem;
 
 [DisallowMultipleComponent]
 public class PlayerInventory : MonoBehaviour
@@ -10,6 +11,12 @@ public class PlayerInventory : MonoBehaviour
     private PlayerStats playerStats;
     private int selectedSlotIndex;
 
+    [Header("Debug")]
+    [SerializeField] private bool enableDebugItemInjection;
+    [SerializeField] private InventoryItemDefinition[] debugItemPool = Array.Empty<InventoryItemDefinition>();
+    [SerializeField] private Key debugAddItemKey = Key.F6;
+    private int debugNextItemIndex;
+
     public event Action OnInventoryChanged;
     public event Action<int> OnSelectedSlotChanged;
 
@@ -18,6 +25,27 @@ public class PlayerInventory : MonoBehaviour
     private void Awake()
     {
         playerStats = GetComponent<PlayerStats>();
+    }
+
+    private void Update()
+    {
+        if (!enableDebugItemInjection)
+        {
+            return;
+        }
+
+        Keyboard keyboard = Keyboard.current;
+        if (keyboard == null)
+        {
+            return;
+        }
+
+        if (!keyboard[debugAddItemKey].wasPressedThisFrame)
+        {
+            return;
+        }
+
+        TryAddNextDebugItem();
     }
 
     public int GetUnlockedSlotCount()
@@ -190,6 +218,38 @@ public class PlayerInventory : MonoBehaviour
     private bool IsUnlocked(int slotIndex)
     {
         return slotIndex >= 0 && slotIndex < GetUnlockedSlotCount();
+    }
+
+    private bool TryAddNextDebugItem()
+    {
+        if (debugItemPool == null || debugItemPool.Length == 0)
+        {
+            Debug.LogWarning("PlayerInventory debug: no debug items configured.");
+            return false;
+        }
+
+        int attempts = debugItemPool.Length;
+        while (attempts > 0)
+        {
+            InventoryItemDefinition candidate = debugItemPool[debugNextItemIndex];
+            debugNextItemIndex = (debugNextItemIndex + 1) % debugItemPool.Length;
+            attempts--;
+
+            if (candidate == null)
+            {
+                continue;
+            }
+
+            if (TryAddItem(candidate, out string reason))
+            {
+                Debug.Log($"PlayerInventory debug: added '{candidate.DisplayName}' ({candidate.ItemId}).");
+                return true;
+            }
+
+            Debug.LogWarning($"PlayerInventory debug: could not add '{candidate.name}'. Reason: {reason}");
+        }
+
+        return false;
     }
 
     [Serializable]

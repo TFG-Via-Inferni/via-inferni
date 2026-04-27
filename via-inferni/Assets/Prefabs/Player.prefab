@@ -151,6 +151,7 @@ GameObject:
   - component: {fileID: 2721176194322675229}
   - component: {fileID: 6006702707038135300}
   - component: {fileID: 4335573628349318775}
+  - component: {fileID: 9094118240366613217}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -331,6 +332,22 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 46409f3272e8d7d4e9bcaaea2930212c, type: 2}
   - {fileID: 11400000, guid: cef17f84cc166c845a75832aab684440, type: 2}
   - {fileID: 11400000, guid: 2cfedaa41c3d4764ba4587ade60a20ff, type: 2}
+--- !u!114 &9094118240366613217
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6324667708166986596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7121ef0e236612d43be76f11c7e050da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInventory
+  enableDebugItemInjection: 1
+  debugItemPool:
+  - {fileID: 11400000, guid: dd9abf91b923d214b91e88fb16f9f921, type: 2}
+  debugAddItemKey: 99
 --- !u!1 &7601860083779843958
 GameObject:
   m_ObjectHideFlags: 0
