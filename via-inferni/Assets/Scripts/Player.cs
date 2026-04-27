@@ -34,6 +34,8 @@ public class Player : MonoBehaviour, IDamageable
 
     [Header("Inventory Input")]
     [SerializeField] private float pickupInteractionRadius = 1.5f;
+    [SerializeField] private float dropSpawnDistance = 0.8f;
+    [SerializeField] private GameObject inventoryPickupPrefab;
 
     private Rigidbody2D rb;
     private Vector2 movement;
@@ -261,7 +263,7 @@ public class Player : MonoBehaviour, IDamageable
 
         if (keyboard.qKey.wasPressedThisFrame)
         {
-            playerInventory.TryDropSelected(out _, out _);
+            TryDropSelectedInventoryItem();
         }
 
         bool interactPressed = (interactAction != null && interactAction.WasPressedThisFrame()) || keyboard.eKey.wasPressedThisFrame;
@@ -317,6 +319,25 @@ public class Player : MonoBehaviour, IDamageable
         }
 
         return nearestPickup.TryPickup(playerInventory, out _);
+    }
+
+    private bool TryDropSelectedInventoryItem()
+    {
+        if (playerInventory == null)
+        {
+            return false;
+        }
+
+        if (!playerInventory.TryDropSelected(out InventoryItemDefinition droppedItem, out _))
+        {
+            return false;
+        }
+
+        Vector3 spawnOffset = (Vector3)(facingDirection.sqrMagnitude > 0.001f ? facingDirection.normalized : Vector2.right) * Mathf.Max(0.1f, dropSpawnDistance);
+        Vector3 spawnPosition = transform.position + spawnOffset;
+
+        WorldInventoryPickup.Spawn(droppedItem, spawnPosition, inventoryPickupPrefab);
+        return true;
     }
 
     public bool TrySwapForm()

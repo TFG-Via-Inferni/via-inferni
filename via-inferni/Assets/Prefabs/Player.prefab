@@ -263,8 +263,6 @@ MonoBehaviour:
   moveSpeed: 5
   acceleration: 40
   deceleration: 45
-  maxHealth: 100
-  currentHealth: 100
   startingForm: 0
   swapCooldown: 1
   meleeVisual: {fileID: 7601860083779843958}
@@ -273,6 +271,10 @@ MonoBehaviour:
   playerActionMapName: Player
   moveActionName: Move
   swapActionName: Swap
+  interactActionName: Interact
+  pickupInteractionRadius: 1.5
+  dropSpawnDistance: 0.8
+  inventoryPickupPrefab: {fileID: 9045097665042941129, guid: e19ef8052403d9848bf6d21049a93f7a, type: 3}
 --- !u!114 &6006702707038135300
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -285,6 +287,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed121a486426f4c4399c24bde9d3da6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
+  maxHealth: 12
   damageMultiplier: 1
   critChance: 0.1
   dodgeChance: 0.05
@@ -299,9 +302,8 @@ MonoBehaviour:
   - 11
   - 14
   moveSpeedMultiplier: 1
-  luckMultiplier: 1
   inventoryCapacity: 3
-  coins: 0
+  collectedSoul: 0
 --- !u!114 &4335573628349318775
 MonoBehaviour:
   m_ObjectHideFlags: 0
