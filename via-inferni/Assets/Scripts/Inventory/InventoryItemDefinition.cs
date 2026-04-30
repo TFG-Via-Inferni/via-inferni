@@ -35,7 +35,7 @@ public class InventoryItemDefinition : ScriptableObject
     {
         itemId = InventoryItemValidationUtility.NormalizeId(itemId);
 
-        // En este sistema todos los objetos son unicos y no stackeables.
+        // En este sistema los objetos no se apilan en una sola ranura; cada copia ocupa su propio hueco.
         if (isStackable)
         {
             isStackable = false;

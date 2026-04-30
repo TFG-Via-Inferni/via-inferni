@@ -99,13 +99,6 @@ public class PlayerInventory : MonoBehaviour
             return false;
         }
 
-        if (ContainsItemId(item.ItemId))
-        {
-            reason = "Item already exists in inventory (unique non-stack rule).";
-            RegisterFailure(reason);
-            return false;
-        }
-
         int freeSlotIndex = FindFirstFreeUnlockedSlotIndex();
         if (freeSlotIndex < 0)
         {
@@ -185,30 +178,6 @@ public class PlayerInventory : MonoBehaviour
         }
 
         return slots[slotIndex];
-    }
-
-    private bool ContainsItemId(string itemId)
-    {
-        if (string.IsNullOrWhiteSpace(itemId))
-        {
-            return false;
-        }
-
-        for (int i = 0; i < MaxSlots; i++)
-        {
-            InventoryItemDefinition current = slots[i];
-            if (current == null)
-            {
-                continue;
-            }
-
-            if (string.Equals(current.ItemId, itemId, StringComparison.Ordinal))
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private int FindFirstFreeUnlockedSlotIndex()
