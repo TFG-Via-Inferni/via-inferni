@@ -85,6 +85,16 @@ public class CircleManager : MonoBehaviour
 
     public bool TrySpawnGlobalEnemyDrop(Vector3 position, string sourceName = "Enemy")
     {
+        if (CurrentCircleDefinition != null)
+        {
+            float circleDropChance = Mathf.Clamp01(CurrentCircleDefinition.enemyDropChance);
+            if (Random.value <= circleDropChance && CurrentCircleDefinition.TryPickInventoryDrop(out InventoryItemDefinition circleItem))
+            {
+                WorldInventoryPickup.Spawn(circleItem, position);
+                return true;
+            }
+        }
+
         if (Random.value > Mathf.Clamp01(globalEnemyDropChance))
         {
             return false;

@@ -28,6 +28,18 @@ public class WeightedEnemyEntry
     }
 }
 
+[Serializable]
+public class WeightedInventoryDropEntry
+{
+    public InventoryItemDefinition itemDefinition;
+    [Min(0f)] public float weight = 1f;
+
+    public bool IsValid()
+    {
+        return itemDefinition != null && itemDefinition.IsValid(out _);
+    }
+}
+
 [CreateAssetMenu(fileName = "CircleDefinition", menuName = "Scriptable Objects/Circle Definition")]
 public class CircleDefinition : ScriptableObject
 {
@@ -44,6 +56,11 @@ public class CircleDefinition : ScriptableObject
 
     [Tooltip("Pool de enemigos ponderado para este círculo.")]
     public WeightedEnemyEntry[] enemyPool;
+
+    [Header("Inventory Drops")]
+    [Range(0f, 1f)] public float enemyDropChance = 1f;
+    [Tooltip("Pool de objetos de inventario ponderado para este círculo.")]
+    public WeightedInventoryDropEntry[] inventoryDropPool;
 
     public RoomScriptable[] GetRoomPoolOrEmpty()
     {
@@ -151,5 +168,47 @@ public class CircleDefinition : ScriptableObject
     {
         WeightedEnemyEntry entry = PickEnemyEntry(roomType);
         return entry != null ? entry.enemyPrefab : null;
+    }
+
+    public bool TryPickInventoryDrop(out InventoryItemDefinition itemDefinition)
+    {
+        itemDefinition = null;
+
+        if (inventoryDropPool == null || inventoryDropPool.Length == 0)
+        {
+            return false;
+        }
+
+        List<WeightedInventoryDropEntry> validEntries = inventoryDropPool
+            .Where(entry => entry != null && entry.IsValid())
+            .ToList();
+
+        if (validEntries.Count == 0)
+        {
+            return false;
+        }
+
+        float totalWeight = validEntries.Sum(entry => Mathf.Max(0f, entry.weight));
+        if (totalWeight <= 0f)
+        {
+            itemDefinition = validEntries[UnityEngine.Random.Range(0, validEntries.Count)].itemDefinition;
+            return itemDefinition != null;
+        }
+
+        float roll = UnityEngine.Random.value * totalWeight;
+        float cumulative = 0f;
+
+        foreach (WeightedInventoryDropEntry entry in validEntries)
+        {
+            cumulative += Mathf.Max(0f, entry.weight);
+            if (roll <= cumulative)
+            {
+                itemDefinition = entry.itemDefinition;
+                return itemDefinition != null;
+            }
+        }
+
+        itemDefinition = validEntries[validEntries.Count - 1].itemDefinition;
+        return itemDefinition != null;
     }
 }
