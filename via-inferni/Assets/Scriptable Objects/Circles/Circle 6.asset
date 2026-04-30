@@ -33,3 +33,45 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b2e4f19810ae034419ffc252d70f7297, type: 2}
   - {fileID: 11400000, guid: 0c6607bd71ddea34b8a5ea9e1b014d58, type: 2}
   enemyPool: []
+  enemyDropChance: 1
+  inventoryDropPool:
+  - itemDefinition: {fileID: 11400000, guid: ec084e978c07f2c41bfcda823352454f, type: 2}
+    weight: 3.2
+  - itemDefinition: {fileID: 11400000, guid: 21fa2b538fc36b44982244899b927f3c, type: 2}
+    weight: 4.8
+  - itemDefinition: {fileID: 11400000, guid: 4ce0d7621a13c1f428d150588f4e6f3e, type: 2}
+    weight: 5.6
+  - itemDefinition: {fileID: 11400000, guid: 3c063efb70925e446a501f532a5e9177, type: 2}
+    weight: 6.4
+  - itemDefinition: {fileID: 11400000, guid: cf703fbda487be64fb16f09b7f3ee88e, type: 2}
+    weight: 3.2
+  - itemDefinition: {fileID: 11400000, guid: 3add62938df4f4143a871df3ada58839, type: 2}
+    weight: 4.8
+  - itemDefinition: {fileID: 11400000, guid: ce21bbf247f3c554c875ef5eaaa8da39, type: 2}
+    weight: 5.6
+  - itemDefinition: {fileID: 11400000, guid: 1da41009d9cb4af49bd4c91aacc31a26, type: 2}
+    weight: 6.4
+  - itemDefinition: {fileID: 11400000, guid: e31eaeab2e63b83409c6a07249a2c77c, type: 2}
+    weight: 3.2
+  - itemDefinition: {fileID: 11400000, guid: 0b19ff70ffc210f4a91ae3a62f951f41, type: 2}
+    weight: 4.8
+  - itemDefinition: {fileID: 11400000, guid: 9cc9ed2491409ec4395bd4a598595b12, type: 2}
+    weight: 5.6
+  - itemDefinition: {fileID: 11400000, guid: 639b72353f13d7341b2ecd13df572e6e, type: 2}
+    weight: 6.4
+  - itemDefinition: {fileID: 11400000, guid: 8adda461efecf524a9c0cd0b1443229c, type: 2}
+    weight: 3.2
+  - itemDefinition: {fileID: 11400000, guid: 4ee390f37ad85264da5159cc7498c3b4, type: 2}
+    weight: 4.8
+  - itemDefinition: {fileID: 11400000, guid: 6998a3ebd6af41542a5587760153ec90, type: 2}
+    weight: 5.6
+  - itemDefinition: {fileID: 11400000, guid: 130079e0d12b224439ed115a9afdb7fb, type: 2}
+    weight: 6.4
+  - itemDefinition: {fileID: 11400000, guid: 0f2381bb7a9df544482624409980ccb4, type: 2}
+    weight: 3.2
+  - itemDefinition: {fileID: 11400000, guid: 0c2b1d9c10352e44fba2a316dbbea095, type: 2}
+    weight: 4.8
+  - itemDefinition: {fileID: 11400000, guid: d912361e3e75a6c43aae3c65ded2caaf, type: 2}
+    weight: 5.6
+  - itemDefinition: {fileID: 11400000, guid: 8378f783794678d44926037ee729b794, type: 2}
+    weight: 6.4

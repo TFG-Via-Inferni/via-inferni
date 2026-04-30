@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventoryItemDefinition
   itemId: stat_maxhealth_gold
   displayName: "Max Health \u2014 Gold"
-  icon: {fileID: 0}
+  icon: {fileID: -977909187, guid: 80b2732509e76de4cb52a304d22f4774, type: 3}
   itemType: 0
   isStackable: 0
   statBoost:
