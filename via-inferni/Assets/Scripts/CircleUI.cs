@@ -75,6 +75,7 @@ public class CircleUI : MonoBehaviour
     private RectTransform vitalsHudRoot;
     private Image soulCruetImage;
     private RectTransform heartsRoot;
+    private Image[] heartBackgroundImages = new Image[0];
     private Image[] heartOverlayImages = new Image[0];
     private float currentHeartSize;
     private float currentHeartSpacing;
@@ -893,16 +894,24 @@ public class CircleUI : MonoBehaviour
             return;
         }
 
-        if (heartOverlayImages.Length != heartSlots)
+        if (heartBackgroundImages.Length > heartSlots)
         {
-            for (int i = heartsRoot.childCount - 1; i >= 0; i--)
+            for (int i = heartSlots; i < heartBackgroundImages.Length; i++)
             {
-                Destroy(heartsRoot.GetChild(i).gameObject);
+                if (i < heartsRoot.childCount)
+                {
+                    heartsRoot.GetChild(i).gameObject.SetActive(false);
+                }
             }
+        }
 
-            heartOverlayImages = new Image[heartSlots];
+        if (heartBackgroundImages.Length < heartSlots)
+        {
+            int previousCount = heartBackgroundImages.Length;
+            Array.Resize(ref heartBackgroundImages, heartSlots);
+            Array.Resize(ref heartOverlayImages, heartSlots);
 
-            for (int i = 0; i < heartSlots; i++)
+            for (int i = previousCount; i < heartSlots; i++)
             {
                 GameObject heartObject = new GameObject($"Heart_{i}", typeof(RectTransform), typeof(Image));
                 heartObject.transform.SetParent(heartsRoot, false);
@@ -918,27 +927,36 @@ public class CircleUI : MonoBehaviour
                 Image overlay = overlayObject.GetComponent<Image>();
                 overlay.raycastTarget = false;
                 overlay.preserveAspect = true;
+                heartBackgroundImages[i] = heartBackground;
                 heartOverlayImages[i] = overlay;
             }
         }
 
-        for (int i = 0; i < heartsRoot.childCount; i++)
+        for (int i = 0; i < heartSlots; i++)
         {
             RectTransform heartRect = heartsRoot.GetChild(i).GetComponent<RectTransform>();
+            if (!heartRect.gameObject.activeSelf)
+            {
+                heartRect.gameObject.SetActive(true);
+            }
+
             ConfigureTopLeftRect(
                 heartRect,
                 new Vector2(i * (currentHeartSize + currentHeartSpacing), 0f),
                 new Vector2(currentHeartSize, currentHeartSize)
             );
 
-            Image bg = heartRect.GetComponent<Image>();
+            Image bg = i < heartBackgroundImages.Length ? heartBackgroundImages[i] : heartRect.GetComponent<Image>();
             if (bg != null)
             {
                 bg.sprite = heartEmptySprite;
                 bg.enabled = heartEmptySprite != null;
             }
 
-            RectTransform overlayRect = heartRect.childCount > 0 ? heartRect.GetChild(0).GetComponent<RectTransform>() : null;
+            Image overlayImage = i < heartOverlayImages.Length ? heartOverlayImages[i] : null;
+            RectTransform overlayRect = overlayImage != null
+                ? overlayImage.rectTransform
+                : (heartRect.childCount > 0 ? heartRect.GetChild(0).GetComponent<RectTransform>() : null);
             if (overlayRect != null)
             {
                 ConfigureTopLeftRect(overlayRect, Vector2.zero, new Vector2(currentHeartSize, currentHeartSize));
