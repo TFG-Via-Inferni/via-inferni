@@ -77,7 +77,8 @@ public class PlayerInventory : MonoBehaviour
 
     public int SelectNextSlotCyclic()
     {
-        selectedSlotIndex = (selectedSlotIndex + 1) % MaxSlots;
+        int unlockedCount = Mathf.Clamp(GetUnlockedSlotCount(), 1, MaxSlots);
+        selectedSlotIndex = (selectedSlotIndex + 1) % unlockedCount;
         OnSelectedSlotChanged?.Invoke(selectedSlotIndex);
         return selectedSlotIndex;
     }
