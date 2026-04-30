@@ -54,6 +54,17 @@ public class CircleManager : MonoBehaviour
             {
                 Debug.LogError("MapGenerator.instance es null!");
             }
+            
+            // Aumentar la capacidad de inventario del jugador en +1 al avanzar de círculo
+            Player player = UnityEngine.Object.FindFirstObjectByType<Player>();
+            if (player != null && player.Stats != null)
+            {
+                bool increased = player.Stats.IncreaseInventoryCapacity(1);
+                if (increased)
+                {
+                    Debug.Log("CircleManager: capacidad de inventario aumentada en +1.");
+                }
+            }
         }
         else
         {
