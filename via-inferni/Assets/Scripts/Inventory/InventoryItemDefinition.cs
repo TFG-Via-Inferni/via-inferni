@@ -71,6 +71,16 @@ public class InventoryItemDefinition : ScriptableObject
             return tierIndex;
         }
 
+        if (statType == StatBoostType.MoveSpeedMultiplier)
+        {
+            return tierIndex * 0.05f;
+        }
+
+        if (statType == StatBoostType.CritChance || statType == StatBoostType.DodgeChance)
+        {
+            return tierIndex * 0.025f;
+        }
+
         return tierIndex * 0.1f;
     }
 }
