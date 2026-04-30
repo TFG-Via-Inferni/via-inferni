@@ -155,11 +155,8 @@ public class PlayerStats : MonoBehaviour
             return;
         }
 
-        float previousMaxHealth = maxHealth;
         maxHealth = Mathf.Max(1f, maxHealth + (heartsDelta * 2f));
-
-        float maxHealthDelta = maxHealth - previousMaxHealth;
-        currentHealth = Mathf.Clamp(currentHealth + maxHealthDelta, 0f, maxHealth);
+        currentHealth = Mathf.Min(currentHealth, maxHealth);
     }
 
     public void AdjustDamageMultiplier(float delta)
