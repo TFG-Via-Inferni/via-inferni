@@ -115,6 +115,7 @@ public class PlayerInventory : MonoBehaviour
         }
 
         slots[freeSlotIndex] = item;
+    ApplyItemEffect(item);
         ClearFailure();
         OnInventoryChanged?.Invoke();
         return true;
@@ -148,6 +149,7 @@ public class PlayerInventory : MonoBehaviour
         }
 
         slots[selectedSlotIndex] = null;
+    RemoveItemEffect(current);
         ClearFailure();
         droppedItem = current;
         OnInventoryChanged?.Invoke();
@@ -243,6 +245,72 @@ public class PlayerInventory : MonoBehaviour
     {
         lastFailureReason = string.Empty;
         lastFailureTimestamp = -999f;
+    }
+
+    private void ApplyItemEffect(InventoryItemDefinition item)
+    {
+        if (playerStats == null || item == null)
+        {
+            return;
+        }
+
+        if (item.ItemType != InventoryItemType.StatBoost)
+        {
+            return;
+        }
+
+        InventoryStatBoostData boost = item.StatBoost;
+        switch (boost.statType)
+        {
+            case StatBoostType.MaxHealth:
+                playerStats.AdjustMaxHealthHearts(Mathf.RoundToInt(boost.magnitude));
+                break;
+            case StatBoostType.DamageMultiplier:
+                playerStats.AdjustDamageMultiplier(boost.magnitude);
+                break;
+            case StatBoostType.MoveSpeedMultiplier:
+                playerStats.AdjustMoveSpeedMultiplier(boost.magnitude);
+                break;
+            case StatBoostType.CritChance:
+                playerStats.AdjustCritChance(boost.magnitude);
+                break;
+            case StatBoostType.DodgeChance:
+                playerStats.AdjustDodgeChance(boost.magnitude);
+                break;
+        }
+    }
+
+    private void RemoveItemEffect(InventoryItemDefinition item)
+    {
+        if (playerStats == null || item == null)
+        {
+            return;
+        }
+
+        if (item.ItemType != InventoryItemType.StatBoost)
+        {
+            return;
+        }
+
+        InventoryStatBoostData boost = item.StatBoost;
+        switch (boost.statType)
+        {
+            case StatBoostType.MaxHealth:
+                playerStats.AdjustMaxHealthHearts(-Mathf.RoundToInt(boost.magnitude));
+                break;
+            case StatBoostType.DamageMultiplier:
+                playerStats.AdjustDamageMultiplier(-boost.magnitude);
+                break;
+            case StatBoostType.MoveSpeedMultiplier:
+                playerStats.AdjustMoveSpeedMultiplier(-boost.magnitude);
+                break;
+            case StatBoostType.CritChance:
+                playerStats.AdjustCritChance(-boost.magnitude);
+                break;
+            case StatBoostType.DodgeChance:
+                playerStats.AdjustDodgeChance(-boost.magnitude);
+                break;
+        }
     }
 
     private bool TryAddNextDebugItem()

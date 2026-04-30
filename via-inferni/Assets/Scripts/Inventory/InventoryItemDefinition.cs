@@ -48,7 +48,7 @@ public class InventoryItemDefinition : ScriptableObject
                 statBoost.statType = StatBoostType.MaxHealth;
             }
 
-            statBoost.magnitude = Mathf.Max(0f, statBoost.magnitude);
+            statBoost.magnitude = GetMagnitudeForTier(statBoost.statType, statBoost.tier);
         }
 
         if (itemType == InventoryItemType.Special)
@@ -60,5 +60,17 @@ public class InventoryItemDefinition : ScriptableObject
     public bool IsValid(out string reason)
     {
         return InventoryItemValidationUtility.ValidateDefinition(this, out reason);
+    }
+
+    private static float GetMagnitudeForTier(StatBoostType statType, ItemTier tier)
+    {
+        int tierIndex = Mathf.Clamp((int)tier + 1, 1, 4);
+
+        if (statType == StatBoostType.MaxHealth)
+        {
+            return tierIndex;
+        }
+
+        return tierIndex * 0.1f;
     }
 }

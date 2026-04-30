@@ -148,6 +148,60 @@ public class PlayerStats : MonoBehaviour
         return inventoryCapacity != previous;
     }
 
+    public void AdjustMaxHealthHearts(int heartsDelta)
+    {
+        if (heartsDelta == 0)
+        {
+            return;
+        }
+
+        float previousMaxHealth = maxHealth;
+        maxHealth = Mathf.Max(1f, maxHealth + (heartsDelta * 2f));
+
+        float maxHealthDelta = maxHealth - previousMaxHealth;
+        currentHealth = Mathf.Clamp(currentHealth + maxHealthDelta, 0f, maxHealth);
+    }
+
+    public void AdjustDamageMultiplier(float delta)
+    {
+        if (Mathf.Approximately(delta, 0f))
+        {
+            return;
+        }
+
+        damageMultiplier = Mathf.Max(0.01f, damageMultiplier + delta);
+    }
+
+    public void AdjustMoveSpeedMultiplier(float delta)
+    {
+        if (Mathf.Approximately(delta, 0f))
+        {
+            return;
+        }
+
+        moveSpeedMultiplier = Mathf.Max(0.01f, moveSpeedMultiplier + delta);
+    }
+
+    public void AdjustCritChance(float delta)
+    {
+        if (Mathf.Approximately(delta, 0f))
+        {
+            return;
+        }
+
+        critChance = Mathf.Clamp01(critChance + delta);
+    }
+
+    public void AdjustDodgeChance(float delta)
+    {
+        if (Mathf.Approximately(delta, 0f))
+        {
+            return;
+        }
+
+        dodgeChance = Mathf.Clamp01(dodgeChance + delta);
+    }
+
     /// <summary>
     /// Restore health by the given amount. Returns the actual amount healed.
     /// </summary>
