@@ -551,6 +551,11 @@ public class EnemyController : MonoBehaviour
         movement = Vector2.zero;
         DeactivateAI();
 
+        if (CircleManager.instance != null)
+        {
+            CircleManager.instance.TrySpawnGlobalEnemyDrop(transform.position, runtimeDefinition != null ? runtimeDefinition.displayName : gameObject.name);
+        }
+
         if (parentRoom != null)
         {
             parentRoom.OnEnemyDestroyed(this);

@@ -10,6 +10,10 @@ public class CircleManager : MonoBehaviour
     [SerializeField] private int maxCircles = 9;
     [SerializeField] private CircleDatabase circleDatabase;
 
+    [Header("Enemy Inventory Drops")]
+    [Range(0f, 1f)] [SerializeField] private float globalEnemyDropChance = 1f;
+    [SerializeField] private InventoryItemDefinition[] globalEnemyDropPool = new InventoryItemDefinition[0];
+
     public int CurrentCircle => currentCircle;
     public CircleDefinition CurrentCircleDefinition { get; private set; }
 
@@ -77,6 +81,53 @@ public class CircleManager : MonoBehaviour
             9 => "Ninth Circle - Treachery",
             _ => "Unknown"
         };
+    }
+
+    public bool TrySpawnGlobalEnemyDrop(Vector3 position, string sourceName = "Enemy")
+    {
+        if (Random.value > Mathf.Clamp01(globalEnemyDropChance))
+        {
+            return false;
+        }
+
+        InventoryItemDefinition item = PickGlobalEnemyDropItem();
+        if (item == null)
+        {
+            Debug.LogWarning($"CircleManager: no hay objetos válidos en el pool global de drops para {sourceName}.");
+            return false;
+        }
+
+        WorldInventoryPickup.Spawn(item, position);
+        return true;
+    }
+
+    private InventoryItemDefinition PickGlobalEnemyDropItem()
+    {
+        if (globalEnemyDropPool == null || globalEnemyDropPool.Length == 0)
+        {
+            return null;
+        }
+
+        int attempts = globalEnemyDropPool.Length;
+        while (attempts > 0)
+        {
+            InventoryItemDefinition candidate = globalEnemyDropPool[Random.Range(0, globalEnemyDropPool.Length)];
+            attempts--;
+
+            if (candidate == null)
+            {
+                continue;
+            }
+
+            if (!candidate.IsValid(out _))
+            {
+                continue;
+            }
+
+            return candidate;
+        }
+
+        return null;
     }
 
     private void RefreshCurrentCircleDefinition()
