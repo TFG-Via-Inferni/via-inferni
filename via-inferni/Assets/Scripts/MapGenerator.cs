@@ -111,6 +111,8 @@ public class MapGenerator : MonoBehaviour
 
     public void SetupDungeon()
     {
+        ClearWorldInventoryPickups();
+
         for (int i = 0; i < spawnedCells.Count; i++)
         {
             Destroy(spawnedCells[i].gameObject);
@@ -193,6 +195,18 @@ public class MapGenerator : MonoBehaviour
         InitializeMinimapFog();
         RoomManager.instance.SetUpRooms(spawnedCells);
         SpawnPlayer();
+    }
+
+    private static void ClearWorldInventoryPickups()
+    {
+        WorldInventoryPickup[] pickups = UnityEngine.Object.FindObjectsByType<WorldInventoryPickup>(FindObjectsSortMode.None);
+        for (int i = 0; i < pickups.Length; i++)
+        {
+            if (pickups[i] != null)
+            {
+                Destroy(pickups[i].gameObject);
+            }
+        }
     }
 
     private void InitializeMinimapFog()
