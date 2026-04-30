@@ -4,6 +4,8 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class WorldInventoryPickup : MonoBehaviour, IInventoryPickup
 {
+    private static readonly Vector3 DefaultPickupScale = new Vector3(0.75f, 0.75f, 1f);
+
     [Header("Pickup")]
     [SerializeField] private InventoryItemDefinition itemDefinition;
     [SerializeField] private bool destroyOnPickup = true;
@@ -83,6 +85,7 @@ public class WorldInventoryPickup : MonoBehaviour, IInventoryPickup
 
         GameObject pickupObject = new GameObject($"Pickup_{item.ItemId}");
         pickupObject.transform.position = position;
+        pickupObject.transform.localScale = DefaultPickupScale;
 
         SpriteRenderer renderer = pickupObject.AddComponent<SpriteRenderer>();
         renderer.sortingOrder = 25;
