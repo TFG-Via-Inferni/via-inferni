@@ -100,6 +100,18 @@ public class PlayerInventory : MonoBehaviour
             return false;
         }
 
+        // Check if this is a special item and if one is already active
+        if (item.ItemType == InventoryItemType.Special)
+        {
+            SpecialItemType specialType = SpecialItemManager.ParseSpecialEffectId(item.SpecialEffectId);
+            if (SpecialItemManager.Instance.IsSpecialTypeActive(specialType))
+            {
+                reason = $"A special item of type '{specialType}' is already active.";
+                RegisterFailure(reason);
+                return false;
+            }
+        }
+
         int freeSlotIndex = FindFirstFreeUnlockedSlotIndex();
         if (freeSlotIndex < 0)
         {
@@ -219,67 +231,83 @@ public class PlayerInventory : MonoBehaviour
 
     private void ApplyItemEffect(InventoryItemDefinition item)
     {
-        if (playerStats == null || item == null)
+        if (item == null)
         {
             return;
         }
 
-        if (item.ItemType != InventoryItemType.StatBoost)
+        if (item.ItemType == InventoryItemType.StatBoost)
         {
-            return;
-        }
+            if (playerStats == null)
+            {
+                return;
+            }
 
-        InventoryStatBoostData boost = item.StatBoost;
-        switch (boost.statType)
+            InventoryStatBoostData boost = item.StatBoost;
+            switch (boost.statType)
+            {
+                case StatBoostType.MaxHealth:
+                    playerStats.AdjustMaxHealthHearts(Mathf.RoundToInt(boost.magnitude));
+                    break;
+                case StatBoostType.DamageMultiplier:
+                    playerStats.AdjustDamageMultiplier(boost.magnitude);
+                    break;
+                case StatBoostType.MoveSpeedMultiplier:
+                    playerStats.AdjustMoveSpeedMultiplier(boost.magnitude);
+                    break;
+                case StatBoostType.CritChance:
+                    playerStats.AdjustCritChance(boost.magnitude);
+                    break;
+                case StatBoostType.DodgeChance:
+                    playerStats.AdjustDodgeChance(boost.magnitude);
+                    break;
+            }
+        }
+        else if (item.ItemType == InventoryItemType.Special)
         {
-            case StatBoostType.MaxHealth:
-                playerStats.AdjustMaxHealthHearts(Mathf.RoundToInt(boost.magnitude));
-                break;
-            case StatBoostType.DamageMultiplier:
-                playerStats.AdjustDamageMultiplier(boost.magnitude);
-                break;
-            case StatBoostType.MoveSpeedMultiplier:
-                playerStats.AdjustMoveSpeedMultiplier(boost.magnitude);
-                break;
-            case StatBoostType.CritChance:
-                playerStats.AdjustCritChance(boost.magnitude);
-                break;
-            case StatBoostType.DodgeChance:
-                playerStats.AdjustDodgeChance(boost.magnitude);
-                break;
+            SpecialItemType specialType = SpecialItemManager.ParseSpecialEffectId(item.SpecialEffectId);
+            SpecialItemManager.Instance.RegisterSpecial(specialType);
         }
     }
 
     private void RemoveItemEffect(InventoryItemDefinition item)
     {
-        if (playerStats == null || item == null)
+        if (item == null)
         {
             return;
         }
 
-        if (item.ItemType != InventoryItemType.StatBoost)
+        if (item.ItemType == InventoryItemType.StatBoost)
         {
-            return;
-        }
+            if (playerStats == null)
+            {
+                return;
+            }
 
-        InventoryStatBoostData boost = item.StatBoost;
-        switch (boost.statType)
+            InventoryStatBoostData boost = item.StatBoost;
+            switch (boost.statType)
+            {
+                case StatBoostType.MaxHealth:
+                    playerStats.AdjustMaxHealthHearts(-Mathf.RoundToInt(boost.magnitude));
+                    break;
+                case StatBoostType.DamageMultiplier:
+                    playerStats.AdjustDamageMultiplier(-boost.magnitude);
+                    break;
+                case StatBoostType.MoveSpeedMultiplier:
+                    playerStats.AdjustMoveSpeedMultiplier(-boost.magnitude);
+                    break;
+                case StatBoostType.CritChance:
+                    playerStats.AdjustCritChance(-boost.magnitude);
+                    break;
+                case StatBoostType.DodgeChance:
+                    playerStats.AdjustDodgeChance(-boost.magnitude);
+                    break;
+            }
+        }
+        else if (item.ItemType == InventoryItemType.Special)
         {
-            case StatBoostType.MaxHealth:
-                playerStats.AdjustMaxHealthHearts(-Mathf.RoundToInt(boost.magnitude));
-                break;
-            case StatBoostType.DamageMultiplier:
-                playerStats.AdjustDamageMultiplier(-boost.magnitude);
-                break;
-            case StatBoostType.MoveSpeedMultiplier:
-                playerStats.AdjustMoveSpeedMultiplier(-boost.magnitude);
-                break;
-            case StatBoostType.CritChance:
-                playerStats.AdjustCritChance(-boost.magnitude);
-                break;
-            case StatBoostType.DodgeChance:
-                playerStats.AdjustDodgeChance(-boost.magnitude);
-                break;
+            SpecialItemType specialType = SpecialItemManager.ParseSpecialEffectId(item.SpecialEffectId);
+            SpecialItemManager.Instance.UnregisterSpecial(specialType);
         }
     }
 

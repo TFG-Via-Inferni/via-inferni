@@ -31,3 +31,13 @@ public struct InventoryStatBoostData
     public ItemTier tier;
     public float magnitude;
 }
+
+public enum SpecialItemType
+{
+    None = 0,
+    Dash = 1,
+    Cloak = 2,
+    Shield = 3,
+    FullMap = 4,
+    CursedCoin = 5
+}
