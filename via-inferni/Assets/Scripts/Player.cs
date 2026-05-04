@@ -220,9 +220,14 @@ public class Player : MonoBehaviour, IDamageable
         {
             inputDir = Vector2.ClampMagnitude(movement, 1f);
         }
+        else if (isDashing)
+        {
+            // If dash starts without movement input, dash in the facing direction.
+            inputDir = facingDirection.sqrMagnitude > 0.0001f ? facingDirection.normalized : Vector2.right;
+        }
         else
         {
-            inputDir = facingDirection.sqrMagnitude > 0.0001f ? facingDirection.normalized : Vector2.right;
+            inputDir = Vector2.zero;
         }
 
         Vector2 targetVelocity = inputDir * finalMoveSpeed;
