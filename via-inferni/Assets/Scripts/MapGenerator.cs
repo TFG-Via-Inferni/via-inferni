@@ -56,6 +56,7 @@ public class MapGenerator : MonoBehaviour
     private HashSet<Cell> visitedRooms = new();
     private Cell currentRoomCell;
     private Room lastPlayerRoom;
+    private bool fullMapReveal = false;
 
     private static readonly List<int[]> roomShapes = new()
     {
@@ -272,10 +273,19 @@ public class MapGenerator : MonoBehaviour
         foreach (Cell cell in spawnedCells)
         {
             bool isCurrent = cell == currentRoomCell;
-            bool isVisited = visitedRooms.Contains(cell);
+            bool isVisited = fullMapReveal ? true : visitedRooms.Contains(cell);
             float alpha = isCurrent ? currentRoomAlpha : (isVisited ? visitedAlpha : undiscoveredAlpha);
             SetCellAlpha(cell, alpha);
         }
+    }
+
+    /// <summary>
+    /// Toggle full minimap reveal. When enabled, all rooms are shown as visited.
+    /// </summary>
+    public void SetFullMapReveal(bool reveal)
+    {
+        fullMapReveal = reveal;
+        RefreshMinimapVisuals();
     }
 
     private void SetCellAlpha(Cell cell, float alpha)

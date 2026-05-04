@@ -305,6 +305,13 @@ public class PlayerInventory : MonoBehaviour
                 {
                     player.ActivateShield();
                 }
+                else if (specialType == SpecialItemType.FullMap)
+                {
+                    if (MapGenerator.instance != null)
+                    {
+                        MapGenerator.instance.SetFullMapReveal(true);
+                    }
+                }
             }
         }
     }
@@ -357,6 +364,13 @@ public class PlayerInventory : MonoBehaviour
                 else if (specialType == SpecialItemType.Shield)
                 {
                     player.DeactivateShield();
+                }
+                else if (specialType == SpecialItemType.FullMap)
+                {
+                    if (MapGenerator.instance != null)
+                    {
+                        MapGenerator.instance.SetFullMapReveal(false);
+                    }
                 }
             }
         }
