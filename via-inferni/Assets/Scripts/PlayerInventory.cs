@@ -15,6 +15,16 @@ public class PlayerInventory : MonoBehaviour
 
     [Header("Debug")]
     [SerializeField] private bool enableDebugItemInjection;
+    [SerializeField] private InventoryItemDefinition debugDashItem;
+    [SerializeField] private InventoryItemDefinition debugCloakItem;
+    [SerializeField] private InventoryItemDefinition debugShieldItem;
+    [SerializeField] private InventoryItemDefinition debugFullMapItem;
+    [SerializeField] private InventoryItemDefinition debugCursedCoinItem;
+    [SerializeField] private Key debugDashKey = Key.F1;
+    [SerializeField] private Key debugCloakKey = Key.F2;
+    [SerializeField] private Key debugShieldKey = Key.F3;
+    [SerializeField] private Key debugFullMapKey = Key.F4;
+    [SerializeField] private Key debugCursedCoinKey = Key.F5;
     [SerializeField] private InventoryItemDefinition[] debugItemPool = Array.Empty<InventoryItemDefinition>();
     [SerializeField] private Key debugAddItemKey = Key.F6;
     private int debugNextItemIndex;
@@ -44,12 +54,40 @@ public class PlayerInventory : MonoBehaviour
             return;
         }
 
-        if (!keyboard[debugAddItemKey].wasPressedThisFrame)
+        if (keyboard[debugDashKey].wasPressedThisFrame)
         {
+            TryAddDebugSpecial(debugDashItem, "Dash");
             return;
         }
 
-        TryAddNextDebugItem();
+        if (keyboard[debugCloakKey].wasPressedThisFrame)
+        {
+            TryAddDebugSpecial(debugCloakItem, "Cloak");
+            return;
+        }
+
+        if (keyboard[debugShieldKey].wasPressedThisFrame)
+        {
+            TryAddDebugSpecial(debugShieldItem, "Shield");
+            return;
+        }
+
+        if (keyboard[debugFullMapKey].wasPressedThisFrame)
+        {
+            TryAddDebugSpecial(debugFullMapItem, "FullMap");
+            return;
+        }
+
+        if (keyboard[debugCursedCoinKey].wasPressedThisFrame)
+        {
+            TryAddDebugSpecial(debugCursedCoinItem, "CursedCoin");
+            return;
+        }
+
+        if (keyboard[debugAddItemKey].wasPressedThisFrame)
+        {
+            TryAddNextDebugItem();
+        }
     }
 
     public int GetUnlockedSlotCount()
@@ -405,6 +443,24 @@ public class PlayerInventory : MonoBehaviour
             Debug.LogWarning($"PlayerInventory debug: could not add '{candidate.name}'. Reason: {reason}");
         }
 
+        return false;
+    }
+
+    private bool TryAddDebugSpecial(InventoryItemDefinition item, string label)
+    {
+        if (item == null)
+        {
+            Debug.LogWarning($"PlayerInventory debug: no item assigned for {label} key.");
+            return false;
+        }
+
+        if (TryAddItem(item, out string reason))
+        {
+            Debug.Log($"PlayerInventory debug: added '{item.DisplayName}' ({item.ItemId}) via {label} key.");
+            return true;
+        }
+
+        Debug.LogWarning($"PlayerInventory debug: could not add '{item.name}' via {label} key. Reason: {reason}");
         return false;
     }
 

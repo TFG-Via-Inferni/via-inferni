@@ -276,6 +276,9 @@ MonoBehaviour:
   pickupInteractionRadius: 1.5
   dropSpawnDistance: 0.8
   inventoryPickupPrefab: {fileID: 9045097665042941129, guid: e19ef8052403d9848bf6d21049a93f7a, type: 3}
+  dashSpeedMultiplier: 4.5
+  dashDuration: 0.14
+  dashCooldown: 2
 --- !u!114 &6006702707038135300
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -345,6 +348,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInventory
   enableDebugItemInjection: 1
+  debugDashItem: {fileID: 11400000, guid: c1602210a2672d244a657a33a9694f7e, type: 2}
+  debugCloakItem: {fileID: 11400000, guid: b67a78117148ba248a104542901387b9, type: 2}
+  debugShieldItem: {fileID: 11400000, guid: 91bdf465c813b8344a2aaf2a586dec5b, type: 2}
+  debugFullMapItem: {fileID: 11400000, guid: 36774a2281cfe6a4b8e8a3aee9cd451f, type: 2}
+  debugCursedCoinItem: {fileID: 11400000, guid: bd3d22ef83ba8c647947d1a4b518533b, type: 2}
+  debugDashKey: 94
+  debugCloakKey: 95
+  debugShieldKey: 96
+  debugFullMapKey: 97
+  debugCursedCoinKey: 98
   debugItemPool:
   - {fileID: 11400000, guid: dd9abf91b923d214b91e88fb16f9f921, type: 2}
   debugAddItemKey: 99
