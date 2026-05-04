@@ -37,6 +37,11 @@ public class Player : MonoBehaviour, IDamageable
     [SerializeField] private float dropSpawnDistance = 0.8f;
     [SerializeField] private GameObject inventoryPickupPrefab;
 
+    [Header("Special Items - Dash")]
+    [SerializeField] private float dashSpeedMultiplier = 4.5f;
+    [SerializeField] private float dashDuration = 0.14f;
+    [SerializeField] private float dashCooldown = 2f;
+
     private Rigidbody2D rb;
     private Vector2 movement;
     private Vector2 currentVelocity;
@@ -48,6 +53,10 @@ public class Player : MonoBehaviour, IDamageable
     private PlayerStats playerStats;
     private PlayerInventory playerInventory;
     private Vector2 facingDirection = Vector2.right;
+
+    // Dash state
+    private float dashActiveUntil = -999f;
+    private float dashCooldownUntil = -999f;
 
     public event Action<PlayerFormType> OnFormChanged;
 
@@ -126,6 +135,7 @@ public class Player : MonoBehaviour, IDamageable
         HandleWeaponSlotInput();
         HandleInventoryInput();
         HandleSoulInput();
+        HandleDashInput();
 
         if (swapAction != null && swapAction.WasPressedThisFrame())
         {
@@ -147,8 +157,21 @@ public class Player : MonoBehaviour, IDamageable
         }
 
         float moveSpeedMultiplier = playerStats != null ? playerStats.MoveSpeedMultiplier : 1f;
-        float finalMoveSpeed = moveSpeed * moveSpeedMultiplier;
-        Vector2 targetVelocity = Vector2.ClampMagnitude(movement, 1f) * finalMoveSpeed;
+        bool isDashing = Time.time < dashActiveUntil;
+        float dashMult = isDashing ? dashSpeedMultiplier : 1f;
+        float finalMoveSpeed = moveSpeed * moveSpeedMultiplier * dashMult;
+
+        Vector2 inputDir;
+        if (movement.sqrMagnitude > 0.0001f)
+        {
+            inputDir = Vector2.ClampMagnitude(movement, 1f);
+        }
+        else
+        {
+            inputDir = facingDirection.sqrMagnitude > 0.0001f ? facingDirection.normalized : Vector2.right;
+        }
+
+        Vector2 targetVelocity = inputDir * finalMoveSpeed;
         float rate = targetVelocity.sqrMagnitude > 0.0001f ? acceleration : deceleration;
 
         currentVelocity = Vector2.MoveTowards(
@@ -200,6 +223,42 @@ public class Player : MonoBehaviour, IDamageable
         {
             playerStats.SelectWeaponSlot(CurrentForm, 3);
         }
+    }
+
+    private void HandleDashInput()
+    {
+        if (playerInventory == null)
+        {
+            return;
+        }
+
+        Keyboard keyboard = Keyboard.current;
+        if (keyboard == null)
+        {
+            return;
+        }
+
+        bool shiftPressed = keyboard.leftShiftKey.wasPressedThisFrame || keyboard.rightShiftKey.wasPressedThisFrame;
+        if (!shiftPressed)
+        {
+            return;
+        }
+
+        // Check if player has dash special
+        if (!playerInventory.HasSpecialType(SpecialItemType.Dash))
+        {
+            return;
+        }
+
+        // Cooldown check
+        if (Time.time < dashCooldownUntil)
+        {
+            return;
+        }
+
+        // Activate dash
+        dashActiveUntil = Time.time + dashDuration;
+        dashCooldownUntil = Time.time + dashCooldown;
     }
 
     private void HandleSoulInput()

@@ -193,6 +193,32 @@ public class PlayerInventory : MonoBehaviour
         return slots[slotIndex];
     }
 
+    /// <summary>
+    /// Returns true if any inventory slot contains a special item of the given type.
+    /// </summary>
+    public bool HasSpecialType(SpecialItemType type)
+    {
+        if (type == SpecialItemType.None)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < GetUnlockedSlotCount(); i++)
+        {
+            InventoryItemDefinition it = slots[i];
+            if (it == null) continue;
+            if (it.ItemType != InventoryItemType.Special) continue;
+
+            SpecialItemType st = SpecialItemManager.ParseSpecialEffectId(it.SpecialEffectId);
+            if (st == type)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private int FindFirstFreeUnlockedSlotIndex()
     {
         int unlockedCount = GetUnlockedSlotCount();
