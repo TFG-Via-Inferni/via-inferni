@@ -255,8 +255,8 @@ public class Player : MonoBehaviour, IDamageable
             return;
         }
 
-        bool shiftPressedThisFrame = keyboard.leftShiftKey.wasPressedThisFrame || keyboard.rightShiftKey.wasPressedThisFrame;
-        if (shiftPressedThisFrame)
+        bool altPressedThisFrame = keyboard.leftAltKey.wasPressedThisFrame || keyboard.rightAltKey.wasPressedThisFrame;
+        if (altPressedThisFrame)
         {
             playerInventory.SelectNextSlotCyclic();
         }
