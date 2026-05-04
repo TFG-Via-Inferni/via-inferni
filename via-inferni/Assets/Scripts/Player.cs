@@ -495,7 +495,18 @@ public class Player : MonoBehaviour, IDamageable
             return;
         }
 
-        playerStats.TakeDamage(amount);
+        // Apply damage and capture actual damage taken (PlayerStats.TakeDamage returns actual amount)
+        float damageTaken = playerStats.TakeDamage(amount);
+
+        // Cursed Coin: gain souls when taking damage while owning the special
+        if (damageTaken > 0f && playerInventory != null && playerInventory.HasSpecialType(SpecialItemType.CursedCoin))
+        {
+            int soulsGained = Mathf.FloorToInt(damageTaken) * 5; // 5 souls per 1 HP lost
+            if (soulsGained > 0)
+            {
+                playerStats.AddSoul(soulsGained);
+            }
+        }
     }
 
     public void ApplyDamage(float amount)
