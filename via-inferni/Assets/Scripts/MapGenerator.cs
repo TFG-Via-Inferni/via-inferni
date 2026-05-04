@@ -55,6 +55,7 @@ public class MapGenerator : MonoBehaviour
     public static MapGenerator instance;
     private HashSet<Cell> visitedRooms = new();
     private Cell currentRoomCell;
+    public Cell CurrentRoomCell => currentRoomCell;
     private Room lastPlayerRoom;
     private bool fullMapReveal = false;
 

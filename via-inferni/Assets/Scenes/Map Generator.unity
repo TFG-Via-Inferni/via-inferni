@@ -267,6 +267,7 @@ GameObject:
   - component: {fileID: 146902797}
   - component: {fileID: 146902796}
   - component: {fileID: 146902794}
+  - component: {fileID: 146902798}
   m_Layer: 0
   m_Name: MinimapCamera
   m_TagString: Untagged
@@ -353,7 +354,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 2.5
+  orthographic size: 1
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -384,6 +385,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &146902798
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 146902793}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f764e65bb5f354498e44b8f3265e6a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MinimapCameraController
+  minimapCamera: {fileID: 146902796}
+  followLerp: 0.2
+  smooth: 1
+  zOffset: -10
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -521,6 +538,78 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!1 &349359685
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 349359688}
+  - component: {fileID: 349359687}
+  - component: {fileID: 349359686}
+  m_Layer: 0
+  m_Name: MapImage
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &349359686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 349359685}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Texture: {fileID: 8400000, guid: a10fae696a6bece4bb1a1388b6ed0767, type: 2}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+--- !u!222 &349359687
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 349359685}
+  m_CullTransparentMesh: 1
+--- !u!224 &349359688
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 349359685}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 3.74391, y: -2.36446}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &572601335
 GameObject:
   m_ObjectHideFlags: 0
@@ -1605,6 +1694,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 469d4150f91c7954cbe3b0246af8b1a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MinimapUIController
+  minimapFrameSprite: {fileID: 21300000, guid: e3f067b287946b04a9eec669f6803654, type: 3}
+  minimapBackdropColor: {r: 0.06, g: 0.06, b: 0.06, a: 0.72}
+  minimapFrameTint: {r: 1, g: 1, b: 1, a: 1}
+  minimapSizePercentOfScreen: 0.3
+  minimapMarginPercentOfScreen: 0.03
+  minimapPadding: {x: 2, y: 2}
+  minimapMinSize: 20
+  minimapMaxSize: 320
 --- !u!1 &1479316069
 GameObject:
   m_ObjectHideFlags: 0
@@ -2552,3 +2649,4 @@ SceneRoots:
   - {fileID: 1830817231}
   - {fileID: 146902797}
   - {fileID: 2072824183}
+  - {fileID: 349359688}
