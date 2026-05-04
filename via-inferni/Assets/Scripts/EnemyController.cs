@@ -26,9 +26,9 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private bool startDormant = true;
 
     [Header("Type Behavior")]
-    [SerializeField] private float flyPreferredDistance = 3.5f;
+    [SerializeField] private float flyPreferredDistance = 2.0f;
     [SerializeField] private float flyOrbitStrength = 0.65f;
-    [SerializeField] private float flyAttackRangeMultiplier = 2.2f;
+    [SerializeField] private float flyAttackRangeMultiplier = 3.0f;
     [SerializeField] private float flyProjectileSpeed = 8.5f;
     [SerializeField] private float flyProjectileLifetime = 2.2f;
     [SerializeField] private float flyProjectileSpawnOffset = 0.5f;
@@ -122,6 +122,12 @@ public class EnemyController : MonoBehaviour
         attackCooldown = definition.attackCooldown;
         attackDamage = definition.attackDamage;
         startDormant = definition.startDormant;
+
+        // If this is a flying enemy, make its preferred orbit distance match its effective attack range
+        if (CurrentEnemyType == EnemyType.Fly)
+        {
+            flyPreferredDistance = attackRange * Mathf.Max(1f, flyAttackRangeMultiplier);
+        }
 
         if (rb != null)
         {
@@ -403,10 +409,13 @@ public class EnemyController : MonoBehaviour
         float distance = toPlayer.magnitude;
         Vector2 direction = distance > 0.0001f ? toPlayer / distance : Vector2.right;
 
+        // Cuando está atacando, mantiene una distancia dentro del rango de ataque
+        float effectiveAttackRange = attackRange * Mathf.Max(1f, flyAttackRangeMultiplier);
+        float targetDistance = effectiveAttackRange * 0.8f; // Mantén el 80% del rango de ataque
+
         // Mantiene distancia y strafea mientras prepara disparo.
         Vector2 tangent = new Vector2(-direction.y, direction.x) * flyOrbitSign;
-        float preferred = Mathf.Max(attackRange, flyPreferredDistance);
-        Vector2 radial = distance > preferred
+        Vector2 radial = distance > targetDistance
             ? direction
             : -direction * 0.35f;
         movement = (radial + tangent * flyOrbitStrength).normalized * speed;
@@ -415,7 +424,6 @@ public class EnemyController : MonoBehaviour
         {
             return;
         }
-
         ShootAtPlayer(direction);
         lastAttackTime = Time.time;
         flyOrbitSign *= -1f;
@@ -453,6 +461,7 @@ public class EnemyController : MonoBehaviour
             directionToPlayer,
             transform
         );
+        Debug.Log($"[EnemyController] ShootAtPlayer spawned projectile towards {directionToPlayer} dmg={attackDamage} speed={flyProjectileSpeed}");
     }
 
     public float ModifyIncomingDamage(float baseDamage, GameObject source)
