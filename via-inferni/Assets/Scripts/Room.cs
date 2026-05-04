@@ -663,6 +663,7 @@ public class Room : MonoBehaviour
             if (player != null)
             {
                 player.RechargeCloakIfOwned();
+                player.RechargeShieldIfOwned();
             }
         }
     }

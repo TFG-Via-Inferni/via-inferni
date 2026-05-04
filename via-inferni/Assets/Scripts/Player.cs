@@ -61,6 +61,29 @@ public class Player : MonoBehaviour, IDamageable
     // Cloak state
     private bool cloakActive = false;
 
+    // Shield state: one absorb per room
+    private bool shieldAvailable = false;
+
+    public bool HasShieldAvailable => shieldAvailable;
+
+    public void ActivateShield()
+    {
+        shieldAvailable = true;
+    }
+
+    public void DeactivateShield()
+    {
+        shieldAvailable = false;
+    }
+
+    public void RechargeShieldIfOwned()
+    {
+        if (playerInventory != null && playerInventory.HasSpecialType(SpecialItemType.Shield))
+        {
+            ActivateShield();
+        }
+    }
+
     public bool IsCloaked => cloakActive;
 
     public void ActivateCloak()
@@ -456,6 +479,19 @@ public class Player : MonoBehaviour, IDamageable
     {
         if (playerStats == null || amount <= 0f)
         {
+            return;
+        }
+
+        // If player is cloaked, they should not receive damage
+        if (cloakActive)
+        {
+            return;
+        }
+
+        // If shield is available this room, absorb the hit and mark shield used
+        if (shieldAvailable)
+        {
+            shieldAvailable = false;
             return;
         }
 
