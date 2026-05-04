@@ -204,6 +204,15 @@ public class EnemyController : MonoBehaviour
             }
         }
 
+        // If player has an active cloak, ignore them completely
+        Player playerComp = player.GetComponent<Player>();
+        if (playerComp != null && playerComp.IsCloaked)
+        {
+            movement = Vector2.zero;
+            ChangeState(EnemyState.Idle);
+            return;
+        }
+
         float distanceToPlayer = Vector2.Distance(transform.position, player.position);
 
         // Cambiar de estado según la distancia

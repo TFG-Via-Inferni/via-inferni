@@ -293,6 +293,12 @@ public class PlayerInventory : MonoBehaviour
         {
             SpecialItemType specialType = SpecialItemManager.ParseSpecialEffectId(item.SpecialEffectId);
             SpecialItemManager.Instance.RegisterSpecial(specialType);
+            // Activate per-player runtime effects for certain specials (e.g., Cloak)
+            Player player = GetComponent<Player>();
+            if (player != null && specialType == SpecialItemType.Cloak)
+            {
+                player.ActivateCloak();
+            }
         }
     }
 
@@ -334,6 +340,11 @@ public class PlayerInventory : MonoBehaviour
         {
             SpecialItemType specialType = SpecialItemManager.ParseSpecialEffectId(item.SpecialEffectId);
             SpecialItemManager.Instance.UnregisterSpecial(specialType);
+            Player player = GetComponent<Player>();
+            if (player != null && specialType == SpecialItemType.Cloak)
+            {
+                player.DeactivateCloak();
+            }
         }
     }
 

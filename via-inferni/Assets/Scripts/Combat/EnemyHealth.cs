@@ -54,6 +54,20 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
         currentHealth = Mathf.Max(0f, currentHealth - amount);
 
+        // Notify source owner that it dealt damage (used for Cloak special: first-damage deactivates)
+        if (source != null)
+        {
+            DamageSourceContext context = source.GetComponent<DamageSourceContext>();
+            if (context != null && context.OwnerRoot != null)
+            {
+                Player player = context.OwnerRoot.GetComponent<Player>();
+                if (player != null)
+                {
+                    player.NotifyDealtDamage();
+                }
+            }
+        }
+
         if (currentHealth > 0f)
         {
             return;

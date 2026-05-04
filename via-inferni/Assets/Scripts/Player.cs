@@ -58,6 +58,37 @@ public class Player : MonoBehaviour, IDamageable
     private float dashActiveUntil = -999f;
     private float dashCooldownUntil = -999f;
 
+    // Cloak state
+    private bool cloakActive = false;
+
+    public bool IsCloaked => cloakActive;
+
+    public void ActivateCloak()
+    {
+        cloakActive = true;
+    }
+
+    public void DeactivateCloak()
+    {
+        cloakActive = false;
+    }
+
+    public void RechargeCloakIfOwned()
+    {
+        if (playerInventory != null && playerInventory.HasSpecialType(SpecialItemType.Cloak))
+        {
+            ActivateCloak();
+        }
+    }
+
+    public void NotifyDealtDamage()
+    {
+        if (cloakActive)
+        {
+            DeactivateCloak();
+        }
+    }
+
     public event Action<PlayerFormType> OnFormChanged;
 
     public PlayerFormType CurrentForm { get; private set; }

@@ -655,5 +655,15 @@ public class Room : MonoBehaviour
                 door.Unlock();
             }
         }
+        // After clearing the room, recharge cloak for the player if they own it
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+        {
+            Player player = playerObj.GetComponent<Player>();
+            if (player != null)
+            {
+                player.RechargeCloakIfOwned();
+            }
+        }
     }
 }
