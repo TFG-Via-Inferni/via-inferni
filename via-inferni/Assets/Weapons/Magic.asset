@@ -28,7 +28,7 @@ MonoBehaviour:
   attackLungeDuration: 0.35
   flipVisualWithFacing: 1
   attackType: 1
-  baseDamage: 10
+  baseDamage: 7
   cooldown: 0.4
   range: 1.2
   hitboxSize: {x: 1.2, y: 1.2}
@@ -37,12 +37,12 @@ MonoBehaviour:
   meleeAppliesKnockback: 0
   meleeKnockbackForce: 0
   projectilePrefab: {fileID: 1835126340686643829, guid: f7e965ac2c65cf243a2a59b0c9a9b8b5, type: 3}
-  projectileSpeed: 12
-  projectileLifetime: 3
+  projectileSpeed: 11
+  projectileLifetime: 2.5
   projectileSpawnOffset: {x: 0.9, y: 0}
-  projectileHoming: 0
-  projectileHomingTurnSpeed: 0
-  projectileHomingSearchRadius: 0
+  projectileHoming: 1
+  projectileHomingTurnSpeed: 5
+  projectileHomingSearchRadius: 4.5
   requiresChargeAttack: 0
   chargeTimeToMax: 1.25
   chargeMinDamageMultiplier: 0.6
