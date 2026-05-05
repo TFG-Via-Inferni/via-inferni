@@ -5,6 +5,7 @@ public class Projectile : MonoBehaviour
 {
     [SerializeField] private float hitRadius = 0.2f;
     [SerializeField] private bool destroyOnFirstHit = true;
+    [SerializeField] private float visualRotationOffset = -90f;
 
     private float damage;
     private float speed;
@@ -35,11 +36,13 @@ public class Projectile : MonoBehaviour
         homingTurnSpeed = homingTurnSpeedAmount;
         homingSearchRadius = homingRadius;
         spawnTime = Time.time;
+        UpdateVisualRotation();
     }
 
     private void Update()
     {
         UpdateHomingDirection();
+        UpdateVisualRotation();
         transform.position += (Vector3)(direction * (speed * Time.deltaTime));
 
         if (Time.time >= spawnTime + lifetime)
@@ -139,6 +142,17 @@ public class Projectile : MonoBehaviour
         Vector2 desiredDirection = ((Vector2)closestTarget.bounds.center - currentPosition).normalized;
         float blend = Mathf.Clamp01(homingTurnSpeed * Time.deltaTime);
         direction = Vector2.Lerp(direction, desiredDirection, blend).normalized;
+    }
+
+    private void UpdateVisualRotation()
+    {
+        if (direction.sqrMagnitude <= 0.0001f)
+        {
+            return;
+        }
+
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0f, 0f, angle + visualRotationOffset);
     }
 
     private bool ShouldIgnoreSelfHit(Collider2D other)

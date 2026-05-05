@@ -38,12 +38,12 @@ MonoBehaviour:
     weight: 0
     useRoomTypeFilter: 0
     allowedRoomTypes: 
-  - enemyPrefab: {fileID: 0}
+  - enemyPrefab: {fileID: 1736370125707709183, guid: 91bffbb5bdd6a8149aed07897b4d80e8, type: 3}
     enemyDefinition: {fileID: 11400000, guid: 23e9a8aa4e178034a95393cd5a11c0ef, type: 2}
     weight: 0
     useRoomTypeFilter: 0
     allowedRoomTypes: 
-  - enemyPrefab: {fileID: 0}
+  - enemyPrefab: {fileID: 1736370125707709183, guid: 8252264c0fec37b4aa33632b5331311e, type: 3}
     enemyDefinition: {fileID: 11400000, guid: 5da3717e94414604cb029316b5cbc3ac, type: 2}
     weight: 0
     useRoomTypeFilter: 0

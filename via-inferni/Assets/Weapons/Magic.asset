@@ -15,16 +15,35 @@ MonoBehaviour:
   weaponId: 5
   displayName: Magic
   form: 1
+  visualSprite: {fileID: 0}
+  visualOffset: {x: 0.28, y: -0.04}
+  visualScale: {x: 1, y: 1}
+  visualRotation: -90
+  attackMotionStyle: 0
+  attackArcDegrees: 90
+  attackLungeMultiplier: 1
+  idleBobAmplitude: 0.012
+  idleBobSpeed: 7
+  attackLungeDistance: 0.08
+  attackLungeDuration: 0.35
+  flipVisualWithFacing: 1
   attackType: 1
   baseDamage: 10
   cooldown: 0.4
   range: 1.2
   hitboxSize: {x: 1.2, y: 1.2}
   hitboxOffset: {x: 0.9, y: 0}
-  projectilePrefab: {fileID: 1835126340686643829, guid: c4522ea733e295f4fa8383dec4a6a879, type: 3}
+  meleeSlashVisualReach: 0
+  meleeAppliesKnockback: 0
+  meleeKnockbackForce: 0
+  projectilePrefab: {fileID: 1835126340686643829, guid: f7e965ac2c65cf243a2a59b0c9a9b8b5, type: 3}
   projectileSpeed: 12
   projectileLifetime: 3
   projectileSpawnOffset: {x: 0.9, y: 0}
   projectileHoming: 0
   projectileHomingTurnSpeed: 0
   projectileHomingSearchRadius: 0
+  requiresChargeAttack: 0
+  chargeTimeToMax: 1.25
+  chargeMinDamageMultiplier: 0.6
+  chargeMaxDamageMultiplier: 2.2
