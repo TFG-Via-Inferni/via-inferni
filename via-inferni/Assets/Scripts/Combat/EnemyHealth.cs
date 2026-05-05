@@ -8,6 +8,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     [SerializeField] private bool destroyOnDeath = true;
 
     private float currentHealth;
+    private SpriteDamageFlash damageFlash;
 
     public event Action<EnemyHealth, GameObject> Died;
 
@@ -19,6 +20,12 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     {
         maxHealth = Mathf.Max(1f, maxHealth);
         currentHealth = maxHealth;
+        damageFlash = GetComponent<SpriteDamageFlash>();
+
+        if (damageFlash == null)
+        {
+            damageFlash = gameObject.AddComponent<SpriteDamageFlash>();
+        }
     }
 
     public void Configure(float newMaxHealth, bool restoreFullHealth = true)
@@ -53,6 +60,11 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         }
 
         currentHealth = Mathf.Max(0f, currentHealth - amount);
+
+        if (damageFlash != null)
+        {
+            damageFlash.PlayFlash();
+        }
 
         // Notify source owner that it dealt damage (used for Cloak special: first-damage deactivates)
         if (source != null)

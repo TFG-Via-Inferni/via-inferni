@@ -52,6 +52,7 @@ public class Player : MonoBehaviour, IDamageable
     private float lastSwapTime = -999f;
     private PlayerStats playerStats;
     private PlayerInventory playerInventory;
+    private SpriteDamageFlash damageFlash;
     private Vector2 facingDirection = Vector2.right;
 
     // Dash state
@@ -143,6 +144,12 @@ public class Player : MonoBehaviour, IDamageable
         if (playerInventory == null)
         {
             playerInventory = gameObject.AddComponent<PlayerInventory>();
+        }
+
+        damageFlash = GetComponent<SpriteDamageFlash>();
+        if (damageFlash == null)
+        {
+            damageFlash = gameObject.AddComponent<SpriteDamageFlash>();
         }
 
         ConfigureInputActions();
@@ -502,6 +509,11 @@ public class Player : MonoBehaviour, IDamageable
 
         // Apply damage and capture actual damage taken (PlayerStats.TakeDamage returns actual amount)
         float damageTaken = playerStats.TakeDamage(amount);
+
+        if (damageTaken > 0f && damageFlash != null)
+        {
+            damageFlash.PlayFlash();
+        }
 
         // Cursed Coin: gain souls when taking damage while owning the special
         if (damageTaken > 0f && playerInventory != null && playerInventory.HasSpecialType(SpecialItemType.CursedCoin))
