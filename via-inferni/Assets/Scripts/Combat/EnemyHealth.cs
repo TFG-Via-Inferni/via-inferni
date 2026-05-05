@@ -9,6 +9,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
     private float currentHealth;
     private SpriteDamageFlash damageFlash;
+    private EnemyCombatStatus combatStatus;
 
     public event Action<EnemyHealth, GameObject> Died;
 
@@ -25,6 +26,12 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         if (damageFlash == null)
         {
             damageFlash = gameObject.AddComponent<SpriteDamageFlash>();
+        }
+
+        combatStatus = GetComponent<EnemyCombatStatus>();
+        if (combatStatus == null)
+        {
+            combatStatus = gameObject.AddComponent<EnemyCombatStatus>();
         }
     }
 
@@ -59,11 +66,30 @@ public class EnemyHealth : MonoBehaviour, IDamageable
             return;
         }
 
+        WeaponDefinition weapon = ResolveWeaponDefinition(source);
+        if (combatStatus != null && weapon != null && weapon.IdentityEffect == WeaponIdentityEffect.ConsumeMarkBonus)
+        {
+            if (combatStatus.ConsumeMark())
+            {
+                amount *= Mathf.Max(1f, weapon.MarkedDamageMultiplier);
+            }
+        }
+
         currentHealth = Mathf.Max(0f, currentHealth - amount);
 
         if (damageFlash != null)
         {
             damageFlash.PlayFlash();
+        }
+
+        if (weapon != null && RoomCameraController.Instance != null)
+        {
+            RoomCameraController.Instance.TriggerImpactFeedback(weapon.HitstopDuration, weapon.CameraShakeDistance, weapon.CameraShakeDuration);
+        }
+
+        if (combatStatus != null && weapon != null && weapon.IdentityEffect == WeaponIdentityEffect.ApplyMark && currentHealth > 0f)
+        {
+            combatStatus.ApplyMark(weapon.MarkDuration);
         }
 
         // Notify source owner that it dealt damage (used for Cloak special: first-damage deactivates)
@@ -96,5 +122,16 @@ public class EnemyHealth : MonoBehaviour, IDamageable
     public void ResetHealth()
     {
         currentHealth = maxHealth;
+    }
+
+    private static WeaponDefinition ResolveWeaponDefinition(GameObject source)
+    {
+        if (source == null)
+        {
+            return null;
+        }
+
+        DamageSourceContext context = source.GetComponent<DamageSourceContext>();
+        return context != null ? context.Weapon : null;
     }
 }

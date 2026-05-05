@@ -7,7 +7,7 @@ public class MeleeHitbox : MonoBehaviour
     [SerializeField] private LayerMask hittableLayers = ~0;
     [SerializeField] private float lifetime = 0.12f;
 
-    private readonly HashSet<Collider2D> hitColliders = new HashSet<Collider2D>();
+    private readonly HashSet<IDamageable> hitTargets = new HashSet<IDamageable>();
     private float damage;
     private GameObject source;
     private bool appliesKnockback;
@@ -35,14 +35,14 @@ public class MeleeHitbox : MonoBehaviour
             return;
         }
 
-        if (!hitColliders.Add(other))
-        {
-            return;
-        }
-
         IDamageable damageable = other.GetComponentInParent<IDamageable>();
         if (damageable != null && damageable.CanTakeDamage)
         {
+            if (!hitTargets.Add(damageable))
+            {
+                return;
+            }
+
             damageable.TakeDamage(damage, source);
             ApplyKnockback(other);
         }
@@ -77,6 +77,18 @@ public class MeleeHitbox : MonoBehaviour
         if (knockbackDirection.sqrMagnitude <= 0.0001f)
         {
             knockbackDirection = Vector2.up;
+        }
+
+        EnemyController enemyController = body.GetComponent<EnemyController>();
+        if (enemyController == null)
+        {
+            enemyController = body.GetComponentInParent<EnemyController>();
+        }
+
+        if (enemyController != null)
+        {
+            enemyController.ApplyKnockback(knockbackDirection, knockbackForce);
+            return;
         }
 
         body.AddForce(knockbackDirection.normalized * knockbackForce, ForceMode2D.Impulse);

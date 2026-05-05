@@ -26,6 +26,8 @@ public class PlayerWeaponVisualController : MonoBehaviour
     private float currentBaseRotation;
     private Vector2 attackDirection = Vector2.right;
     private float attackPulseTimer;
+    private Vector2 recoilDirection = Vector2.zero;
+    private float recoilTimer;
 
     private void Awake()
     {
@@ -72,6 +74,11 @@ public class PlayerWeaponVisualController : MonoBehaviour
         if (attackPulseTimer > 0f)
         {
             attackPulseTimer = Mathf.Max(0f, attackPulseTimer - Time.deltaTime);
+        }
+
+        if (recoilTimer > 0f)
+        {
+            recoilTimer = Mathf.Max(0f, recoilTimer - Time.deltaTime);
         }
     }
 
@@ -142,6 +149,14 @@ public class PlayerWeaponVisualController : MonoBehaviour
             attackScale = 1f + (Mathf.Max(0f, attackPulseScale) * (1f - normalized));
         }
 
+        if (recoilTimer > 0f)
+        {
+            float recoilDuration = Mathf.Max(0.01f, currentWeapon.AttackRecoilDuration);
+            float recoilNormalized = recoilTimer / recoilDuration;
+            float recoilDistance = currentWeapon.AttackRecoilDistance * recoilNormalized;
+            attackOffset += recoilDirection * recoilDistance;
+        }
+
         bool mirrorVisual = ShouldMirrorVisual(visualDirection);
         Vector2 rotationDirection = mirrorVisual ? Vector2.right : visualDirection;
         float visualAngle = Mathf.Atan2(rotationDirection.y, rotationDirection.x) * Mathf.Rad2Deg;
@@ -201,6 +216,8 @@ public class PlayerWeaponVisualController : MonoBehaviour
 
         attackDirection = direction.sqrMagnitude > 0.0001f ? direction.normalized : GetFacingDirection();
         attackPulseTimer = Mathf.Max(attackPulseDuration, weapon.AttackLungeDuration);
+        recoilDirection = -attackDirection;
+        recoilTimer = Mathf.Max(0f, weapon.AttackRecoilDuration);
     }
 
     private static Vector2 RotateVector(Vector2 vector, float degrees)

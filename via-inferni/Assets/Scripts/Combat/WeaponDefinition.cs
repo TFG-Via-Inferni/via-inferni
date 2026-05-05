@@ -14,6 +14,13 @@ public enum WeaponAttackMotionStyle
     Chop
 }
 
+public enum WeaponIdentityEffect
+{
+    None,
+    ApplyMark,
+    ConsumeMarkBonus
+}
+
 [CreateAssetMenu(fileName = "WeaponDefinition", menuName = "Via Inferni/Combat/Weapon Definition")]
 public class WeaponDefinition : ScriptableObject
 {
@@ -64,6 +71,18 @@ public class WeaponDefinition : ScriptableObject
     [Min(0.1f)] [SerializeField] private float chargeMinDamageMultiplier = 0.6f;
     [Min(0.1f)] [SerializeField] private float chargeMaxDamageMultiplier = 2.2f;
 
+    [Header("Identity")]
+    [SerializeField] private WeaponIdentityEffect identityEffect;
+    [Min(0f)] [SerializeField] private float markDuration = 3f;
+    [Min(1f)] [SerializeField] private float markedDamageMultiplier = 1.5f;
+
+    [Header("Impact Feedback")]
+    [Min(0f)] [SerializeField] private float hitstopDuration = 0.03f;
+    [Min(0f)] [SerializeField] private float cameraShakeDistance = 0.08f;
+    [Min(0f)] [SerializeField] private float cameraShakeDuration = 0.08f;
+    [Min(0f)] [SerializeField] private float attackRecoilDistance = 0.08f;
+    [Min(0f)] [SerializeField] private float attackRecoilDuration = 0.09f;
+
     public string WeaponId => weaponId;
     public string DisplayName => string.IsNullOrWhiteSpace(displayName) ? weaponId : displayName;
     public PlayerFormType Form => form;
@@ -99,6 +118,14 @@ public class WeaponDefinition : ScriptableObject
     public float ChargeTimeToMax => chargeTimeToMax;
     public float ChargeMinDamageMultiplier => chargeMinDamageMultiplier;
     public float ChargeMaxDamageMultiplier => chargeMaxDamageMultiplier;
+    public WeaponIdentityEffect IdentityEffect => identityEffect;
+    public float MarkDuration => markDuration;
+    public float MarkedDamageMultiplier => markedDamageMultiplier;
+    public float HitstopDuration => hitstopDuration;
+    public float CameraShakeDistance => cameraShakeDistance;
+    public float CameraShakeDuration => cameraShakeDuration;
+    public float AttackRecoilDistance => attackRecoilDistance;
+    public float AttackRecoilDuration => attackRecoilDuration;
 
     public WeaponAttackMotionStyle GetResolvedAttackMotionStyle()
     {

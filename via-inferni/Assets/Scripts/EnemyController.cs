@@ -36,6 +36,10 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private float tankSpeedMultiplier = 0.7f;
     [SerializeField] private float tankAttackWindup = 0.45f;
     [SerializeField] private float tankAttackDamageMultiplier = 2f;
+    [SerializeField] private float flyShotWindup = 0.18f;
+    [SerializeField] private Color telegraphColor = new Color(1f, 0.55f, 0.55f, 1f);
+    [SerializeField] private float telegraphScaleMultiplier = 1.12f;
+    [SerializeField] private float knockbackRecoverDuration = 0.16f;
 
     private EnemyState currentState = EnemyState.Idle;
     private Transform player;
@@ -51,6 +55,12 @@ public class EnemyController : MonoBehaviour
     private float flyOrbitSign = 1f;
     private bool tankIsWindingUp;
     private float tankWindupReadyAt;
+    private bool flyIsWindingUp;
+    private float flyWindupReadyAt;
+    private Color spriteBaseColor = Color.white;
+    private Vector3 visualBaseScale = Vector3.one;
+    private Vector2 knockbackVelocity;
+    private float knockbackUntil = -999f;
 
     private EnemyType CurrentEnemyType => runtimeDefinition != null ? runtimeDefinition.enemyType : EnemyType.Normal;
 
@@ -70,6 +80,12 @@ public class EnemyController : MonoBehaviour
         if (spriteRenderer == null)
         {
             spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        }
+
+        if (spriteRenderer != null)
+        {
+            spriteBaseColor = spriteRenderer.color;
+            visualBaseScale = spriteRenderer.transform.localScale;
         }
 
         if (health != null)
@@ -172,6 +188,8 @@ public class EnemyController : MonoBehaviour
         aiEnabled = false;
         movement = Vector2.zero;
         tankIsWindingUp = false;
+        flyIsWindingUp = false;
+        ResetTelegraphVisual();
 
         if (rb != null)
         {
@@ -237,6 +255,8 @@ public class EnemyController : MonoBehaviour
                 HandleAttack();
                 break;
         }
+
+        UpdateTelegraphVisual();
     }
 
     void FixedUpdate()
@@ -252,8 +272,32 @@ public class EnemyController : MonoBehaviour
             return;
         }
 
+        if (Time.time < knockbackUntil)
+        {
+            rb.MovePosition(rb.position + (knockbackVelocity * Time.fixedDeltaTime));
+            knockbackVelocity = Vector2.Lerp(knockbackVelocity, Vector2.zero, Time.fixedDeltaTime / Mathf.Max(0.01f, knockbackRecoverDuration));
+            return;
+        }
+
         // Mover al enemigo
         rb.MovePosition(rb.position + movement * Time.fixedDeltaTime);
+    }
+
+    public void ApplyKnockback(Vector2 direction, float force)
+    {
+        if (force <= 0f)
+        {
+            return;
+        }
+
+        Vector2 normalizedDirection = direction.sqrMagnitude > 0.0001f
+            ? direction.normalized
+            : Vector2.up;
+
+        knockbackVelocity = normalizedDirection * force;
+        knockbackUntil = Time.time + Mathf.Max(0.05f, knockbackRecoverDuration);
+        tankIsWindingUp = false;
+        flyIsWindingUp = false;
     }
 
     void UpdateState(float distanceToPlayer)
@@ -420,10 +464,24 @@ public class EnemyController : MonoBehaviour
             : -direction * 0.35f;
         movement = (radial + tangent * flyOrbitStrength).normalized * speed;
 
-        if (Time.time < lastAttackTime + attackCooldown)
+        if (!flyIsWindingUp)
+        {
+            if (Time.time < lastAttackTime + attackCooldown)
+            {
+                return;
+            }
+
+            flyIsWindingUp = true;
+            flyWindupReadyAt = Time.time + Mathf.Max(0.05f, flyShotWindup);
+            return;
+        }
+
+        if (Time.time < flyWindupReadyAt)
         {
             return;
         }
+
+        flyIsWindingUp = false;
         ShootAtPlayer(direction);
         lastAttackTime = Time.time;
         flyOrbitSign *= -1f;
@@ -577,6 +635,44 @@ public class EnemyController : MonoBehaviour
         if (parentRoom != null)
         {
             parentRoom.OnEnemyDestroyed(this);
+        }
+    }
+
+    private void UpdateTelegraphVisual()
+    {
+        if (spriteRenderer == null)
+        {
+            return;
+        }
+
+        bool telegraphActive = tankIsWindingUp || flyIsWindingUp;
+        if (!telegraphActive)
+        {
+            ResetTelegraphVisual();
+            return;
+        }
+
+        float pulse = 0.55f + (0.45f * Mathf.Abs(Mathf.Sin(Time.time * 28f)));
+        spriteRenderer.color = Color.Lerp(spriteBaseColor, telegraphColor, pulse);
+
+        if (spriteRenderer.transform != null)
+        {
+            float scale = Mathf.Lerp(1f, telegraphScaleMultiplier, pulse);
+            spriteRenderer.transform.localScale = visualBaseScale * scale;
+        }
+    }
+
+    private void ResetTelegraphVisual()
+    {
+        if (spriteRenderer == null)
+        {
+            return;
+        }
+
+        spriteRenderer.color = spriteBaseColor;
+        if (spriteRenderer.transform != null)
+        {
+            spriteRenderer.transform.localScale = visualBaseScale;
         }
     }
 

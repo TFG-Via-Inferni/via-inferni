@@ -31,6 +31,24 @@ public class PlayerCombatController : MonoBehaviour
     private string chargingWeaponId;
     private PlayerFormType chargingForm;
 
+    public bool IsChargingAttack => isChargingAttack;
+    public WeaponDefinition ChargingWeapon => chargingWeapon;
+    public PlayerFormType ChargingForm => chargingForm;
+    public Vector2 ChargingDirection => chargingDirection;
+    public float CurrentChargeNormalized
+    {
+        get
+        {
+            if (!isChargingAttack || chargingWeapon == null)
+            {
+                return 0f;
+            }
+
+            float duration = Time.time - chargeStartedAt;
+            return Mathf.Clamp01(duration / Mathf.Max(0.1f, chargingWeapon.ChargeTimeToMax));
+        }
+    }
+
     private struct AttackInputState
     {
         public bool PressedThisFrame;
@@ -44,6 +62,7 @@ public class PlayerCombatController : MonoBehaviour
         stats = GetComponent<PlayerStats>();
         EnsureAttackOrigin();
         ConfigureAttackInput();
+        EnsureChargeVisual();
     }
 
     private void OnEnable()
@@ -113,7 +132,8 @@ public class PlayerCombatController : MonoBehaviour
             return false;
         }
 
-        float finalDamage = stats != null ? stats.GetFinalDamage(player.CurrentForm) : weapon.BaseDamage;
+        float damageMultiplier = stats != null ? stats.DamageMultiplier : 1f;
+        float finalDamage = weapon.BaseDamage * Mathf.Max(0.01f, damageMultiplier);
         Vector2 facingDirection = attackDirection.sqrMagnitude > 0.0001f ? attackDirection.normalized : GetDefaultAttackDirection();
         string attackWeaponId = stats != null
             ? stats.GetSelectedWeaponId(player.CurrentForm)
@@ -155,7 +175,7 @@ public class PlayerCombatController : MonoBehaviour
         hitboxCollider.size = weapon.HitboxSize;
 
         DamageSourceContext context = hitboxObject.AddComponent<DamageSourceContext>();
-        context.Configure(player.transform.root, weaponId, form);
+        context.Configure(player.transform.root, weaponId, form, weapon);
 
         MeleeHitbox hitbox = hitboxObject.AddComponent<MeleeHitbox>();
         hitbox.Initialize(damageAmount, hitboxObject, damageLayers, weapon.MeleeAppliesKnockback, weapon.MeleeKnockbackForce);
@@ -185,7 +205,7 @@ public class PlayerCombatController : MonoBehaviour
             context = projectileObject.AddComponent<DamageSourceContext>();
         }
 
-        context.Configure(player.transform.root, weaponId, form);
+        context.Configure(player.transform.root, weaponId, form, weapon);
 
         projectile.Initialize(
             damageAmount,
@@ -252,7 +272,8 @@ public class PlayerCombatController : MonoBehaviour
         float chargeDuration = Time.time - chargeStartedAt;
         float normalizedCharge = Mathf.Clamp01(chargeDuration / Mathf.Max(0.1f, chargingWeapon.ChargeTimeToMax));
         float chargeMultiplier = Mathf.Lerp(chargingWeapon.ChargeMinDamageMultiplier, chargingWeapon.ChargeMaxDamageMultiplier, normalizedCharge);
-        float baseDamage = stats != null ? stats.GetFinalDamage(chargingForm) : chargingWeapon.BaseDamage;
+        float damageMultiplier = stats != null ? stats.DamageMultiplier : 1f;
+        float baseDamage = chargingWeapon.BaseDamage * Mathf.Max(0.01f, damageMultiplier);
         float chargedDamage = baseDamage * chargeMultiplier;
 
         PerformProjectileAttack(chargingWeapon, chargedDamage, chargingDirection, chargingWeaponId, chargingForm);
@@ -385,6 +406,15 @@ public class PlayerCombatController : MonoBehaviour
         attackOrigin = originObject.transform;
     }
 
+    private void EnsureChargeVisual()
+    {
+        PlayerChargeAttackVisual chargeVisual = GetComponent<PlayerChargeAttackVisual>();
+        if (chargeVisual == null)
+        {
+            gameObject.AddComponent<PlayerChargeAttackVisual>();
+        }
+    }
+
     private bool TryReadArrowAttackInput(out Vector2 attackDirection)
     {
         Keyboard keyboard = Keyboard.current;
@@ -466,7 +496,7 @@ public class PlayerCombatController : MonoBehaviour
         MeleeSlashVisual slashVisual = slashObject.AddComponent<MeleeSlashVisual>();
         Vector2 slashStart = player.transform.position;
         Vector2 slashEnd = slashStart + GetMeleeSlashOffset(weapon, facingDirection);
-        slashVisual.Initialize(slashStart, slashEnd);
+        slashVisual.Initialize(slashStart, slashEnd, weapon);
     }
 
     private static Vector2 GetMeleeSlashOffset(WeaponDefinition weapon, Vector2 direction)

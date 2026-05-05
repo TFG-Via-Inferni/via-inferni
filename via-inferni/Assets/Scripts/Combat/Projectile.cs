@@ -24,6 +24,18 @@ public class Projectile : MonoBehaviour
     private Collider2D homingTarget;
     private Vector2 homingAimPoint;
     private float nextHomingRetargetTime;
+    private ProjectileParticleTrailVisual trailVisual;
+    private SpriteRenderer projectileSpriteRenderer;
+
+    private void Awake()
+    {
+        projectileSpriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        trailVisual = GetComponent<ProjectileParticleTrailVisual>();
+        if (trailVisual == null)
+        {
+            trailVisual = gameObject.AddComponent<ProjectileParticleTrailVisual>();
+        }
+    }
 
     public void Initialize(
         float damageAmount,
@@ -44,6 +56,24 @@ public class Projectile : MonoBehaviour
         homingTurnSpeed = homingTurnSpeedAmount;
         homingSearchRadius = homingRadius;
         spawnTime = Time.time;
+
+        if (trailVisual == null)
+        {
+            trailVisual = GetComponent<ProjectileParticleTrailVisual>();
+            if (trailVisual == null)
+            {
+                trailVisual = gameObject.AddComponent<ProjectileParticleTrailVisual>();
+            }
+        }
+
+        if (projectileSpriteRenderer == null)
+        {
+            projectileSpriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        }
+
+        DamageSourceContext context = GetComponent<DamageSourceContext>();
+        WeaponDefinition weapon = context != null ? context.Weapon : null;
+        trailVisual.Configure(weapon, projectileSpriteRenderer);
         UpdateVisualRotation();
     }
 
@@ -52,6 +82,7 @@ public class Projectile : MonoBehaviour
         UpdateHomingDirection();
         UpdateVisualRotation();
         transform.position += (Vector3)(direction * (speed * Time.deltaTime));
+        trailVisual?.Tick(direction);
 
         if (Time.time >= spawnTime + lifetime)
         {

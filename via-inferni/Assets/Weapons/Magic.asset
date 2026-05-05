@@ -47,3 +47,11 @@ MonoBehaviour:
   chargeTimeToMax: 1.25
   chargeMinDamageMultiplier: 0.6
   chargeMaxDamageMultiplier: 2.2
+  identityEffect: 1
+  markDuration: 4
+  markedDamageMultiplier: 1.45
+  hitstopDuration: 0.018
+  cameraShakeDistance: 0.03
+  cameraShakeDuration: 0.04
+  attackRecoilDistance: 0.025
+  attackRecoilDuration: 0.06

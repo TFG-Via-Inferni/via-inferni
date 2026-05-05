@@ -15,11 +15,11 @@ MonoBehaviour:
   enemyType: 2
   displayName: Limbo Tank Enemy
   overrideSprite: {fileID: 1643640203, guid: daa66dd237160c64ead327ba59a12899, type: 3}
-  maxHealth: 30
+  maxHealth: 60
   moveSpeed: 2
   detectionRadius: 10
   attackRange: 1.5
   attackCooldown: 1
-  attackDamage: 1.0
+  attackDamage: 1
   ignoreGravity: 1
   startDormant: 1

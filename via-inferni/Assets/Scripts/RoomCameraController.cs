@@ -18,6 +18,9 @@ public class RoomCameraController : MonoBehaviour
     private Transform desiredTarget;
     private Transform followProxy;
     private Transform fixedRoomAnchor;
+    private Coroutine hitstopRoutine;
+    private float shakeUntilRealtime = -999f;
+    private float shakeDistance;
 
     private void Awake()
     {
@@ -98,7 +101,40 @@ public class RoomCameraController : MonoBehaviour
             return;
         }
 
-        followProxy.position = desiredTarget.position;
+        Vector3 shakeOffset = Vector3.zero;
+        if (Time.unscaledTime < shakeUntilRealtime && shakeDistance > 0f)
+        {
+            Vector2 randomOffset = Random.insideUnitCircle * shakeDistance;
+            shakeOffset = new Vector3(randomOffset.x, randomOffset.y, 0f);
+        }
+
+        followProxy.position = desiredTarget.position + shakeOffset;
+    }
+
+    public void TriggerImpactFeedback(float hitstopDuration, float cameraShakeDistance, float cameraShakeDuration)
+    {
+        if (PauseMenuController.IsPaused)
+        {
+            return;
+        }
+
+        if (cameraShakeDistance > 0f && cameraShakeDuration > 0f)
+        {
+            shakeDistance = Mathf.Max(shakeDistance, cameraShakeDistance);
+            shakeUntilRealtime = Mathf.Max(shakeUntilRealtime, Time.unscaledTime + cameraShakeDuration);
+        }
+
+        if (hitstopDuration <= 0f || !gameObject.activeInHierarchy)
+        {
+            return;
+        }
+
+        if (hitstopRoutine != null)
+        {
+            StopCoroutine(hitstopRoutine);
+        }
+
+        hitstopRoutine = StartCoroutine(PlayHitstop(hitstopDuration));
     }
 
     private void SwitchToRoom(Room room, bool instantProxySnap, string reason)
@@ -232,5 +268,20 @@ public class RoomCameraController : MonoBehaviour
 
         Vector3 p = t.position;
         return $"({p.x:F2},{p.y:F2},{p.z:F2})";
+    }
+
+    private IEnumerator PlayHitstop(float duration)
+    {
+        float safeDuration = Mathf.Max(0.005f, duration);
+        float previousTimeScale = Time.timeScale <= 0f ? 1f : Time.timeScale;
+        Time.timeScale = 0f;
+        yield return new WaitForSecondsRealtime(safeDuration);
+
+        if (!PauseMenuController.IsPaused)
+        {
+            Time.timeScale = previousTimeScale;
+        }
+
+        hitstopRoutine = null;
     }
 }
