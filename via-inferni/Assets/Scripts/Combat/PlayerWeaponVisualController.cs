@@ -91,9 +91,7 @@ public class PlayerWeaponVisualController : MonoBehaviour
         spriteRenderer.enabled = true;
 
         Vector2 facing = GetFacingDirection();
-        // Calculate rotation angle based on facing direction
-        float facingAngle = Mathf.Atan2(facing.y, facing.x) * Mathf.Rad2Deg;
-        Vector2 directionalBaseOffset = GetDirectionalBaseOffset(facing);
+        Vector2 visualDirection = facing;
         
         Vector2 attackOffset = Vector2.zero;
         float attackScale = 1f;
@@ -110,6 +108,7 @@ public class PlayerWeaponVisualController : MonoBehaviour
             float attackProgress = eased;
             WeaponAttackMotionStyle motionStyle = currentWeapon.GetResolvedAttackMotionStyle();
             Vector2 attackFacing = attackDirection.sqrMagnitude > 0.0001f ? attackDirection.normalized : facing;
+            visualDirection = attackFacing;
 
             switch (motionStyle)
             {
@@ -143,11 +142,13 @@ public class PlayerWeaponVisualController : MonoBehaviour
             attackScale = 1f + (Mathf.Max(0f, attackPulseScale) * (1f - normalized));
         }
 
-        Vector2 forwardOffset = GetForwardOffset(facing);
+        float visualAngle = Mathf.Atan2(visualDirection.y, visualDirection.x) * Mathf.Rad2Deg;
+        Vector2 directionalBaseOffset = GetDirectionalBaseOffset(visualDirection);
+        Vector2 forwardOffset = GetForwardOffset(visualDirection);
 
-        // Keep a stable hand anchor, then push the weapon forward in the facing direction.
+        // During the attack, the whole weapon pose follows the attack direction.
         transform.localPosition = directionalBaseOffset + forwardOffset + attackOffset;
-        transform.localRotation = Quaternion.Euler(0f, 0f, currentBaseRotation + facingAngle + attackAngle);
+        transform.localRotation = Quaternion.Euler(0f, 0f, currentBaseRotation + visualAngle + attackAngle);
 
         Vector2 scale = currentBaseScale * attackScale;
         transform.localScale = new Vector3(scale.x, scale.y, 1f);
