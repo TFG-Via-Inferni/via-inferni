@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,6 +7,8 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(PlayerStats))]
 public class PlayerCombatController : MonoBehaviour
 {
+    public event Action<WeaponDefinition, Vector2, PlayerFormType> OnAttackPerformed;
+
     [Header("Attack Input")]
     [SerializeField] private InputActionAsset inputActionsAsset;
     [SerializeField] private string playerActionMapName = "Player";
@@ -124,6 +127,8 @@ public class PlayerCombatController : MonoBehaviour
         {
             PerformProjectileAttack(weapon, finalDamage, facingDirection, attackWeaponId, player.CurrentForm);
         }
+
+        OnAttackPerformed?.Invoke(weapon, facingDirection, player.CurrentForm);
 
         lastAttackTime = Time.time;
         return true;
@@ -265,7 +270,7 @@ public class PlayerCombatController : MonoBehaviour
         chargingForm = PlayerFormType.Melee;
     }
 
-    private WeaponDefinition GetCurrentWeaponDefinition()
+    public WeaponDefinition GetCurrentWeaponDefinition()
     {
         if (stats == null || player == null)
         {
@@ -459,8 +464,27 @@ public class PlayerCombatController : MonoBehaviour
         slashObject.transform.SetParent(transform, true);
 
         MeleeSlashVisual slashVisual = slashObject.AddComponent<MeleeSlashVisual>();
-        float slashLength = Mathf.Max(weapon.HitboxSize.x, weapon.HitboxSize.y, weapon.Range, 0.5f);
-        slashVisual.Initialize(player.transform.position + (Vector3)GetMeleeAttackOffset(weapon, facingDirection), facingDirection, slashLength);
+        Vector2 slashStart = player.transform.position;
+        Vector2 slashEnd = slashStart + GetMeleeSlashOffset(weapon, facingDirection);
+        slashVisual.Initialize(slashStart, slashEnd);
+    }
+
+    private static Vector2 GetMeleeSlashOffset(WeaponDefinition weapon, Vector2 direction)
+    {
+        if (weapon == null)
+        {
+            return Vector2.zero;
+        }
+
+        Vector2 normalizedDirection = direction.sqrMagnitude > 0.0001f
+            ? direction.normalized
+            : Vector2.right;
+
+        float fallbackReach = Mathf.Lerp(weapon.HitboxOffset.magnitude, weapon.Range, 0.35f);
+        float configuredReach = weapon.MeleeSlashVisualReach;
+        float reach = configuredReach > 0f ? configuredReach : fallbackReach;
+        reach = Mathf.Max(reach, 0.1f);
+        return normalizedDirection * reach;
     }
 
     private static Vector2 GetMeleeAttackOffset(WeaponDefinition weapon, Vector2 direction)

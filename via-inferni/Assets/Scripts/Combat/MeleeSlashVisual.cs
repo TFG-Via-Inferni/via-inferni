@@ -5,19 +5,36 @@ public class MeleeSlashVisual : MonoBehaviour
 {
     [SerializeField] private float lifetime = 0.12f;
     [SerializeField] private float width = 0.08f;
+    [SerializeField] private float crossSize = 0.22f;
     [SerializeField] private Color color = new Color(1f, 1f, 1f, 0.9f);
     [SerializeField] private int sortingOrder = 1000;
 
-    private LineRenderer lineRenderer;
+    private LineRenderer primaryLineRenderer;
+    private LineRenderer secondaryLineRenderer;
 
-    public void Initialize(Vector2 origin, Vector2 direction, float length)
+    public void Initialize(Vector2 start, Vector2 end)
     {
-        Vector2 normalizedDirection = direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector2.right;
-        Vector2 perpendicular = new Vector2(-normalizedDirection.y, normalizedDirection.x);
-        Vector2 start = origin + normalizedDirection * (length * 0.15f) - perpendicular * (length * 0.15f);
-        Vector2 end = origin + normalizedDirection * length + perpendicular * (length * 0.15f);
+        float halfSize = Mathf.Max(0.02f, crossSize) * 0.5f;
+        Vector2 diagonalA = new Vector2(halfSize, halfSize);
+        Vector2 diagonalB = new Vector2(halfSize, -halfSize);
 
-        lineRenderer = gameObject.AddComponent<LineRenderer>();
+        primaryLineRenderer = CreateLineRenderer("SlashCrossA");
+        secondaryLineRenderer = CreateLineRenderer("SlashCrossB");
+
+        primaryLineRenderer.SetPosition(0, end - diagonalA);
+        primaryLineRenderer.SetPosition(1, end + diagonalA);
+        secondaryLineRenderer.SetPosition(0, end - diagonalB);
+        secondaryLineRenderer.SetPosition(1, end + diagonalB);
+
+        Destroy(gameObject, lifetime);
+    }
+
+    private LineRenderer CreateLineRenderer(string childName)
+    {
+        GameObject lineObject = new GameObject(childName);
+        lineObject.transform.SetParent(transform, false);
+
+        LineRenderer lineRenderer = lineObject.AddComponent<LineRenderer>();
         lineRenderer.positionCount = 2;
         lineRenderer.useWorldSpace = true;
         lineRenderer.startWidth = width;
@@ -39,9 +56,6 @@ public class MeleeSlashVisual : MonoBehaviour
             lineRenderer.material = new Material(shader);
         }
 
-        lineRenderer.SetPosition(0, start);
-        lineRenderer.SetPosition(1, end);
-
-        Destroy(gameObject, lifetime);
+        return lineRenderer;
     }
 }

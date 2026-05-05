@@ -6,6 +6,14 @@ public enum WeaponAttackType
     Projectile
 }
 
+public enum WeaponAttackMotionStyle
+{
+    Auto,
+    Sweep,
+    Thrust,
+    Chop
+}
+
 [CreateAssetMenu(fileName = "WeaponDefinition", menuName = "Via Inferni/Combat/Weapon Definition")]
 public class WeaponDefinition : ScriptableObject
 {
@@ -13,6 +21,20 @@ public class WeaponDefinition : ScriptableObject
     [SerializeField] private string weaponId;
     [SerializeField] private string displayName;
     [SerializeField] private PlayerFormType form;
+
+    [Header("Visual")]
+    [SerializeField] private Sprite visualSprite;
+    [SerializeField] private Vector2 visualOffset = new Vector2(0.28f, -0.04f);
+    [SerializeField] private Vector2 visualScale = Vector2.one;
+    [Range(-180f, 180f)] [SerializeField] private float visualRotation;
+    [SerializeField] private WeaponAttackMotionStyle attackMotionStyle = WeaponAttackMotionStyle.Auto;
+    [Min(0f)] [SerializeField] private float attackArcDegrees = 90f;
+    [Min(0f)] [SerializeField] private float attackLungeMultiplier = 1f;
+    [Min(0f)] [SerializeField] private float idleBobAmplitude = 0.012f;
+    [Min(0f)] [SerializeField] private float idleBobSpeed = 7f;
+    [Min(0f)] [SerializeField] private float attackLungeDistance = 0.08f;
+    [Min(0.01f)] [SerializeField] private float attackLungeDuration = 0.35f;
+    [SerializeField] private bool flipVisualWithFacing = true;
 
     [Header("Attack")]
     [SerializeField] private WeaponAttackType attackType = WeaponAttackType.Melee;
@@ -23,6 +45,7 @@ public class WeaponDefinition : ScriptableObject
     [Header("Melee")]
     [SerializeField] private Vector2 hitboxSize = new Vector2(1.2f, 1.2f);
     [SerializeField] private Vector2 hitboxOffset = new Vector2(0.9f, 0f);
+    [Min(0f)] [SerializeField] private float meleeSlashVisualReach = 0f;
     [SerializeField] private bool meleeAppliesKnockback;
     [Min(0f)] [SerializeField] private float meleeKnockbackForce = 0f;
 
@@ -44,12 +67,25 @@ public class WeaponDefinition : ScriptableObject
     public string WeaponId => weaponId;
     public string DisplayName => string.IsNullOrWhiteSpace(displayName) ? weaponId : displayName;
     public PlayerFormType Form => form;
+    public Sprite VisualSprite => visualSprite;
+    public Vector2 VisualOffset => visualOffset;
+    public Vector2 VisualScale => visualScale;
+    public float VisualRotation => visualRotation;
+    public WeaponAttackMotionStyle AttackMotionStyle => attackMotionStyle;
+    public float AttackArcDegrees => attackArcDegrees;
+    public float AttackLungeMultiplier => attackLungeMultiplier;
+    public float IdleBobAmplitude => idleBobAmplitude;
+    public float IdleBobSpeed => idleBobSpeed;
+    public float AttackLungeDistance => attackLungeDistance;
+    public float AttackLungeDuration => attackLungeDuration;
+    public bool FlipVisualWithFacing => flipVisualWithFacing;
     public WeaponAttackType AttackType => attackType;
     public float BaseDamage => baseDamage;
     public float Cooldown => cooldown;
     public float Range => range;
     public Vector2 HitboxSize => hitboxSize;
     public Vector2 HitboxOffset => hitboxOffset;
+    public float MeleeSlashVisualReach => meleeSlashVisualReach;
     public bool MeleeAppliesKnockback => meleeAppliesKnockback;
     public float MeleeKnockbackForce => meleeKnockbackForce;
     public GameObject ProjectilePrefab => projectilePrefab;
@@ -63,4 +99,27 @@ public class WeaponDefinition : ScriptableObject
     public float ChargeTimeToMax => chargeTimeToMax;
     public float ChargeMinDamageMultiplier => chargeMinDamageMultiplier;
     public float ChargeMaxDamageMultiplier => chargeMaxDamageMultiplier;
+
+    public WeaponAttackMotionStyle GetResolvedAttackMotionStyle()
+    {
+        if (attackMotionStyle != WeaponAttackMotionStyle.Auto)
+        {
+            return attackMotionStyle;
+        }
+
+        string key = string.IsNullOrWhiteSpace(weaponId) ? displayName : weaponId;
+        key = string.IsNullOrWhiteSpace(key) ? string.Empty : key.Trim().ToLowerInvariant();
+
+        if (key.Contains("spear") || key.Contains("lanza"))
+        {
+            return WeaponAttackMotionStyle.Thrust;
+        }
+
+        if (key.Contains("axe") || key.Contains("hacha"))
+        {
+            return WeaponAttackMotionStyle.Chop;
+        }
+
+        return WeaponAttackMotionStyle.Sweep;
+    }
 }

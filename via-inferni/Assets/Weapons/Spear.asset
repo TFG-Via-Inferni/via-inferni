@@ -15,12 +15,25 @@ MonoBehaviour:
   weaponId: 2
   displayName: Spear
   form: 0
+  visualSprite: {fileID: 1268254487, guid: aab1c3afa5aa57440813968353447012, type: 3}
+  visualOffset: {x: -1.2, y: -0.1}
+  visualScale: {x: 1, y: 1}
+  visualRotation: -44
+  attackMotionStyle: 2
+  attackArcDegrees: 0
+  attackLungeMultiplier: 1
+  idleBobAmplitude: 0.012
+  idleBobSpeed: 7
+  attackLungeDistance: 1
+  attackLungeDuration: 0.2
+  flipVisualWithFacing: 1
   attackType: 0
   baseDamage: 10
   cooldown: 0.4
   range: 1.9
-  hitboxSize: {x: 1.1, y: 1.0}
+  hitboxSize: {x: 1.1, y: 1}
   hitboxOffset: {x: 1.35, y: 0}
+  meleeSlashVisualReach: 1.5425
   meleeAppliesKnockback: 0
   meleeKnockbackForce: 0
   projectilePrefab: {fileID: 0}
@@ -30,3 +43,7 @@ MonoBehaviour:
   projectileHoming: 0
   projectileHomingTurnSpeed: 0
   projectileHomingSearchRadius: 0
+  requiresChargeAttack: 0
+  chargeTimeToMax: 1.25
+  chargeMinDamageMultiplier: 0.6
+  chargeMaxDamageMultiplier: 2.2
