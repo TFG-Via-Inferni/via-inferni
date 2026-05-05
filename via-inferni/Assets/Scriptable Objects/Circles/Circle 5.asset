@@ -32,7 +32,22 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0a466da723ac878439ccd189fbf567c9, type: 2}
   - {fileID: 11400000, guid: aa564e78dc8a16a4ebc27c4f5e5dd5e1, type: 2}
   - {fileID: 11400000, guid: 35cc347970cfe974987f621a685bd8c1, type: 2}
-  enemyPool: []
+  enemyPool:
+  - enemyPrefab: {fileID: 1736370125707709183, guid: 44204ae761c1a9c4184aac622784b9b3, type: 3}
+    enemyDefinition: {fileID: 11400000, guid: 183111f6ddf0a1249a2c7ad36b40d2e6, type: 2}
+    weight: 0
+    useRoomTypeFilter: 0
+    allowedRoomTypes: 
+  - enemyPrefab: {fileID: 1736370125707709183, guid: 8885b48437cca384baac7a89571403e6, type: 3}
+    enemyDefinition: {fileID: 11400000, guid: c31dc19fef2076546b460e4ad9f1aed9, type: 2}
+    weight: 0
+    useRoomTypeFilter: 0
+    allowedRoomTypes: 
+  - enemyPrefab: {fileID: 1736370125707709183, guid: de986d4286b2df74f9936687feda95a4, type: 3}
+    enemyDefinition: {fileID: 11400000, guid: e051b35f0ccf5d84dad071b4267fabe6, type: 2}
+    weight: 0
+    useRoomTypeFilter: 0
+    allowedRoomTypes: 
   enemyDropChance: 1
   inventoryDropPool:
   - itemDefinition: {fileID: 11400000, guid: ec084e978c07f2c41bfcda823352454f, type: 2}
