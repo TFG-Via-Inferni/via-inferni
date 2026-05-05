@@ -3,6 +3,11 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class Projectile : MonoBehaviour
 {
+    private const float HomingTurnDegreesPerSpeedUnit = 45f;
+    private const float HomingMinTurnFactor = 0.3f;
+    private const float HomingRetargetInterval = 0.18f;
+    private const float HomingAimPointVariance = 0.65f;
+
     [SerializeField] private float hitRadius = 0.2f;
     [SerializeField] private bool destroyOnFirstHit = true;
     [SerializeField] private float visualRotationOffset = -90f;
@@ -16,6 +21,9 @@ public class Projectile : MonoBehaviour
     private bool homingEnabled;
     private float homingTurnSpeed;
     private float homingSearchRadius;
+    private Collider2D homingTarget;
+    private Vector2 homingAimPoint;
+    private float nextHomingRetargetTime;
 
     public void Initialize(
         float damageAmount,
@@ -102,15 +110,81 @@ public class Projectile : MonoBehaviour
             return;
         }
 
-        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, homingSearchRadius);
-        if (hits == null || hits.Length == 0)
+        Vector2 currentPosition = transform.position;
+        if (ShouldRefreshHomingTarget(currentPosition))
+        {
+            RefreshHomingTarget(currentPosition);
+        }
+
+        if (homingTarget == null)
         {
             return;
         }
 
+        Vector2 toAimPoint = homingAimPoint - currentPosition;
+        if (toAimPoint.sqrMagnitude <= 0.0001f)
+        {
+            return;
+        }
+
+        Vector2 desiredDirection = toAimPoint.normalized;
+        float distanceFactor = Mathf.Clamp01(toAimPoint.magnitude / homingSearchRadius);
+        distanceFactor = Mathf.Lerp(HomingMinTurnFactor, 1f, distanceFactor);
+
+        float currentAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        float desiredAngle = Mathf.Atan2(desiredDirection.y, desiredDirection.x) * Mathf.Rad2Deg;
+        float maxTurnDegrees = homingTurnSpeed * HomingTurnDegreesPerSpeedUnit * distanceFactor * Time.deltaTime;
+        float newAngle = Mathf.MoveTowardsAngle(currentAngle, desiredAngle, maxTurnDegrees);
+        float radians = newAngle * Mathf.Deg2Rad;
+        direction = new Vector2(Mathf.Cos(radians), Mathf.Sin(radians)).normalized;
+    }
+
+    private bool ShouldRefreshHomingTarget(Vector2 currentPosition)
+    {
+        if (homingTarget == null || !homingTarget.gameObject.activeInHierarchy)
+        {
+            return true;
+        }
+
+        if (Time.time >= nextHomingRetargetTime)
+        {
+            return true;
+        }
+
+        float maxRangeSqr = homingSearchRadius * homingSearchRadius;
+        return ((Vector2)homingTarget.bounds.center - currentPosition).sqrMagnitude > maxRangeSqr;
+    }
+
+    private void RefreshHomingTarget(Vector2 currentPosition)
+    {
+        homingTarget = FindClosestHomingTarget(currentPosition);
+        nextHomingRetargetTime = Time.time + HomingRetargetInterval;
+
+        if (homingTarget == null)
+        {
+            return;
+        }
+
+        Bounds bounds = homingTarget.bounds;
+        Vector2 center = bounds.center;
+        Vector2 extents = bounds.extents * HomingAimPointVariance;
+        Vector2 aimOffset = new Vector2(
+            Random.Range(-extents.x, extents.x),
+            Random.Range(-extents.y, extents.y)
+        );
+        homingAimPoint = center + aimOffset;
+    }
+
+    private Collider2D FindClosestHomingTarget(Vector2 currentPosition)
+    {
+        Collider2D[] hits = Physics2D.OverlapCircleAll(currentPosition, homingSearchRadius);
+        if (hits == null || hits.Length == 0)
+        {
+            return null;
+        }
+
         Collider2D closestTarget = null;
         float closestDistance = float.MaxValue;
-        Vector2 currentPosition = transform.position;
 
         for (int i = 0; i < hits.Length; i++)
         {
@@ -134,14 +208,7 @@ public class Projectile : MonoBehaviour
             }
         }
 
-        if (closestTarget == null)
-        {
-            return;
-        }
-
-        Vector2 desiredDirection = ((Vector2)closestTarget.bounds.center - currentPosition).normalized;
-        float blend = Mathf.Clamp01(homingTurnSpeed * Time.deltaTime);
-        direction = Vector2.Lerp(direction, desiredDirection, blend).normalized;
+        return closestTarget;
     }
 
     private void UpdateVisualRotation()
