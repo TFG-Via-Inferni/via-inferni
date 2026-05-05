@@ -36,10 +36,25 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private float tankSpeedMultiplier = 0.7f;
     [SerializeField] private float tankAttackWindup = 0.45f;
     [SerializeField] private float tankAttackDamageMultiplier = 2f;
+    [SerializeField] private float tankAttackLungeForce = 6.5f;
+    [SerializeField] private float tankAttackLungeDuration = 0.12f;
+    [SerializeField] private float normalAttackRangeMultiplier = 0.72f;
+    [SerializeField] private float normalAttackEngageRangeMultiplier = 1.45f;
+    [SerializeField] private float normalAttackWindup = 0.1f;
+    [SerializeField] private float normalWindupChaseSpeedMultiplier = 0.48f;
+    [SerializeField] private float normalAttackCommitRangeMultiplier = 1.35f;
+    [SerializeField] private float normalAttackLungeForce = 5.1f;
+    [SerializeField] private float normalAttackLungeDuration = 0.1f;
     [SerializeField] private float flyShotWindup = 0.18f;
+    [SerializeField] private float flyAttackCooldownMultiplier = 1.45f;
     [SerializeField] private Color telegraphColor = new Color(1f, 0.55f, 0.55f, 1f);
     [SerializeField] private float telegraphScaleMultiplier = 1.12f;
     [SerializeField] private float knockbackRecoverDuration = 0.16f;
+    [SerializeField] private Color dashTrailColor = new Color(1f, 0.92f, 0.92f, 1f);
+    [SerializeField] private float normalDashTrailAlphaMultiplier = 1.65f;
+    [SerializeField] private float normalDashTrailSpawnIntervalMultiplier = 0.68f;
+    [SerializeField] private float normalDashTrailLifetimeMultiplier = 1.35f;
+    [SerializeField] private float normalDashTrailScaleMultiplier = 1.05f;
 
     private EnemyState currentState = EnemyState.Idle;
     private Transform player;
@@ -53,14 +68,21 @@ public class EnemyController : MonoBehaviour
     private bool isDead;
     private EnemyDefinition runtimeDefinition;
     private float flyOrbitSign = 1f;
+    private bool normalIsWindingUp;
+    private float normalWindupReadyAt;
+    private Vector2 normalCommittedDirection = Vector2.right;
     private bool tankIsWindingUp;
     private float tankWindupReadyAt;
     private bool flyIsWindingUp;
     private float flyWindupReadyAt;
     private Color spriteBaseColor = Color.white;
     private Vector3 visualBaseScale = Vector3.one;
+    private EnemyDashTrailVisual dashTrailVisual;
     private Vector2 knockbackVelocity;
     private float knockbackUntil = -999f;
+    private Vector2 attackLungeVelocity;
+    private float attackLungeUntil = -999f;
+    private float currentAttackLungeDuration = 0.1f;
 
     private EnemyType CurrentEnemyType => runtimeDefinition != null ? runtimeDefinition.enemyType : EnemyType.Normal;
 
@@ -81,6 +103,14 @@ public class EnemyController : MonoBehaviour
         {
             spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         }
+
+        dashTrailVisual = GetComponent<EnemyDashTrailVisual>();
+        if (dashTrailVisual == null)
+        {
+            dashTrailVisual = gameObject.AddComponent<EnemyDashTrailVisual>();
+        }
+
+        dashTrailVisual.Configure(spriteRenderer);
 
         if (spriteRenderer != null)
         {
@@ -130,6 +160,11 @@ public class EnemyController : MonoBehaviour
         if (spriteRenderer != null && definition.overrideSprite != null)
         {
             spriteRenderer.sprite = definition.overrideSprite;
+        }
+
+        if (dashTrailVisual != null)
+        {
+            dashTrailVisual.Configure(spriteRenderer);
         }
 
         speed = definition.moveSpeed;
@@ -187,8 +222,12 @@ public class EnemyController : MonoBehaviour
     {
         aiEnabled = false;
         movement = Vector2.zero;
+        normalIsWindingUp = false;
+        normalCommittedDirection = Vector2.right;
         tankIsWindingUp = false;
         flyIsWindingUp = false;
+        attackLungeVelocity = Vector2.zero;
+        attackLungeUntil = -999f;
         ResetTelegraphVisual();
 
         if (rb != null)
@@ -279,6 +318,13 @@ public class EnemyController : MonoBehaviour
             return;
         }
 
+        if (Time.time < attackLungeUntil)
+        {
+            rb.MovePosition(rb.position + (attackLungeVelocity * Time.fixedDeltaTime));
+            attackLungeVelocity = Vector2.Lerp(attackLungeVelocity, Vector2.zero, Time.fixedDeltaTime / Mathf.Max(0.01f, currentAttackLungeDuration));
+            return;
+        }
+
         // Mover al enemigo
         rb.MovePosition(rb.position + movement * Time.fixedDeltaTime);
     }
@@ -296,8 +342,52 @@ public class EnemyController : MonoBehaviour
 
         knockbackVelocity = normalizedDirection * force;
         knockbackUntil = Time.time + Mathf.Max(0.05f, knockbackRecoverDuration);
+        normalIsWindingUp = false;
+        normalCommittedDirection = Vector2.right;
         tankIsWindingUp = false;
         flyIsWindingUp = false;
+        attackLungeVelocity = Vector2.zero;
+        attackLungeUntil = -999f;
+    }
+
+    private float GetCurrentAttackCooldown()
+    {
+        if (CurrentEnemyType == EnemyType.Fly)
+        {
+            return attackCooldown * Mathf.Max(1f, flyAttackCooldownMultiplier);
+        }
+
+        return attackCooldown;
+    }
+
+    private void StartAttackLunge(Vector2 direction, float force, float duration)
+    {
+        if (force <= 0f || duration <= 0f)
+        {
+            return;
+        }
+
+        attackLungeVelocity = direction.normalized * force;
+        currentAttackLungeDuration = duration;
+        attackLungeUntil = Time.time + duration;
+
+        if (dashTrailVisual != null)
+        {
+            if (CurrentEnemyType == EnemyType.Normal)
+            {
+                dashTrailVisual.Play(
+                    duration,
+                    dashTrailColor,
+                    normalDashTrailAlphaMultiplier,
+                    normalDashTrailSpawnIntervalMultiplier,
+                    normalDashTrailLifetimeMultiplier,
+                    normalDashTrailScaleMultiplier);
+            }
+            else
+            {
+                dashTrailVisual.Play(duration, dashTrailColor, 1f, 1f, 1f, 1f);
+            }
+        }
     }
 
     void UpdateState(float distanceToPlayer)
@@ -306,6 +396,11 @@ public class EnemyController : MonoBehaviour
         if (CurrentEnemyType == EnemyType.Fly)
         {
             effectiveAttackRange *= Mathf.Max(1f, flyAttackRangeMultiplier);
+        }
+        else if (CurrentEnemyType == EnemyType.Normal)
+        {
+            effectiveAttackRange *= Mathf.Clamp(normalAttackRangeMultiplier, 0.1f, 1f);
+            effectiveAttackRange *= Mathf.Max(1f, normalAttackEngageRangeMultiplier);
         }
 
         if (distanceToPlayer <= effectiveAttackRange)
@@ -325,7 +420,16 @@ public class EnemyController : MonoBehaviour
     void ChangeState(EnemyState newState)
     {
         if (currentState == newState) return;
-        
+
+        if (newState != EnemyState.Attack)
+        {
+            normalIsWindingUp = false;
+            normalCommittedDirection = Vector2.right;
+            tankIsWindingUp = false;
+            flyIsWindingUp = false;
+            ResetTelegraphVisual();
+        }
+
         currentState = newState;
     }
 
@@ -375,29 +479,71 @@ public class EnemyController : MonoBehaviour
             return;
         }
 
-        movement = Vector2.zero;
-
-        // Atacar si ha pasado el cooldown
-        if (Time.time >= lastAttackTime + attackCooldown)
-        {
-            PerformAttack();
-            lastAttackTime = Time.time;
-
-            if (CurrentEnemyType == EnemyType.Fly)
-            {
-                flyOrbitSign *= -1f;
-            }
-        }
+        HandleNormalAttack();
     }
 
-    void PerformAttack()
+    private void HandleNormalAttack()
     {
-        Debug.Log("¡Enemigo atacando!");
+        if (player == null)
+        {
+            return;
+        }
 
+        Vector2 directionToPlayer = ((Vector2)player.position - rb.position);
+        float distanceToPlayer = directionToPlayer.magnitude;
+        if (directionToPlayer.sqrMagnitude <= 0.0001f)
+        {
+            directionToPlayer = Vector2.right;
+            distanceToPlayer = 0f;
+        }
+
+        float effectiveAttackRange = attackRange * Mathf.Clamp(normalAttackRangeMultiplier, 0.1f, 1f);
+        float engageRange = effectiveAttackRange * Mathf.Max(1f, normalAttackEngageRangeMultiplier);
+
+        if (!normalIsWindingUp)
+        {
+            movement = Vector2.zero;
+
+            if (Time.time < lastAttackTime + GetCurrentAttackCooldown())
+            {
+                return;
+            }
+
+            normalIsWindingUp = true;
+            normalCommittedDirection = directionToPlayer.normalized;
+            normalWindupReadyAt = Time.time + Mathf.Max(0.04f, normalAttackWindup);
+            return;
+        }
+
+        if (directionToPlayer.sqrMagnitude > 0.0001f)
+        {
+            normalCommittedDirection = Vector2.Lerp(
+                normalCommittedDirection,
+                directionToPlayer.normalized,
+                0.35f).normalized;
+        }
+
+        movement = normalCommittedDirection * (speed * normalWindupChaseSpeedMultiplier);
+
+        if (Time.time < normalWindupReadyAt)
+        {
+            return;
+        }
+
+        normalIsWindingUp = false;
+
+        if (distanceToPlayer > engageRange * Mathf.Max(1.05f, normalAttackCommitRangeMultiplier))
+        {
+            return;
+        }
+
+        StartAttackLunge(normalCommittedDirection, normalAttackLungeForce, normalAttackLungeDuration);
         if (playerDamageable != null && playerDamageable.CanTakeDamage)
         {
             playerDamageable.TakeDamage(attackDamage, gameObject);
         }
+
+        lastAttackTime = Time.time;
     }
 
     private void HandleTankAttack()
@@ -406,7 +552,7 @@ public class EnemyController : MonoBehaviour
 
         if (!tankIsWindingUp)
         {
-            if (Time.time < lastAttackTime + attackCooldown)
+            if (Time.time < lastAttackTime + GetCurrentAttackCooldown())
             {
                 return;
             }
@@ -436,6 +582,13 @@ public class EnemyController : MonoBehaviour
         }
 
         float heavyDamage = attackDamage * tankAttackDamageMultiplier;
+        Vector2 directionToPlayer = ((Vector2)player.position - rb.position);
+        if (directionToPlayer.sqrMagnitude <= 0.0001f)
+        {
+            directionToPlayer = Vector2.right;
+        }
+
+        StartAttackLunge(directionToPlayer.normalized, tankAttackLungeForce, tankAttackLungeDuration);
         if (playerDamageable != null && playerDamageable.CanTakeDamage)
         {
             playerDamageable.TakeDamage(heavyDamage, gameObject);
@@ -466,7 +619,7 @@ public class EnemyController : MonoBehaviour
 
         if (!flyIsWindingUp)
         {
-            if (Time.time < lastAttackTime + attackCooldown)
+            if (Time.time < lastAttackTime + GetCurrentAttackCooldown())
             {
                 return;
             }
