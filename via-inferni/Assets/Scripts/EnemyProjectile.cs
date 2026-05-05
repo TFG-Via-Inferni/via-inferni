@@ -4,6 +4,7 @@ using UnityEngine;
 public class EnemyProjectile : MonoBehaviour
 {
     [SerializeField] private float hitRadius = 0.2f;
+    [SerializeField] private float visualRotationOffset = -90f;
 
     private float damage;
     private float speed;
@@ -20,10 +21,12 @@ public class EnemyProjectile : MonoBehaviour
         direction = travelDirection.sqrMagnitude > 0.0001f ? travelDirection.normalized : Vector2.right;
         ownerRoot = owner != null ? owner.root : null;
         spawnTime = Time.time;
+        UpdateVisualRotation();
     }
 
     private void Update()
     {
+        UpdateVisualRotation();
         transform.position += (Vector3)(direction * (speed * Time.deltaTime));
 
         if (Time.time >= spawnTime + lifetime)
@@ -64,5 +67,16 @@ public class EnemyProjectile : MonoBehaviour
                 return;
             }
         }
+    }
+
+    private void UpdateVisualRotation()
+    {
+        if (direction.sqrMagnitude <= 0.0001f)
+        {
+            return;
+        }
+
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0f, 0f, angle + visualRotationOffset);
     }
 }
