@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Axe
   form: 0
   visualSprite: {fileID: -134995713, guid: b8845f6fb0b50524294d62eb91947a01, type: 3}
-  visualOffset: {x: -1.2, y: 0}
+  visualOffset: {x: -1.2, y: -0.3}
   visualScale: {x: 1, y: 1}
   visualRotation: -90
   attackMotionStyle: 3
