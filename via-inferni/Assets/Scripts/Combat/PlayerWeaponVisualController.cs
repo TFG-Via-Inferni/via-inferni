@@ -142,16 +142,19 @@ public class PlayerWeaponVisualController : MonoBehaviour
             attackScale = 1f + (Mathf.Max(0f, attackPulseScale) * (1f - normalized));
         }
 
-        float visualAngle = Mathf.Atan2(visualDirection.y, visualDirection.x) * Mathf.Rad2Deg;
+        bool mirrorVisual = ShouldMirrorVisual(visualDirection);
+        Vector2 rotationDirection = mirrorVisual ? Vector2.right : visualDirection;
+        float visualAngle = Mathf.Atan2(rotationDirection.y, rotationDirection.x) * Mathf.Rad2Deg;
         Vector2 directionalBaseOffset = GetDirectionalBaseOffset(visualDirection);
         Vector2 forwardOffset = GetForwardOffset(visualDirection);
+        float finalAttackAngle = mirrorVisual ? -attackAngle : attackAngle;
 
         // During the attack, the whole weapon pose follows the attack direction.
         transform.localPosition = directionalBaseOffset + forwardOffset + attackOffset;
-        transform.localRotation = Quaternion.Euler(0f, 0f, currentBaseRotation + visualAngle + attackAngle);
+        transform.localRotation = Quaternion.Euler(0f, 0f, currentBaseRotation + visualAngle + finalAttackAngle);
 
         Vector2 scale = currentBaseScale * attackScale;
-        transform.localScale = new Vector3(scale.x, scale.y, 1f);
+        transform.localScale = new Vector3(scale.x, mirrorVisual ? -scale.y : scale.y, 1f);
     }
 
     private void RefreshWeaponVisual(bool force)
@@ -241,5 +244,15 @@ public class PlayerWeaponVisualController : MonoBehaviour
 
         Vector2 facing = player.FacingDirection;
         return facing.sqrMagnitude > 0.0001f ? facing.normalized : Vector2.right;
+    }
+
+    private bool ShouldMirrorVisual(Vector2 direction)
+    {
+        if (currentWeapon == null || !currentWeapon.FlipVisualWithFacing)
+        {
+            return false;
+        }
+
+        return direction.x < -0.0001f && Mathf.Abs(direction.x) >= Mathf.Abs(direction.y);
     }
 }

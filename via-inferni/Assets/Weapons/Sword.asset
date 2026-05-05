@@ -15,10 +15,10 @@ MonoBehaviour:
   weaponId: 1
   displayName: Sword
   form: 0
-  visualSprite: {fileID: -279038542, guid: aab1c3afa5aa57440813968353447012, type: 3}
+  visualSprite: {fileID: 1467661787, guid: b8845f6fb0b50524294d62eb91947a01, type: 3}
   visualOffset: {x: -1.2, y: -0.1}
   visualScale: {x: 1, y: 1}
-  visualRotation: -44
+  visualRotation: -90
   attackMotionStyle: 1
   attackArcDegrees: 160
   attackLungeMultiplier: 1
@@ -33,7 +33,7 @@ MonoBehaviour:
   range: 1.55
   hitboxSize: {x: 1.7, y: 1.3}
   hitboxOffset: {x: 1.05, y: 0}
-  meleeSlashVisualReach: 1.225
+  meleeSlashVisualReach: 1.5
   meleeAppliesKnockback: 1
   meleeKnockbackForce: 4.5
   projectilePrefab: {fileID: 0}

@@ -15,10 +15,10 @@ MonoBehaviour:
   weaponId: 3
   displayName: Axe
   form: 0
-  visualSprite: {fileID: -1572150948, guid: aab1c3afa5aa57440813968353447012, type: 3}
-  visualOffset: {x: -1.2, y: -0.1}
+  visualSprite: {fileID: -134995713, guid: b8845f6fb0b50524294d62eb91947a01, type: 3}
+  visualOffset: {x: -1.2, y: 0}
   visualScale: {x: 1, y: 1}
-  visualRotation: -44
+  visualRotation: -90
   attackMotionStyle: 3
   attackArcDegrees: 45
   attackLungeMultiplier: 1
@@ -33,6 +33,7 @@ MonoBehaviour:
   range: 1
   hitboxSize: {x: 1, y: 1}
   hitboxOffset: {x: 0.85, y: 0}
+  meleeSlashVisualReach: 1
   meleeAppliesKnockback: 0
   meleeKnockbackForce: 0
   projectilePrefab: {fileID: 0}
