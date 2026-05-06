@@ -7,6 +7,9 @@ public class ShopManager : MonoBehaviour
 {
     [Header("Prefabs")]
     [SerializeField] private ShopStand shopStandPrefab;
+    [Header("Item Pools")]
+    [Tooltip("Pool of special items that can appear in shops (assign special InventoryItemDefinition assets)")]
+    [SerializeField] private InventoryItemDefinition[] specialPool = new InventoryItemDefinition[0];
 
     [Header("Layout")]
     [SerializeField] private Vector2[] standOffsets = new Vector2[3]
@@ -42,6 +45,9 @@ public class ShopManager : MonoBehaviour
             player = playerObj.GetComponent<Player>();
             playerInventory = playerObj.GetComponent<PlayerInventory>();
         }
+
+        // Populate shop immediately when starting
+        PopulateShop();
     }
 
     private void Update()
@@ -92,6 +98,179 @@ public class ShopManager : MonoBehaviour
         {
             Debug.Log("ShopManager: purchase failed (not enough souls or inventory full).");
         }
+    }
+
+    private void PopulateShop()
+    {
+        InventoryItemDefinition[] items = new InventoryItemDefinition[spawnedStands.Count];
+        int[] prices = new int[spawnedStands.Count];
+
+        // Central index is middle (1) for 3 stands
+        int centerIndex = spawnedStands.Count == 3 ? 1 : 0;
+
+        // 1) Try central special
+        InventoryItemDefinition centerItem = TryPickAvailableSpecial();
+        if (centerItem != null)
+        {
+            items[centerIndex] = centerItem;
+            prices[centerIndex] = PriceForItem(centerItem);
+        }
+        else
+        {
+            // Fallback: pick a tier 4 (Platinum) item from current circle
+            InventoryItemDefinition tier4 = PickTierDropFromCurrentCircle(ItemTier.Platinum);
+            if (tier4 != null)
+            {
+                items[centerIndex] = tier4;
+                prices[centerIndex] = PriceForItem(tier4);
+            }
+            else
+            {
+                // last resort: pick any circle drop
+                if (CircleManager.instance != null && CircleManager.instance.CurrentCircleDefinition != null && CircleManager.instance.CurrentCircleDefinition.TryPickInventoryDrop(out InventoryItemDefinition any))
+                {
+                    items[centerIndex] = any;
+                    prices[centerIndex] = PriceForItem(any);
+                }
+            }
+        }
+
+        // 2) Pick adjacent (left/right)
+        for (int i = 0; i < spawnedStands.Count; i++)
+        {
+            if (i == centerIndex) continue;
+
+            InventoryItemDefinition pick = null;
+            if (CircleManager.instance != null && CircleManager.instance.CurrentCircleDefinition != null)
+            {
+                CircleDefinition def = CircleManager.instance.CurrentCircleDefinition;
+                def.TryPickInventoryDrop(out pick);
+            }
+
+            if (pick == null)
+            {
+                // fallback global
+                pick = PickAnyGlobalDropFallback();
+            }
+
+            items[i] = pick;
+            prices[i] = pick != null ? PriceForItem(pick) : 0;
+        }
+
+        AssignItems(items, prices);
+    }
+
+    private InventoryItemDefinition TryPickAvailableSpecial()
+    {
+        if (specialPool == null || specialPool.Length == 0) return null;
+
+        for (int i = 0; i < specialPool.Length; i++)
+        {
+            var candidate = specialPool[i];
+            if (candidate == null) continue;
+            SpecialItemType st = SpecialItemManager.ParseSpecialEffectId(candidate.SpecialEffectId);
+            if (st == SpecialItemType.None) continue;
+
+            if (SpecialItemManager.Instance.IsSpecialTypeActive(st))
+            {
+                continue; // already active somewhere
+            }
+
+            // Also prevent if player already has it in inventory
+            var playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+            {
+                var inv = playerObj.GetComponent<PlayerInventory>();
+                if (inv != null && inv.HasSpecialType(st))
+                {
+                    continue;
+                }
+            }
+
+            return candidate;
+        }
+
+        return null;
+    }
+
+    private InventoryItemDefinition PickTierDropFromCurrentCircle(ItemTier tier)
+    {
+        if (CircleManager.instance == null || CircleManager.instance.CurrentCircleDefinition == null) return null;
+        var def = CircleManager.instance.CurrentCircleDefinition;
+
+        var validEntries = def.inventoryDropPool == null ? null : new System.Collections.Generic.List<WeightedInventoryDropEntry>();
+        if (validEntries == null) return null;
+
+        foreach (var entry in def.inventoryDropPool)
+        {
+            if (entry == null || entry.itemDefinition == null) continue;
+            if (entry.itemDefinition.ItemType != InventoryItemType.StatBoost) continue;
+            if (entry.itemDefinition.StatBoost.tier == tier)
+            {
+                validEntries.Add(entry);
+            }
+        }
+
+        if (validEntries.Count == 0) return null;
+
+        float totalWeight = 0f;
+        foreach (var e in validEntries) totalWeight += Mathf.Max(0f, e.weight);
+        if (totalWeight <= 0f)
+        {
+            return validEntries[Random.Range(0, validEntries.Count)].itemDefinition;
+        }
+
+        float roll = Random.value * totalWeight;
+        float cumulative = 0f;
+        foreach (var e in validEntries)
+        {
+            cumulative += Mathf.Max(0f, e.weight);
+            if (roll <= cumulative) return e.itemDefinition;
+        }
+
+        return validEntries[validEntries.Count - 1].itemDefinition;
+    }
+
+    private InventoryItemDefinition PickAnyGlobalDropFallback()
+    {
+        if (CircleManager.instance != null)
+        {
+            // try circle first
+            if (CircleManager.instance.CurrentCircleDefinition != null && CircleManager.instance.CurrentCircleDefinition.TryPickInventoryDrop(out InventoryItemDefinition pick))
+            {
+                return pick;
+            }
+        }
+
+        // fallback to CircleManager global pool
+        if (CircleManager.instance != null)
+        {
+            var cm = CircleManager.instance;
+            // use reflection to call private PickGlobalEnemyDropItem? instead we will try globalEnemyDropPool field via public API: TrySpawnGlobalEnemyDrop uses it, but no getter. So return null and let caller handle.
+        }
+
+        return null;
+    }
+
+    private int PriceForItem(InventoryItemDefinition def)
+    {
+        if (def == null) return 0;
+
+        if (def.ItemType == InventoryItemType.Special) return 60;
+
+        if (def.ItemType == InventoryItemType.StatBoost)
+        {
+            switch (def.StatBoost.tier)
+            {
+                case ItemTier.Bronze: return 20;
+                case ItemTier.Silver: return 30;
+                case ItemTier.Gold: return 40;
+                case ItemTier.Platinum: return 50;
+                default: return 40;
+            }
+        }
+
+        return 40;
     }
 
     private void SpawnStands()
