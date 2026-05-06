@@ -52,6 +52,8 @@ public class ShopManager : MonoBehaviour
 
     private void Update()
     {
+        HandleDebugInput();
+
         if (player == null)
         {
             return;
@@ -97,6 +99,27 @@ public class ShopManager : MonoBehaviour
         else
         {
             Debug.Log("ShopManager: purchase failed (not enough souls or inventory full).");
+        }
+    }
+
+    private void HandleDebugInput()
+    {
+        Keyboard keyboard = Keyboard.current;
+        if (keyboard == null)
+        {
+            return;
+        }
+
+        if (keyboard.f7Key.wasPressedThisFrame)
+        {
+            PopulateShop();
+            Debug.Log("ShopManager: debug F7 -> PopulateShop ejecutado.");
+        }
+
+        if (keyboard.f8Key.wasPressedThisFrame)
+        {
+            ClearAll();
+            Debug.Log("ShopManager: debug F8 -> ClearAll ejecutado.");
         }
     }
 
