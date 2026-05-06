@@ -1359,6 +1359,7 @@ Transform:
   - {fileID: 5170916422817192239}
   - {fileID: 9176123452779264138}
   - {fileID: 8325255517596249691}
+  - {fileID: 1045145711078348695}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!156049354 &2970275226574810316
@@ -2210,3 +2211,59 @@ CompositeCollider2D:
   m_OffsetDistance: 0.00005
   m_UseDelaunayMesh: 0
   m_CompositeGameObject: {fileID: 8161117109949090871}
+--- !u!1 &8884817746404527976
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1045145711078348695}
+  - component: {fileID: 4641459469630081242}
+  m_Layer: 0
+  m_Name: Shop
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1045145711078348695
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8884817746404527976}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8320264743346771471}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4641459469630081242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8884817746404527976}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22306b10466fb4a46a8959e5f9885d06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShopManager
+  shopStandPrefab: {fileID: 2680129083668874059, guid: 4e846d62cf04f28419615dccb0e40f84, type: 3}
+  specialPool:
+  - {fileID: 11400000, guid: c1602210a2672d244a657a33a9694f7e, type: 2}
+  - {fileID: 11400000, guid: b67a78117148ba248a104542901387b9, type: 2}
+  - {fileID: 11400000, guid: 91bdf465c813b8344a2aaf2a586dec5b, type: 2}
+  - {fileID: 11400000, guid: 36774a2281cfe6a4b8e8a3aee9cd451f, type: 2}
+  - {fileID: 11400000, guid: bd3d22ef83ba8c647947d1a4b518533b, type: 2}
+  standOffsets:
+  - {x: 19.5, y: -11.5}
+  - {x: 24, y: -11.5}
+  - {x: 28.5, y: -11.5}
+  interactRadius: 1.5
