@@ -1663,6 +1663,7 @@ MonoBehaviour:
   roomPrefab: {fileID: 3625141736511110714, guid: bf88618e6bec61b4992515d0307d91ba, type: 3}
   doorPrefab: {fileID: 6164487024370233051, guid: caa22eb102a515c478d1c65523b74bf3, type: 3}
   enemyPrefab: {fileID: 1736370125707709183, guid: 88c1b017378c0c242ba6ccb361bf9b1c, type: 3}
+  shopPrefab: {fileID: 8531720180054535773, guid: 96efcc3a2bf4dd54f96e74f1f45b971f, type: 3}
   doors:
   - {fileID: 11400000, guid: 1de88b8a021bb5a43859c7b3deaff962, type: 2}
   - {fileID: 11400000, guid: 7f59265b7c624424b9bb0437809a4074, type: 2}

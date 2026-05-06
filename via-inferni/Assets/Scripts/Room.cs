@@ -72,6 +72,27 @@ public class Room : MonoBehaviour
                     var bounds = tilemap.localBounds;
                     roomInstance.transform.localPosition = -bounds.center;
                 }
+
+                // If this cell is a Shop room, ensure a Shop exists under the instantiated visual.
+                if (currentCell != null && currentCell.roomType == RoomType.Shop)
+                {
+                    // Try to find an existing ShopManager in the room prefab variation
+                    ShopManager existingShop = roomInstance.GetComponentInChildren<ShopManager>(true);
+                    if (existingShop != null)
+                    {
+                        // Ensure it's populated now (helps when Shop was added manually in prefab)
+                        existingShop.PopulateShop();
+                    }
+                    else
+                    {
+                        // If RoomManager provides a shop prefab, instantiate it as child to avoid duplicates
+                        if (RoomManager.instance != null && RoomManager.instance.shopPrefab != null)
+                        {
+                            var shopGo = Instantiate(RoomManager.instance.shopPrefab, roomInstance.transform);
+                            shopGo.transform.localPosition = Vector3.zero;
+                        }
+                    }
+                }
             }
         }
 

@@ -16,6 +16,7 @@ public class RoomManager : MonoBehaviour
     public Room roomPrefab;
     public Door doorPrefab;
     public GameObject enemyPrefab;
+    public GameObject shopPrefab;
 
     [Header("Scriptable Obeject References ")]
     public DoorScriptable[] doors;

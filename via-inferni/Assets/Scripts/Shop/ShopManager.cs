@@ -100,7 +100,7 @@ public class ShopManager : MonoBehaviour
         }
     }
 
-    private void PopulateShop()
+    public void PopulateShop()
     {
         InventoryItemDefinition[] items = new InventoryItemDefinition[spawnedStands.Count];
         int[] prices = new int[spawnedStands.Count];
