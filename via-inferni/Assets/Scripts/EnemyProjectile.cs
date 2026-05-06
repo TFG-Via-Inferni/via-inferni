@@ -13,6 +13,11 @@ public class EnemyProjectile : MonoBehaviour
     private float spawnTime;
     private Transform ownerRoot;
 
+    private void Awake()
+    {
+        EnsureNonPhysicalProjectile();
+    }
+
     public void Initialize(float damageAmount, float projectileSpeed, float projectileLifetime, Vector2 travelDirection, Transform owner)
     {
         damage = Mathf.Max(0f, damageAmount);
@@ -21,6 +26,7 @@ public class EnemyProjectile : MonoBehaviour
         direction = travelDirection.sqrMagnitude > 0.0001f ? travelDirection.normalized : Vector2.right;
         ownerRoot = owner != null ? owner.root : null;
         spawnTime = Time.time;
+        EnsureNonPhysicalProjectile();
         UpdateVisualRotation();
     }
 
@@ -78,5 +84,36 @@ public class EnemyProjectile : MonoBehaviour
 
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0f, 0f, angle + visualRotationOffset);
+    }
+
+    private void EnsureNonPhysicalProjectile()
+    {
+        Collider2D[] colliders = GetComponentsInChildren<Collider2D>(true);
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            Collider2D collider = colliders[i];
+            if (collider == null)
+            {
+                continue;
+            }
+
+            collider.isTrigger = true;
+            collider.enabled = false;
+        }
+
+        Rigidbody2D[] rigidbodies = GetComponentsInChildren<Rigidbody2D>(true);
+        for (int i = 0; i < rigidbodies.Length; i++)
+        {
+            Rigidbody2D body = rigidbodies[i];
+            if (body == null)
+            {
+                continue;
+            }
+
+            body.linearVelocity = Vector2.zero;
+            body.angularVelocity = 0f;
+            body.bodyType = RigidbodyType2D.Kinematic;
+            body.simulated = false;
+        }
     }
 }
