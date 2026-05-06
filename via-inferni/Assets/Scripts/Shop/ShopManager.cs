@@ -187,6 +187,12 @@ public class ShopManager : MonoBehaviour
     {
         if (specialPool == null || specialPool.Length == 0) return null;
 
+        var candidates = new System.Collections.Generic.List<InventoryItemDefinition>();
+
+        var playerObj = GameObject.FindGameObjectWithTag("Player");
+        PlayerInventory playerInv = null;
+        if (playerObj != null) playerInv = playerObj.GetComponent<PlayerInventory>();
+
         for (int i = 0; i < specialPool.Length; i++)
         {
             var candidate = specialPool[i];
@@ -199,21 +205,17 @@ public class ShopManager : MonoBehaviour
                 continue; // already active somewhere
             }
 
-            // Also prevent if player already has it in inventory
-            var playerObj = GameObject.FindGameObjectWithTag("Player");
-            if (playerObj != null)
+            if (playerInv != null && playerInv.HasSpecialType(st))
             {
-                var inv = playerObj.GetComponent<PlayerInventory>();
-                if (inv != null && inv.HasSpecialType(st))
-                {
-                    continue;
-                }
+                continue; // player already has it
             }
 
-            return candidate;
+            candidates.Add(candidate);
         }
 
-        return null;
+        if (candidates.Count == 0) return null;
+
+        return candidates[UnityEngine.Random.Range(0, candidates.Count)];
     }
 
     private InventoryItemDefinition PickTierDropFromCurrentCircle(ItemTier tier)
