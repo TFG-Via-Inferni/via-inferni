@@ -134,6 +134,14 @@ public class Room : MonoBehaviour
         }
     }
 
+    public void RegisterDoor(Door door)
+    {
+        if (door != null && !roomDoors.Contains(door))
+        {
+            roomDoors.Add(door);
+        }
+    }
+
     public bool ContainsPoint(Vector2 point)
     {
         return cameraBoundsCollider != null && cameraBoundsCollider.OverlapPoint(point);
@@ -321,12 +329,13 @@ public class Room : MonoBehaviour
     {
         int neighborIndex = fromIndex + GetOffset(direction);
         bool shouldPlaceDoor = false;
+        Cell foundCell = null;
 
         if (neighborIndex >= 0 && neighborIndex < floorplan.Length)
         {
             if (floorplan[neighborIndex] == 1)
             {
-                var foundCell = cellList.FirstOrDefault(x => x.cellList.Contains(neighborIndex));
+                foundCell = cellList.FirstOrDefault(x => x.cellList.Contains(neighborIndex));
                 if (foundCell == null)
                 {
                     shouldPlaceDoor = false;
@@ -352,11 +361,12 @@ public class Room : MonoBehaviour
 
         if (!shouldPlaceDoor)
         {
-            PlaceWall(positionOffset, direction, currentCell.roomType);
+            bool isBreakableSecretWall = foundCell != null && foundCell.roomType == RoomType.Secret;
+            PlaceWall(positionOffset, direction, currentCell.roomType, isBreakableSecretWall);
         }
     }
 
-    private void PlaceWall(Vector2 positionOffset, EdgeDirection direction, RoomType roomType)
+    private void PlaceWall(Vector2 positionOffset, EdgeDirection direction, RoomType roomType, bool isBreakable = false)
     {
         var doorTypes = GetDoorOptions(roomType);
         if (doorTypes == null)
@@ -366,23 +376,28 @@ public class Room : MonoBehaviour
         }
 
         GameObject wallPrefab = null;
+        GameObject doorPrefab = null;
 
         switch (direction)
         {
             case EdgeDirection.Up:
                 wallPrefab = doorTypes.upWall;
+                doorPrefab = doorTypes.upDoor;
                 break;
             
             case EdgeDirection.Down:
                 wallPrefab = doorTypes.downWall;
+                doorPrefab = doorTypes.downDoor;
                 break;
             
             case EdgeDirection.Left:
                 wallPrefab = doorTypes.leftWall;
+                doorPrefab = doorTypes.leftDoor;
                 break;
             
             case EdgeDirection.Right:
                 wallPrefab = doorTypes.rightWall;
+                doorPrefab = doorTypes.rightDoor;
                 break;
         }
 
@@ -390,6 +405,27 @@ public class Room : MonoBehaviour
         {
             var wall = Instantiate(wallPrefab, transform);
             wall.transform.position = (Vector2)transform.position + positionOffset;
+
+            if (isBreakable)
+            {
+                BreakableWall breakableWall = wall.GetComponent<BreakableWall>();
+                if (breakableWall == null)
+                {
+                    breakableWall = wall.AddComponent<BreakableWall>();
+                }
+
+                if (RoomManager.instance != null && RoomManager.instance.doorPrefab != null)
+                {
+                    breakableWall.ConfigureReplacementDoor(
+                        RoomManager.instance.doorPrefab.gameObject,
+                        doorPrefab,
+                        wallPrefab,
+                        direction,
+                        roomType,
+                        roomDoors,
+                        this);
+                }
+            }
         }
     }
 

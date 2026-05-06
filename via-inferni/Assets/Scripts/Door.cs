@@ -10,6 +10,8 @@ public class Door : MonoBehaviour
     private RoomType roomType;
     private bool isLocked = false;
 
+    public bool IsLocked => isLocked;
+
     public void SetDoorPrefab(GameObject doorPrefab)
     {
         currentDoorPrefab = doorPrefab;

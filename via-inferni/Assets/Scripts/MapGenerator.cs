@@ -194,8 +194,8 @@ public class MapGenerator : MonoBehaviour
         SpawnRoom(secretRoomIndex);
 
         UpdateSpecialRoomVisuals();
-        InitializeMinimapFog();
         RoomManager.instance.SetUpRooms(spawnedCells);
+        InitializeMinimapFog();
         SpawnPlayer();
     }
 
@@ -492,6 +492,8 @@ public class MapGenerator : MonoBehaviour
         int x = index % 10;
         int y = index / 10;
         UnityEngine.Vector2 position = new UnityEngine.Vector2(x * cellSize, -y * cellSize);
+
+        floorPlan[index] = 1;
 
         Cell newCell = Instantiate(cellPrefab, position, UnityEngine.Quaternion.identity);
         newCell.value = 1;
