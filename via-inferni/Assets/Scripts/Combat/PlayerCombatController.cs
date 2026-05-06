@@ -20,6 +20,9 @@ public class PlayerCombatController : MonoBehaviour
     [SerializeField] private WeaponDefinition[] meleeWeapons = new WeaponDefinition[3];
     [SerializeField] private WeaponDefinition[] rangedWeapons = new WeaponDefinition[3];
 
+    [Header("Combat Rolls")]
+    [SerializeField] private float criticalDamageMultiplier = 1.75f;
+
     private Player player;
     private PlayerStats stats;
     private InputAction attackAction;
@@ -134,6 +137,11 @@ public class PlayerCombatController : MonoBehaviour
 
         float damageMultiplier = stats != null ? stats.DamageMultiplier : 1f;
         float finalDamage = weapon.BaseDamage * Mathf.Max(0.01f, damageMultiplier);
+        bool isCritical = stats != null && stats.RollCritical();
+        if (isCritical)
+        {
+            finalDamage *= Mathf.Max(1f, criticalDamageMultiplier);
+        }
         Vector2 facingDirection = attackDirection.sqrMagnitude > 0.0001f ? attackDirection.normalized : GetDefaultAttackDirection();
         string attackWeaponId = stats != null
             ? stats.GetSelectedWeaponId(player.CurrentForm)
@@ -141,11 +149,11 @@ public class PlayerCombatController : MonoBehaviour
 
         if (weapon.AttackType == WeaponAttackType.Melee)
         {
-            PerformMeleeAttack(weapon, finalDamage, facingDirection, attackWeaponId, player.CurrentForm);
+            PerformMeleeAttack(weapon, finalDamage, facingDirection, attackWeaponId, player.CurrentForm, isCritical);
         }
         else
         {
-            PerformProjectileAttack(weapon, finalDamage, facingDirection, attackWeaponId, player.CurrentForm);
+            PerformProjectileAttack(weapon, finalDamage, facingDirection, attackWeaponId, player.CurrentForm, isCritical);
         }
 
         OnAttackPerformed?.Invoke(weapon, facingDirection, player.CurrentForm);
@@ -154,7 +162,7 @@ public class PlayerCombatController : MonoBehaviour
         return true;
     }
 
-    private void PerformMeleeAttack(WeaponDefinition weapon, float damageAmount, Vector2 facingDirection, string weaponId, PlayerFormType form)
+    private void PerformMeleeAttack(WeaponDefinition weapon, float damageAmount, Vector2 facingDirection, string weaponId, PlayerFormType form, bool isCritical)
     {
         if (weapon == null || player == null)
         {
@@ -175,13 +183,13 @@ public class PlayerCombatController : MonoBehaviour
         hitboxCollider.size = weapon.HitboxSize;
 
         DamageSourceContext context = hitboxObject.AddComponent<DamageSourceContext>();
-        context.Configure(player.transform.root, weaponId, form, weapon);
+        context.Configure(player.transform.root, weaponId, form, weapon, isCritical);
 
         MeleeHitbox hitbox = hitboxObject.AddComponent<MeleeHitbox>();
         hitbox.Initialize(damageAmount, hitboxObject, damageLayers, weapon.MeleeAppliesKnockback, weapon.MeleeKnockbackForce);
     }
 
-    private void PerformProjectileAttack(WeaponDefinition weapon, float damageAmount, Vector2 facingDirection, string weaponId, PlayerFormType form)
+    private void PerformProjectileAttack(WeaponDefinition weapon, float damageAmount, Vector2 facingDirection, string weaponId, PlayerFormType form, bool isCritical)
     {
         if (weapon == null || weapon.ProjectilePrefab == null || player == null)
         {
@@ -205,7 +213,7 @@ public class PlayerCombatController : MonoBehaviour
             context = projectileObject.AddComponent<DamageSourceContext>();
         }
 
-        context.Configure(player.transform.root, weaponId, form, weapon);
+        context.Configure(player.transform.root, weaponId, form, weapon, isCritical);
 
         projectile.Initialize(
             damageAmount,
@@ -275,8 +283,13 @@ public class PlayerCombatController : MonoBehaviour
         float damageMultiplier = stats != null ? stats.DamageMultiplier : 1f;
         float baseDamage = chargingWeapon.BaseDamage * Mathf.Max(0.01f, damageMultiplier);
         float chargedDamage = baseDamage * chargeMultiplier;
+        bool isCritical = stats != null && stats.RollCritical();
+        if (isCritical)
+        {
+            chargedDamage *= Mathf.Max(1f, criticalDamageMultiplier);
+        }
 
-        PerformProjectileAttack(chargingWeapon, chargedDamage, chargingDirection, chargingWeaponId, chargingForm);
+        PerformProjectileAttack(chargingWeapon, chargedDamage, chargingDirection, chargingWeaponId, chargingForm, isCritical);
         lastAttackTime = Time.time;
         ResetChargeState();
     }

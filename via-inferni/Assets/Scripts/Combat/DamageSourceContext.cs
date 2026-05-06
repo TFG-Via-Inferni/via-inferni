@@ -7,12 +7,14 @@ public class DamageSourceContext : MonoBehaviour
     public string WeaponId { get; private set; }
     public PlayerFormType Form { get; private set; }
     public WeaponDefinition Weapon { get; private set; }
+    public bool IsCritical { get; private set; }
 
-    public void Configure(Transform ownerRoot, string weaponId, PlayerFormType form, WeaponDefinition weapon)
+    public void Configure(Transform ownerRoot, string weaponId, PlayerFormType form, WeaponDefinition weapon, bool isCritical = false)
     {
         OwnerRoot = ownerRoot;
         WeaponId = weaponId;
         Form = form;
         Weapon = weapon;
+        IsCritical = isCritical;
     }
 }

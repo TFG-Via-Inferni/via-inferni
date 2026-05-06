@@ -13,6 +13,7 @@ public class Player : MonoBehaviour, IDamageable
     private const int SoulHealCost = 10;
     private const float SoulHealAmount = 1f;
     private const int SoulDebugStep = 10;
+    private static readonly Color DodgeTextColor = new Color(0.45f, 1f, 0.95f, 1f);
 
     [SerializeField] private float moveSpeed = 5f;
     [Header("Movement Feel")]
@@ -41,6 +42,7 @@ public class Player : MonoBehaviour, IDamageable
     [SerializeField] private float dashSpeedMultiplier = 4.5f;
     [SerializeField] private float dashDuration = 0.14f;
     [SerializeField] private float dashCooldown = 2f;
+    [SerializeField] private Vector3 dodgeTextOffset = new Vector3(0f, 1.1f, 0f);
 
     private Rigidbody2D rb;
     private Vector2 movement;
@@ -536,6 +538,12 @@ public class Player : MonoBehaviour, IDamageable
         if (shieldAvailable)
         {
             shieldAvailable = false;
+            return;
+        }
+
+        if (playerStats.RollDodge())
+        {
+            CombatFeedbackText.Spawn("DODGE", transform.position + dodgeTextOffset, DodgeTextColor, 1f);
             return;
         }
 

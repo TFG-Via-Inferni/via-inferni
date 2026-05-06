@@ -6,6 +6,8 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 {
     [Min(1f)] [SerializeField] private float maxHealth = 30f;
     [SerializeField] private bool destroyOnDeath = true;
+    [SerializeField] private Vector3 combatTextOffset = new Vector3(0f, 0.8f, 0f);
+    [SerializeField] private Color criticalTextColor = new Color(1f, 0.85f, 0.25f, 1f);
 
     private float currentHealth;
     private SpriteDamageFlash damageFlash;
@@ -67,6 +69,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         }
 
         WeaponDefinition weapon = ResolveWeaponDefinition(source);
+        DamageSourceContext damageContext = ResolveDamageContext(source);
         if (combatStatus != null && weapon != null && weapon.IdentityEffect == WeaponIdentityEffect.ConsumeMarkBonus)
         {
             if (combatStatus.ConsumeMark())
@@ -85,6 +88,11 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         if (weapon != null && RoomCameraController.Instance != null)
         {
             RoomCameraController.Instance.TriggerImpactFeedback(weapon.HitstopDuration, weapon.CameraShakeDistance, weapon.CameraShakeDuration);
+        }
+
+        if (damageContext != null && damageContext.IsCritical)
+        {
+            CombatFeedbackText.Spawn("CRIT!", transform.position + combatTextOffset, criticalTextColor, 1.15f);
         }
 
         if (combatStatus != null && weapon != null && weapon.IdentityEffect == WeaponIdentityEffect.ApplyMark && currentHealth > 0f)
@@ -126,12 +134,17 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
     private static WeaponDefinition ResolveWeaponDefinition(GameObject source)
     {
+        DamageSourceContext context = ResolveDamageContext(source);
+        return context != null ? context.Weapon : null;
+    }
+
+    private static DamageSourceContext ResolveDamageContext(GameObject source)
+    {
         if (source == null)
         {
             return null;
         }
 
-        DamageSourceContext context = source.GetComponent<DamageSourceContext>();
-        return context != null ? context.Weapon : null;
+        return source.GetComponent<DamageSourceContext>();
     }
 }
