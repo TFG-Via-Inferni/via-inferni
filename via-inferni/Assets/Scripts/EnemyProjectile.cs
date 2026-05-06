@@ -5,6 +5,7 @@ public class EnemyProjectile : MonoBehaviour
 {
     [SerializeField] private float hitRadius = 0.2f;
     [SerializeField] private float visualRotationOffset = -90f;
+    [SerializeField] private Color impactColor = new Color(1f, 0.56f, 0.56f, 0.95f);
 
     private float damage;
     private float speed;
@@ -33,7 +34,20 @@ public class EnemyProjectile : MonoBehaviour
     private void Update()
     {
         UpdateVisualRotation();
-        transform.position += (Vector3)(direction * (speed * Time.deltaTime));
+        Vector2 previousPosition = transform.position;
+        Vector2 displacement = direction * (speed * Time.deltaTime);
+        float travelDistance = displacement.magnitude;
+
+        if (travelDistance > 0.0001f)
+        {
+            RaycastHit2D[] pathHits = Physics2D.CircleCastAll(previousPosition, hitRadius, direction, travelDistance);
+            if (TryResolvePathHits(pathHits))
+            {
+                return;
+            }
+        }
+
+        transform.position = previousPosition + displacement;
 
         if (Time.time >= spawnTime + lifetime)
         {
@@ -62,6 +76,13 @@ public class EnemyProjectile : MonoBehaviour
 
             if (!hit.CompareTag("Player"))
             {
+                if (!hit.isTrigger)
+                {
+                    ProjectileImpactVisual.Spawn(hit.ClosestPoint(transform.position), impactColor, direction, 0.8f);
+                    Destroy(gameObject);
+                    return;
+                }
+
                 continue;
             }
 
@@ -69,10 +90,56 @@ public class EnemyProjectile : MonoBehaviour
             if (damageable != null && damageable.CanTakeDamage)
             {
                 damageable.TakeDamage(damage, gameObject);
+                ProjectileImpactVisual.Spawn(hit.ClosestPoint(transform.position), impactColor, direction, 0.95f);
                 Destroy(gameObject);
                 return;
             }
         }
+    }
+
+    private bool TryResolvePathHits(RaycastHit2D[] pathHits)
+    {
+        if (pathHits == null || pathHits.Length == 0)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < pathHits.Length; i++)
+        {
+            Collider2D hit = pathHits[i].collider;
+            if (hit == null)
+            {
+                continue;
+            }
+
+            if (ownerRoot != null && hit.transform.root == ownerRoot)
+            {
+                continue;
+            }
+
+            if (!hit.CompareTag("Player"))
+            {
+                if (!hit.isTrigger)
+                {
+                    ProjectileImpactVisual.Spawn(pathHits[i].point, impactColor, direction, 0.8f);
+                    Destroy(gameObject);
+                    return true;
+                }
+
+                continue;
+            }
+
+            IDamageable damageable = hit.GetComponentInParent<IDamageable>();
+            if (damageable != null && damageable.CanTakeDamage)
+            {
+                damageable.TakeDamage(damage, gameObject);
+                ProjectileImpactVisual.Spawn(pathHits[i].point, impactColor, direction, 0.95f);
+                Destroy(gameObject);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void UpdateVisualRotation()

@@ -56,6 +56,7 @@ public class Player : MonoBehaviour, IDamageable
     private PlayerInventory playerInventory;
     private SpriteDamageFlash damageFlash;
     private PlayerDashTrailVisual dashTrailVisual;
+    private PlayerMoveDustVisual moveDustVisual;
     private Vector2 facingDirection = Vector2.right;
 
     // Dash state
@@ -162,6 +163,12 @@ public class Player : MonoBehaviour, IDamageable
             dashTrailVisual = gameObject.AddComponent<PlayerDashTrailVisual>();
         }
 
+        moveDustVisual = GetComponent<PlayerMoveDustVisual>();
+        if (moveDustVisual == null)
+        {
+            moveDustVisual = gameObject.AddComponent<PlayerMoveDustVisual>();
+        }
+
         ConfigureInputActions();
         SetForm(startingForm, force: true);
     }
@@ -259,6 +266,7 @@ public class Player : MonoBehaviour, IDamageable
         );
 
         rb.linearVelocity = currentVelocity;
+        moveDustVisual?.Tick(currentVelocity, !isDashing && inputDir.sqrMagnitude > 0.0001f);
     }
 
     public bool ConsumeSwapRequested()

@@ -11,6 +11,7 @@ public class Projectile : MonoBehaviour
     [SerializeField] private float hitRadius = 0.2f;
     [SerializeField] private bool destroyOnFirstHit = true;
     [SerializeField] private float visualRotationOffset = -90f;
+    [SerializeField] private Color defaultImpactColor = new Color(1f, 0.92f, 0.8f, 0.95f);
 
     private float damage;
     private float speed;
@@ -83,7 +84,20 @@ public class Projectile : MonoBehaviour
     {
         UpdateHomingDirection();
         UpdateVisualRotation();
-        transform.position += (Vector3)(direction * (speed * Time.deltaTime));
+        Vector2 previousPosition = transform.position;
+        Vector2 displacement = direction * (speed * Time.deltaTime);
+        float travelDistance = displacement.magnitude;
+
+        if (travelDistance > 0.0001f)
+        {
+            RaycastHit2D[] pathHits = Physics2D.CircleCastAll(previousPosition, hitRadius, direction, travelDistance);
+            if (TryResolvePathHits(pathHits))
+            {
+                return;
+            }
+        }
+
+        transform.position = previousPosition + displacement;
         trailVisual?.Tick(direction);
 
         if (Time.time >= spawnTime + lifetime)
@@ -115,6 +129,7 @@ public class Projectile : MonoBehaviour
             if (damageable != null && damageable.CanTakeDamage)
             {
                 damageable.TakeDamage(damage, source);
+                SpawnImpactVisual(hit.ClosestPoint(transform.position), 1f);
                 if (destroyOnFirstHit)
                 {
                     Destroy(gameObject);
@@ -131,9 +146,57 @@ public class Projectile : MonoBehaviour
                 continue;
             }
 
+            SpawnImpactVisual(hit.ClosestPoint(transform.position), 0.85f);
             Destroy(gameObject);
             return;
         }
+    }
+
+    private bool TryResolvePathHits(RaycastHit2D[] pathHits)
+    {
+        if (pathHits == null || pathHits.Length == 0)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < pathHits.Length; i++)
+        {
+            Collider2D hit = pathHits[i].collider;
+            if (hit == null)
+            {
+                continue;
+            }
+
+            if (ShouldIgnoreSelfHit(hit))
+            {
+                continue;
+            }
+
+            IDamageable damageable = hit.GetComponentInParent<IDamageable>();
+            if (damageable != null && damageable.CanTakeDamage)
+            {
+                damageable.TakeDamage(damage, source);
+                SpawnImpactVisual(pathHits[i].point, 1f);
+                if (destroyOnFirstHit)
+                {
+                    Destroy(gameObject);
+                    return true;
+                }
+
+                continue;
+            }
+
+            if (hit.isTrigger)
+            {
+                continue;
+            }
+
+            SpawnImpactVisual(pathHits[i].point, 0.85f);
+            Destroy(gameObject);
+            return true;
+        }
+
+        return false;
     }
 
     private void UpdateHomingDirection()
@@ -284,6 +347,12 @@ public class Projectile : MonoBehaviour
             body.bodyType = RigidbodyType2D.Kinematic;
             body.simulated = false;
         }
+    }
+
+    private void SpawnImpactVisual(Vector2 position, float scale)
+    {
+        Color impactColor = projectileSpriteRenderer != null ? projectileSpriteRenderer.color : defaultImpactColor;
+        ProjectileImpactVisual.Spawn(position, impactColor, direction, scale);
     }
 
     private bool ShouldIgnoreSelfHit(Collider2D other)
