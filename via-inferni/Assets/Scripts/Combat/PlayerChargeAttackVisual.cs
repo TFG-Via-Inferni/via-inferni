@@ -6,9 +6,9 @@ using UnityEngine;
 public class PlayerChargeAttackVisual : MonoBehaviour
 {
     [Header("Layout")]
-    [SerializeField] private float anchorDistance = 1.2f;
+    [SerializeField] private float anchorDistance = 1f;
     [SerializeField] private float minRadius = 0.18f;
-    [SerializeField] private float maxRadius = 0.72f;
+    [SerializeField] private float maxRadius = 0.4f;
     [SerializeField] private float innerRadiusRatio = 0.72f;
     [SerializeField] private int outerArcPoints = 18;
     [SerializeField] private int innerArcPoints = 12;
