@@ -53,11 +53,13 @@ public class Player : MonoBehaviour, IDamageable
     private PlayerStats playerStats;
     private PlayerInventory playerInventory;
     private SpriteDamageFlash damageFlash;
+    private PlayerDashTrailVisual dashTrailVisual;
     private Vector2 facingDirection = Vector2.right;
 
     // Dash state
     private float dashActiveUntil = -999f;
     private float dashCooldownUntil = -999f;
+    private bool wasDashingLastFrame;
 
     // Cloak state
     private bool cloakActive = false;
@@ -152,6 +154,12 @@ public class Player : MonoBehaviour, IDamageable
             damageFlash = gameObject.AddComponent<SpriteDamageFlash>();
         }
 
+        dashTrailVisual = GetComponent<PlayerDashTrailVisual>();
+        if (dashTrailVisual == null)
+        {
+            dashTrailVisual = gameObject.AddComponent<PlayerDashTrailVisual>();
+        }
+
         ConfigureInputActions();
         SetForm(startingForm, force: true);
     }
@@ -168,6 +176,7 @@ public class Player : MonoBehaviour, IDamageable
         moveAction?.Disable();
         swapAction?.Disable();
         interactAction?.Disable();
+        wasDashingLastFrame = false;
     }
 
     private void OnDestroy()
@@ -197,6 +206,7 @@ public class Player : MonoBehaviour, IDamageable
         HandleInventoryInput();
         HandleSoulInput();
         HandleDashInput();
+        HandleDashTrail();
 
         if (swapAction != null && swapAction.WasPressedThisFrame())
         {
@@ -325,6 +335,28 @@ public class Player : MonoBehaviour, IDamageable
         // Activate dash
         dashActiveUntil = Time.time + dashDuration;
         dashCooldownUntil = Time.time + dashCooldown;
+    }
+
+    private void HandleDashTrail()
+    {
+        if (dashTrailVisual == null)
+        {
+            return;
+        }
+
+        bool isDashing = Time.time < dashActiveUntil;
+        if (!isDashing)
+        {
+            wasDashingLastFrame = false;
+            return;
+        }
+
+        if (!wasDashingLastFrame)
+        {
+            dashTrailVisual.Play(facingDirection, dashDuration);
+        }
+
+        wasDashingLastFrame = true;
     }
 
     private void HandleSoulInput()
@@ -584,6 +616,7 @@ public class Player : MonoBehaviour, IDamageable
 
         CurrentForm = form;
         ApplyFormVisuals(form);
+        RefreshDashTrailVisual();
         OnFormChanged?.Invoke(form);
     }
 
@@ -598,6 +631,32 @@ public class Player : MonoBehaviour, IDamageable
         {
             rangedVisual.SetActive(form == PlayerFormType.Ranged);
         }
+    }
+
+    private void RefreshDashTrailVisual()
+    {
+        if (dashTrailVisual == null)
+        {
+            return;
+        }
+
+        dashTrailVisual.Configure(GetCurrentFormSpriteRenderer());
+    }
+
+    private SpriteRenderer GetCurrentFormSpriteRenderer()
+    {
+        GameObject currentVisual = CurrentForm == PlayerFormType.Melee ? meleeVisual : rangedVisual;
+        if (currentVisual == null)
+        {
+            currentVisual = meleeVisual != null ? meleeVisual : rangedVisual;
+        }
+
+        if (currentVisual == null)
+        {
+            return null;
+        }
+
+        return currentVisual.GetComponent<SpriteRenderer>();
     }
 
     private void UpdateFacingDirection(Vector2 input)
