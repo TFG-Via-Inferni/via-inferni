@@ -94,6 +94,27 @@ public class Room : MonoBehaviour
                     }
                 }
 
+                // If this cell is a Treasure room (RoomType.Item), ensure a TreasureManager exists
+                if (currentCell != null && currentCell.roomType == RoomType.Item)
+                {
+                    // Try to find an existing TreasureManager in the room prefab variation
+                    TreasureManager existingTreasure = roomInstance.GetComponentInChildren<TreasureManager>(true);
+                    if (existingTreasure != null)
+                    {
+                        // Ensure it's populated now
+                        existingTreasure.PopulateTreasure();
+                    }
+                    else
+                    {
+                        // If RoomManager provides a treasure prefab, instantiate it as child to avoid duplicates
+                        if (RoomManager.instance != null && RoomManager.instance.treasurePrefab != null)
+                        {
+                            var treasureGo = Instantiate(RoomManager.instance.treasurePrefab, roomInstance.transform);
+                            treasureGo.transform.localPosition = Vector3.zero;
+                        }
+                    }
+                }
+
                 if (currentCell != null && currentCell.roomType == RoomType.Secret)
                 {
                     if (RoomManager.instance != null && RoomManager.instance.baptismalFontPrefab != null)

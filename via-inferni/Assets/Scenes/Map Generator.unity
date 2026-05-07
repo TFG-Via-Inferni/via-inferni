@@ -1664,6 +1664,7 @@ MonoBehaviour:
   doorPrefab: {fileID: 6164487024370233051, guid: caa22eb102a515c478d1c65523b74bf3, type: 3}
   enemyPrefab: {fileID: 1736370125707709183, guid: 88c1b017378c0c242ba6ccb361bf9b1c, type: 3}
   shopPrefab: {fileID: 8531720180054535773, guid: 96efcc3a2bf4dd54f96e74f1f45b971f, type: 3}
+  treasurePrefab: {fileID: 5019994034312357317, guid: f22b79bcdb3ab1846bd96a4b808c45f2, type: 3}
   baptismalFontPrefab: {fileID: 737052013726681473, guid: bc1deccf58dff0848b3fdb8f9fd93498, type: 3}
   doors:
   - {fileID: 11400000, guid: 1de88b8a021bb5a43859c7b3deaff962, type: 2}
@@ -2025,6 +2026,7 @@ MonoBehaviour:
   - {fileID: 332920794, guid: 78bbd2a7435f1d54d8b0d9d8cfaca71c, type: 3}
   - {fileID: 725785400, guid: 78bbd2a7435f1d54d8b0d9d8cfaca71c, type: 3}
   - {fileID: -668135714, guid: 78bbd2a7435f1d54d8b0d9d8cfaca71c, type: 3}
+  soulCountFontSize: 28
   cruetHeightPercentOfScreen: 0.2
   heartHeightPercentOfScreen: 0.08
   heartsSpacingPercentOfHeartSize: 0.05
