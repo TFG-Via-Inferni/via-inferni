@@ -70,9 +70,28 @@ public class BreakableWall : MonoBehaviour, IDamageable
 
         if (currentHealth <= 0f)
         {
+            SpawnBreakParticles();
             SpawnReplacementDoor();
             Destroy(gameObject);
         }
+    }
+
+    private void SpawnBreakParticles()
+    {
+        Vector2 direction = Random.insideUnitCircle;
+        if (direction.sqrMagnitude <= 0.0001f)
+        {
+            direction = Vector2.up;
+        }
+
+        Renderer wallRenderer = GetComponentInChildren<Renderer>();
+        WallBreakVisual.Spawn(
+            transform.position,
+            new Color(0.92f, 0.86f, 0.72f, 1f),
+            direction.normalized,
+            1.3f,
+            wallRenderer,
+            15);
     }
 
     private void SpawnReplacementDoor()
