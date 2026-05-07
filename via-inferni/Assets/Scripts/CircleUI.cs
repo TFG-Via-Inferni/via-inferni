@@ -9,6 +9,7 @@ public class CircleUI : MonoBehaviour
     private const float UiRefreshInterval = 0.1f;
     private const float PlayerLookupInterval = 0.5f;
     private const float HeartHpPerFullHeart = 2f;
+    private static readonly Color SoulCountDisplayColor = new Color(1f, 1f, 1f, 0.99f);
 
     public static CircleUI instance;
 
@@ -47,6 +48,7 @@ public class CircleUI : MonoBehaviour
     [SerializeField] private Sprite heartHalfOverlaySprite;
     [SerializeField] private Sprite heartFullOverlaySprite;
     [SerializeField] private Sprite[] soulCruetSprites = new Sprite[5];
+    [SerializeField] private int soulCountFontSize = 28;
 
     [Header("Vitals HUD Responsive")]
     [Range(0.02f, 0.25f)] [SerializeField] private float cruetHeightPercentOfScreen = 0.15f;
@@ -74,6 +76,7 @@ public class CircleUI : MonoBehaviour
     private bool vitalsSpritesLoaded;
     private RectTransform vitalsHudRoot;
     private Image soulCruetImage;
+    private TextMeshProUGUI soulCountText;
     private RectTransform heartsRoot;
     private Image[] heartBackgroundImages = new Image[0];
     private Image[] heartOverlayImages = new Image[0];
@@ -421,6 +424,11 @@ public class CircleUI : MonoBehaviour
             soulCruetImage = EnsureImageReference(vitalsHudRoot, "SoulCruetImage");
         }
 
+        if (soulCountText == null && soulCruetImage != null)
+        {
+            soulCountText = EnsureTextReference(soulCruetImage.rectTransform, "SoulCountText");
+        }
+
         if (heartsRoot == null)
         {
             Transform existing = vitalsHudRoot.Find("HeartsRoot");
@@ -475,6 +483,15 @@ public class CircleUI : MonoBehaviour
 
         soulCruetImage.raycastTarget = false;
         soulCruetImage.preserveAspect = true;
+
+        if (soulCountText != null)
+        {
+            ConfigureCenterRect(soulCountText.rectTransform, new Vector2(0f, -cruetSize.y * 0.2f), cruetSize);
+            soulCountText.raycastTarget = false;
+            soulCountText.alignment = TextAlignmentOptions.Center;
+            soulCountText.color = SoulCountDisplayColor;
+            soulCountText.fontSize = soulCountFontSize;
+        }
     }
 
     private void EnsureInventoryHudReferences()
@@ -844,6 +861,11 @@ public class CircleUI : MonoBehaviour
             {
                 soulCruetImage.enabled = false;
             }
+
+            if (soulCountText != null)
+            {
+                soulCountText.gameObject.SetActive(false);
+            }
             return;
         }
 
@@ -853,6 +875,12 @@ public class CircleUI : MonoBehaviour
             Sprite stateSprite = GetSoulCruetSprite(soulState);
             soulCruetImage.sprite = stateSprite;
             soulCruetImage.enabled = stateSprite != null;
+        }
+
+        if (soulCountText != null)
+        {
+            soulCountText.gameObject.SetActive(true);
+            soulCountText.text = stats.CollectedSoul.ToString();
         }
 
         int heartSlots = Mathf.Max(1, Mathf.CeilToInt(trackedPlayer.MaxHealth / HeartHpPerFullHeart));
@@ -1107,6 +1135,47 @@ public class CircleUI : MonoBehaviour
         image.raycastTarget = false;
         image.preserveAspect = true;
         return image;
+    }
+
+    private TextMeshProUGUI EnsureTextReference(RectTransform parent, string objectName)
+    {
+        if (parent == null)
+        {
+            return null;
+        }
+
+        Transform existing = parent.Find(objectName);
+        GameObject textObject;
+
+        if (existing != null)
+        {
+            textObject = existing.gameObject;
+        }
+        else
+        {
+            textObject = new GameObject(objectName, typeof(RectTransform));
+            textObject.transform.SetParent(parent, false);
+        }
+
+        TextMeshProUGUI text = textObject.GetComponent<TextMeshProUGUI>();
+        if (text == null)
+        {
+            text = textObject.AddComponent<TextMeshProUGUI>();
+        }
+
+        if (text.font == null)
+        {
+            if (statsText != null && statsText.font != null)
+            {
+                text.font = statsText.font;
+            }
+            else if (circleText != null && circleText.font != null)
+            {
+                text.font = circleText.font;
+            }
+        }
+
+        return text;
     }
 
     private bool TryResolveTrackedPlayer()
