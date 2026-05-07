@@ -1635,14 +1635,14 @@ MonoBehaviour:
   playerPrefab: {fileID: 6324667708166986596, guid: cc9d0bb7f2210cc4c964fd46ca231bc6, type: 3}
   cinemachineCamera: {fileID: 958170167}
   roomCameraController: {fileID: 910796520}
-  item: {fileID: 677141824, guid: 615b6ca90597c4848bb7303ac32277e8, type: 3}
-  shop: {fileID: 1926674112, guid: 615b6ca90597c4848bb7303ac32277e8, type: 3}
-  boss: {fileID: 995336870, guid: 615b6ca90597c4848bb7303ac32277e8, type: 3}
-  secret: {fileID: 1848984574, guid: 615b6ca90597c4848bb7303ac32277e8, type: 3}
-  largeRoom: {fileID: 1055139315, guid: 7232fd87630e755449e31a51aa216c36, type: 3}
-  verticalRoom: {fileID: -1950277684, guid: 7232fd87630e755449e31a51aa216c36, type: 3}
-  horizontalRoom: {fileID: -1027615629, guid: 7232fd87630e755449e31a51aa216c36, type: 3}
-  lShapeRoom: {fileID: 157971813, guid: 7232fd87630e755449e31a51aa216c36, type: 3}
+  item: {fileID: -1032868173, guid: de0e1e393eb030e47b47cdf7fb2a3db3, type: 3}
+  shop: {fileID: -946363881, guid: de0e1e393eb030e47b47cdf7fb2a3db3, type: 3}
+  boss: {fileID: 604242999, guid: de0e1e393eb030e47b47cdf7fb2a3db3, type: 3}
+  secret: {fileID: -656775051, guid: de0e1e393eb030e47b47cdf7fb2a3db3, type: 3}
+  largeRoom: {fileID: -1996599095, guid: 4749d29fb8ae0654c865d12577afae8b, type: 3}
+  verticalRoom: {fileID: 21300000, guid: f8978599938171b44ad320d4edbd4491, type: 3}
+  horizontalRoom: {fileID: 21300000, guid: 241c00d15655d7a4f8a32a75a8f15537, type: 3}
+  lShapeRoom: {fileID: 1875304246, guid: 4749d29fb8ae0654c865d12577afae8b, type: 3}
   visitedAlpha: 0.4
   currentRoomAlpha: 1
   undiscoveredAlpha: 0
