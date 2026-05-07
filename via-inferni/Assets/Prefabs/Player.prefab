@@ -106,11 +106,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerWeaponVisualController
   player: {fileID: 2721176194322675229}
   combatController: {fileID: 4335573628349318775}
-  idleSwayAmplitude: 0.01
-  idleSwaySpeed: 7
+  movementSwayOffset: 0.04
+  movementSwayRotation: 10
   attackPulseDistance: 0.09
-  attackPulseDuration: 0.12
+  attackPulseDuration: 0.35
   attackPulseScale: 0.05
+  weaponForwardOffset: 2
+  swordDefaultArc: 90
+  axeDefaultArc: 45
+  spearDefaultLungeMultiplier: 1.35
+  meleeBackCarrySideOffset: {x: 0.1, y: 0}
+  meleeBackCarryDownOffset: {x: 0.1, y: -0.1}
+  meleeBackCarryUpOffset: {x: 0, y: -0.1}
+  meleeBackCarrySideAngle: 35
+  meleeBackCarryDownAngle: 25
+  meleeBackCarryUpAngle: 25
+  meleeBackCarrySortingOrder: 1
+  meleeBackCarryUpSortingOrder: 6
 --- !u!1 &3072731771519389114
 GameObject:
   m_ObjectHideFlags: 0

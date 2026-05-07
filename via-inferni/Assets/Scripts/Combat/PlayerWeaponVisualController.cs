@@ -18,12 +18,22 @@ public class PlayerWeaponVisualController : MonoBehaviour
     [Min(0f)] [SerializeField] private float swordDefaultArc = 90f;
     [Min(0f)] [SerializeField] private float axeDefaultArc = 45f;
     [Min(0f)] [SerializeField] private float spearDefaultLungeMultiplier = 1.35f;
+    [Header("Melee Back Carry")]
+    [SerializeField] private Vector2 meleeBackCarrySideOffset = new Vector2(0.1f, 0f);
+    [SerializeField] private Vector2 meleeBackCarryDownOffset = new Vector2(0.1f, -0.1f);
+    [SerializeField] private Vector2 meleeBackCarryUpOffset = new Vector2(0f, -0.1f);
+    [Range(-180f, 180f)] [SerializeField] private float meleeBackCarrySideAngle = 35f;
+    [Range(-180f, 180f)] [SerializeField] private float meleeBackCarryDownAngle = 25f;
+    [Range(-180f, 180f)] [SerializeField] private float meleeBackCarryUpAngle = 25f;
+    [SerializeField] private int meleeBackCarrySortingOrder = 1;
+    [SerializeField] private int meleeBackCarryUpSortingOrder = 6;
 
     private SpriteRenderer spriteRenderer;
     private WeaponDefinition currentWeapon;
     private Vector2 currentBaseOffset;
     private Vector2 currentBaseScale = Vector2.one;
     private float currentBaseRotation;
+    private int baseSortingOrder;
     private Vector2 attackDirection = Vector2.right;
     private float attackPulseTimer;
     private Vector2 recoilDirection = Vector2.zero;
@@ -32,6 +42,7 @@ public class PlayerWeaponVisualController : MonoBehaviour
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        baseSortingOrder = spriteRenderer != null ? spriteRenderer.sortingOrder : 0;
 
         if (player == null)
         {
@@ -157,6 +168,16 @@ public class PlayerWeaponVisualController : MonoBehaviour
             attackOffset += recoilDirection * recoilDistance;
         }
 
+        bool isIdleMeleePose = attackPulseTimer <= 0f
+            && currentWeapon.AttackType == WeaponAttackType.Melee;
+
+        if (isIdleMeleePose)
+        {
+            ApplyIdleMeleeBackCarryPose(facing);
+            return;
+        }
+
+        spriteRenderer.sortingOrder = baseSortingOrder;
         bool mirrorVisual = ShouldMirrorVisual(visualDirection);
         Vector2 rotationDirection = mirrorVisual ? Vector2.right : visualDirection;
         float visualAngle = Mathf.Atan2(rotationDirection.y, rotationDirection.x) * Mathf.Rad2Deg;
@@ -271,5 +292,59 @@ public class PlayerWeaponVisualController : MonoBehaviour
         }
 
         return direction.x < -0.0001f && Mathf.Abs(direction.x) >= Mathf.Abs(direction.y);
+    }
+
+    private void ApplyIdleMeleeBackCarryPose(Vector2 facing)
+    {
+        Vector2 cardinalDirection = GetDominantCardinalDirection(facing);
+        bool mirrorVisual = cardinalDirection.x < -0.5f;
+        float carryAngle = GetIdleMeleeBackCarryAngle(cardinalDirection, mirrorVisual);
+        Vector2 carryOffset = GetIdleMeleeBackCarryOffset(cardinalDirection, mirrorVisual);
+        float sortingOrder = cardinalDirection.y > 0.5f ? meleeBackCarryUpSortingOrder : meleeBackCarrySortingOrder;
+
+        spriteRenderer.sortingOrder = Mathf.RoundToInt(sortingOrder);
+        transform.localPosition = carryOffset;
+        transform.localRotation = Quaternion.Euler(0f, 0f, currentBaseRotation + carryAngle);
+        transform.localScale = new Vector3(currentBaseScale.x, mirrorVisual ? -currentBaseScale.y : currentBaseScale.y, 1f);
+    }
+
+    private float GetIdleMeleeBackCarryAngle(Vector2 cardinalDirection, bool mirrorVisual)
+    {
+        if (Mathf.Abs(cardinalDirection.x) > 0.5f)
+        {
+            return mirrorVisual ? -meleeBackCarrySideAngle : meleeBackCarrySideAngle;
+        }
+
+        return cardinalDirection.y > 0.5f ? meleeBackCarryUpAngle : meleeBackCarryDownAngle;
+    }
+
+    private Vector2 GetIdleMeleeBackCarryOffset(Vector2 cardinalDirection, bool mirrorVisual)
+    {
+        if (Mathf.Abs(cardinalDirection.x) > 0.5f)
+        {
+            return new Vector2(
+                mirrorVisual ? -meleeBackCarrySideOffset.x : meleeBackCarrySideOffset.x,
+                meleeBackCarrySideOffset.y
+            );
+        }
+
+        return cardinalDirection.y > 0.5f
+            ? meleeBackCarryUpOffset
+            : meleeBackCarryDownOffset;
+    }
+
+    private static Vector2 GetDominantCardinalDirection(Vector2 direction)
+    {
+        if (direction.sqrMagnitude <= 0.0001f)
+        {
+            return Vector2.right;
+        }
+
+        if (Mathf.Abs(direction.x) >= Mathf.Abs(direction.y))
+        {
+            return direction.x >= 0f ? Vector2.right : Vector2.left;
+        }
+
+        return direction.y >= 0f ? Vector2.up : Vector2.down;
     }
 }
