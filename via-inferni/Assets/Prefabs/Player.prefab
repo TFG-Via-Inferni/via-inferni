@@ -411,12 +411,12 @@ MonoBehaviour:
   selectedRangedWeaponIndex: 0
   meleeWeaponBaseDamage:
   - 10
-  - 12
   - 15
+  - 12
   rangedWeaponBaseDamage:
   - 9
-  - 11
   - 14
+  - 11
   moveSpeedMultiplier: 1
   inventoryCapacity: 3
   collectedSoul: 0
@@ -441,12 +441,12 @@ MonoBehaviour:
     m_Bits: 4294967295
   meleeWeapons:
   - {fileID: 11400000, guid: d1a13e0c85bdffd499ea1e7b4c54c4c4, type: 2}
-  - {fileID: 11400000, guid: e3e6b04b920ea2446b1b3e2afa52c8dc, type: 2}
   - {fileID: 11400000, guid: 60f7801cff381dc44a0457cf65edd48e, type: 2}
+  - {fileID: 11400000, guid: e3e6b04b920ea2446b1b3e2afa52c8dc, type: 2}
   rangedWeapons:
   - {fileID: 11400000, guid: 46409f3272e8d7d4e9bcaaea2930212c, type: 2}
-  - {fileID: 11400000, guid: cef17f84cc166c845a75832aab684440, type: 2}
   - {fileID: 11400000, guid: 2cfedaa41c3d4764ba4587ade60a20ff, type: 2}
+  - {fileID: 11400000, guid: cef17f84cc166c845a75832aab684440, type: 2}
 --- !u!114 &9094118240366613217
 MonoBehaviour:
   m_ObjectHideFlags: 0

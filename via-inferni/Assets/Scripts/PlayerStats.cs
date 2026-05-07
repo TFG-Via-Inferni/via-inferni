@@ -15,8 +15,8 @@ public class PlayerStats : MonoBehaviour
     [Header("Weapons")]
     [SerializeField] private int selectedMeleeWeaponIndex;
     [SerializeField] private int selectedRangedWeaponIndex;
-    [SerializeField] private float[] meleeWeaponBaseDamage = new float[3] { 10f, 12f, 15f };
-    [SerializeField] private float[] rangedWeaponBaseDamage = new float[3] { 9f, 11f, 14f };
+    [SerializeField] private float[] meleeWeaponBaseDamage = new float[3] { 10f, 15f, 12f };
+    [SerializeField] private float[] rangedWeaponBaseDamage = new float[3] { 9f, 14f, 11f };
 
     [Header("Mobility")]
     [Min(0.01f)] [SerializeField] private float moveSpeedMultiplier = 1f;
@@ -65,8 +65,8 @@ public class PlayerStats : MonoBehaviour
         inventoryCapacity = Mathf.Clamp(inventoryCapacity, 3, 12);
         collectedSoul = Mathf.Clamp(collectedSoul, 0, 100);
 
-        EnsureWeaponArray(ref meleeWeaponBaseDamage, 10f, 12f, 15f);
-        EnsureWeaponArray(ref rangedWeaponBaseDamage, 9f, 11f, 14f);
+        EnsureWeaponArray(ref meleeWeaponBaseDamage, 10f, 15f, 12f);
+        EnsureWeaponArray(ref rangedWeaponBaseDamage, 9f, 14f, 11f);
 
         selectedMeleeWeaponIndex = Mathf.Clamp(selectedMeleeWeaponIndex, 0, meleeWeaponBaseDamage.Length - 1);
         selectedRangedWeaponIndex = Mathf.Clamp(selectedRangedWeaponIndex, 0, rangedWeaponBaseDamage.Length - 1);
@@ -125,14 +125,14 @@ public class PlayerStats : MonoBehaviour
             ? slot switch
             {
                 1 => "Sword",
-                2 => "Spear",
-                _ => "Axe"
+                2 => "Axe",
+                _ => "Spear"
             }
             : slot switch
             {
                 1 => "Bow",
-                2 => "Magic",
-                _ => "Ballista"
+                2 => "Ballista",
+                _ => "Magic"
             };
     }
 
