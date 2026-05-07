@@ -17,6 +17,7 @@ public class RoomManager : MonoBehaviour
     public Door doorPrefab;
     public GameObject enemyPrefab;
     public GameObject shopPrefab;
+    public GameObject baptismalFontPrefab;
 
     [Header("Scriptable Obeject References ")]
     public DoorScriptable[] doors;

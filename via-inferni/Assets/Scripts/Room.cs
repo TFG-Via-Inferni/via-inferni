@@ -93,6 +93,19 @@ public class Room : MonoBehaviour
                         }
                     }
                 }
+
+                if (currentCell != null && currentCell.roomType == RoomType.Secret)
+                {
+                    if (RoomManager.instance != null && RoomManager.instance.baptismalFontPrefab != null)
+                    {
+                        var baptismalFont = Instantiate(RoomManager.instance.baptismalFontPrefab, roomInstance.transform);
+                        baptismalFont.transform.localPosition = new Vector3(24f, -11.5f, 0f);
+                    }
+                    else
+                    {
+                        Debug.LogWarning("No se pudo instanciar la pila bautismal: falta RoomManager.instance.baptismalFontPrefab.");
+                    }
+                }
             }
         }
 
