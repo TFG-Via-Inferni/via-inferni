@@ -48,7 +48,7 @@ MonoBehaviour:
     weight: 0
     useRoomTypeFilter: 0
     allowedRoomTypes: 
-  enemyDropChance: 1
+  enemyDropChance: 0.1
   inventoryDropPool:
   - itemDefinition: {fileID: 11400000, guid: ec084e978c07f2c41bfcda823352454f, type: 2}
     weight: 8
