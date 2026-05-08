@@ -62,6 +62,7 @@ public class CircleUI : MonoBehaviour
     [Range(0.01f, 0.2f)] [SerializeField] private float heartHeightPercentOfScreen = 0.1f;
     [Range(0.05f, 0.6f)] [SerializeField] private float heartsSpacingPercentOfHeartSize = 0.05f;
     [Range(0.02f, 0.5f)] [SerializeField] private float vitalsGapPercentOfCruet = 0.05f;
+    [SerializeField] private int heartsPerRow = 12;
 
     [Header("Inventory HUD")]
     [SerializeField] private bool showInventoryHud = true;
@@ -1083,17 +1084,26 @@ public class CircleUI : MonoBehaviour
             }
         }
 
+        int cols = Mathf.Max(1, heartsPerRow);
+        int rows = Mathf.CeilToInt(heartSlots / (float)cols);
+
         for (int i = 0; i < heartSlots; i++)
         {
+            int row = i / cols;
+            int col = i % cols;
+
             RectTransform heartRect = heartsRoot.GetChild(i).GetComponent<RectTransform>();
             if (!heartRect.gameObject.activeSelf)
             {
                 heartRect.gameObject.SetActive(true);
             }
 
+            float x = col * (currentHeartSize + currentHeartSpacing);
+            float y = -row * (currentHeartSize + currentHeartSpacing);
+
             ConfigureTopLeftRect(
                 heartRect,
-                new Vector2(i * (currentHeartSize + currentHeartSpacing), 0f),
+                new Vector2(x, y),
                 new Vector2(currentHeartSize, currentHeartSize)
             );
 
@@ -1114,11 +1124,16 @@ public class CircleUI : MonoBehaviour
             }
         }
 
-        float totalWidth = heartSlots > 0
-            ? (heartSlots * currentHeartSize) + ((heartSlots - 1) * currentHeartSpacing)
+        int maxColsInRow = Mathf.Min(cols, heartSlots);
+        float totalWidth = maxColsInRow > 0
+            ? (maxColsInRow * currentHeartSize) + ((maxColsInRow - 1) * currentHeartSpacing)
             : 0f;
 
-        ConfigureTopLeftRect(heartsRoot, heartsRoot.anchoredPosition, new Vector2(totalWidth, currentHeartSize));
+        float totalHeight = rows > 0
+            ? (rows * currentHeartSize) + ((rows - 1) * currentHeartSpacing)
+            : 0f;
+
+        ConfigureTopLeftRect(heartsRoot, heartsRoot.anchoredPosition, new Vector2(totalWidth, totalHeight));
     }
 
     private static int GetSoulCruetState(int soul)

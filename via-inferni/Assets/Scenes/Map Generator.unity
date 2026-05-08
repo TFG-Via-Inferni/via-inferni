@@ -1996,7 +1996,6 @@ MonoBehaviour:
   circleLabelWidthPercentOfScreen: 0.16
   circleLabelHeightPercentOfScreen: 0.04
   circleLabelVerticalGap: 6
-  circleLabelMinFontSize: 10
   showStatsOverlay: 1
   statsText: {fileID: 913163982}
   statsColor: {r: 0.6698113, g: 0.6698113, b: 0.6698113, a: 0.62}
@@ -2029,11 +2028,11 @@ MonoBehaviour:
   - {fileID: 332920794, guid: 78bbd2a7435f1d54d8b0d9d8cfaca71c, type: 3}
   - {fileID: 725785400, guid: 78bbd2a7435f1d54d8b0d9d8cfaca71c, type: 3}
   - {fileID: -668135714, guid: 78bbd2a7435f1d54d8b0d9d8cfaca71c, type: 3}
-  soulCountFontSize: 28
   cruetHeightPercentOfScreen: 0.2
   heartHeightPercentOfScreen: 0.08
   heartsSpacingPercentOfHeartSize: 0.05
   vitalsGapPercentOfCruet: 0.05
+  heartsPerRow: 12
   showInventoryHud: 1
   inventoryBackgroundSprite: {fileID: 21300000, guid: 64182572e9e9cf94cb42663be16a3dd8, type: 3}
   inventoryLockSprite: {fileID: 1418573593, guid: 80b2732509e76de4cb52a304d22f4774, type: 3}
