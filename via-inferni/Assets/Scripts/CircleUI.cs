@@ -9,12 +9,20 @@ public class CircleUI : MonoBehaviour
     private const float UiRefreshInterval = 0.1f;
     private const float PlayerLookupInterval = 0.5f;
     private const float HeartHpPerFullHeart = 2f;
+    private const string MinimapImageObjectName = "MinimapImage";
+    private const string MinimapContainerObjectName = "MinimapContainer";
+    private const string CircleTextObjectName = "CircleText";
     private static readonly Color SoulCountDisplayColor = new Color(1f, 1f, 1f, 0.99f);
 
     public static CircleUI instance;
 
     [Header("UI References")]
     [SerializeField] private TextMeshProUGUI circleText;
+
+    [Header("Circle Label")]
+    [SerializeField] private float circleLabelWidthPercentOfScreen = 0.16f;
+    [SerializeField] private float circleLabelHeightPercentOfScreen = 0.04f;
+    [SerializeField] private float circleLabelVerticalGap = 6f;
 
     [Header("Stats Overlay")]
     [SerializeField] private bool showStatsOverlay = true;
@@ -48,7 +56,6 @@ public class CircleUI : MonoBehaviour
     [SerializeField] private Sprite heartHalfOverlaySprite;
     [SerializeField] private Sprite heartFullOverlaySprite;
     [SerializeField] private Sprite[] soulCruetSprites = new Sprite[5];
-    [SerializeField] private int soulCountFontSize = 28;
 
     [Header("Vitals HUD Responsive")]
     [Range(0.02f, 0.25f)] [SerializeField] private float cruetHeightPercentOfScreen = 0.15f;
@@ -74,6 +81,7 @@ public class CircleUI : MonoBehaviour
     private float nextUiRefreshTime;
     private bool selectionSpritesLoaded;
     private bool vitalsSpritesLoaded;
+    private RectTransform minimapContainerRect;
     private RectTransform vitalsHudRoot;
     private Image soulCruetImage;
     private TextMeshProUGUI soulCountText;
@@ -82,7 +90,6 @@ public class CircleUI : MonoBehaviour
     private Image[] heartOverlayImages = new Image[0];
     private float currentHeartSize;
     private float currentHeartSpacing;
-    private float currentSoulCruetHeight;
     private int currentSoulCountFontSize;
     private RectTransform inventoryHudRoot;
     private Image inventoryBackgroundImage;
@@ -95,13 +102,12 @@ public class CircleUI : MonoBehaviour
     private void Awake()
     {
         instance = this;
-        
-        // Asegurar que el Canvas esté en Screen Space - Overlay
+
         Canvas canvas = GetComponent<Canvas>();
         if (canvas != null)
         {
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvas.sortingOrder = 100; // Para que esté por encima de todo
+            canvas.sortingOrder = 100;
         }
 
         EnsureStatsTextReference();
@@ -110,6 +116,7 @@ public class CircleUI : MonoBehaviour
         EnsureVitalsHudReferences();
         EnsureVitalsSpritesLoaded();
         EnsureInventoryHudReferences();
+        EnsureCircleTextLayout();
     }
 
     private void Start()
@@ -119,6 +126,7 @@ public class CircleUI : MonoBehaviour
         UpdateSelectionHudDisplay();
         UpdateVitalsHudDisplay();
         UpdateInventoryHudDisplay();
+        EnsureCircleTextLayout();
     }
 
     private void Update()
@@ -137,19 +145,131 @@ public class CircleUI : MonoBehaviour
         if (Time.unscaledTime >= nextUiRefreshTime)
         {
             nextUiRefreshTime = Time.unscaledTime + UiRefreshInterval;
+            UpdateCircleDisplay();
             UpdateStatsDisplay();
             UpdateSelectionHudDisplay();
             UpdateVitalsHudDisplay();
             UpdateInventoryHudDisplay();
+            EnsureCircleTextLayout();
         }
     }
 
     public void UpdateCircleDisplay()
     {
+        EnsureCircleTextLayout();
+
         if (circleText != null && CircleManager.instance != null)
         {
             circleText.text = CircleManager.instance.GetCircleName();
         }
+    }
+
+    private void EnsureCircleTextLayout()
+    {
+        RectTransform targetParent = ResolveMinimapContainer();
+
+        if (circleText == null)
+        {
+            circleText = EnsureTextReference(targetParent, CircleTextObjectName);
+        }
+
+        if (circleText == null)
+        {
+            return;
+        }
+
+        if (targetParent != null && circleText.transform.parent != targetParent)
+        {
+            circleText.transform.SetParent(targetParent, false);
+        }
+
+        RectTransform rect = circleText.rectTransform;
+        if (rect == null)
+        {
+            return;
+        }
+
+        float safeScreenWidth = Mathf.Max(1f, Screen.width);
+        float safeScreenHeight = Mathf.Max(1f, Screen.height);
+
+        float labelWidth = safeScreenWidth * circleLabelWidthPercentOfScreen;
+        float labelHeight = safeScreenHeight * circleLabelHeightPercentOfScreen;
+        int circleFontSize = Mathf.RoundToInt(labelHeight * 0.35f);
+
+        if (targetParent != null)
+        {
+            Rect parentRect = targetParent.rect;
+            float parentWidth = Mathf.Max(1f, parentRect.width);
+            float parentHeight = Mathf.Max(1f, parentRect.height);
+
+            labelWidth = parentWidth;
+            labelHeight = Mathf.Max(1f, parentHeight * 0.14f);
+            circleFontSize = Mathf.RoundToInt(parentHeight * 0.08f);
+
+            ConfigureTopLeftRect(
+                rect,
+                new Vector2(0f, -(parentHeight + circleLabelVerticalGap)),
+                new Vector2(labelWidth, labelHeight)
+            );
+        }
+        else
+        {
+            ConfigureTopLeftRect(
+                rect,
+                new Vector2(15f, -10f),
+                new Vector2(labelWidth, labelHeight)
+            );
+        }
+
+        circleText.alignment = TextAlignmentOptions.Center;
+        circleText.textWrappingMode = TextWrappingModes.NoWrap;
+        circleText.raycastTarget = false;
+        circleText.enableAutoSizing = false;
+        circleText.fontSize = Mathf.Max(1f, circleFontSize);
+
+        if (circleText.font == null && statsText != null && statsText.font != null)
+        {
+            circleText.font = statsText.font;
+        }
+    }
+
+    private RectTransform ResolveMinimapContainer()
+    {
+        if (minimapContainerRect != null)
+        {
+            return minimapContainerRect;
+        }
+
+        GameObject minimapContainer = GameObject.Find(MinimapContainerObjectName);
+        if (minimapContainer != null)
+        {
+            minimapContainerRect = minimapContainer.GetComponent<RectTransform>();
+            if (minimapContainerRect != null)
+            {
+                return minimapContainerRect;
+            }
+        }
+
+        GameObject minimapImage = GameObject.Find(MinimapImageObjectName);
+        if (minimapImage == null)
+        {
+            return null;
+        }
+
+        Transform maskTransform = minimapImage.transform.parent;
+        if (maskTransform == null)
+        {
+            return null;
+        }
+
+        Transform containerTransform = maskTransform.parent;
+        if (containerTransform == null)
+        {
+            return null;
+        }
+
+        minimapContainerRect = containerTransform.GetComponent<RectTransform>();
+        return minimapContainerRect;
     }
 
     private void UpdateStatsDisplay()
@@ -480,7 +600,6 @@ public class CircleUI : MonoBehaviour
 
         currentHeartSize = heartSize.x;
         currentHeartSpacing = currentHeartSize * heartsSpacingPercentOfHeartSize;
-        currentSoulCruetHeight = cruetHeight;
         currentSoulCountFontSize = Mathf.RoundToInt(cruetSize.y * 0.2f);
 
         ConfigureTopLeftRect(heartsRoot, new Vector2(cruetSize.x + gap, 0f), Vector2.zero);
