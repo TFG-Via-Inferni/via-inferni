@@ -92,7 +92,7 @@ public class PlayerInventory : MonoBehaviour
 
     public int GetUnlockedSlotCount()
     {
-        int capacity = playerStats != null ? playerStats.InventoryCapacity : 3;
+        int capacity = playerStats != null ? playerStats.InventoryCapacity : 4;
         return Mathf.Clamp(capacity, 0, MaxSlots);
     }
 

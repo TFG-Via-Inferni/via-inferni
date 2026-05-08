@@ -430,7 +430,7 @@ MonoBehaviour:
   - 14
   - 11
   moveSpeedMultiplier: 1
-  inventoryCapacity: 3
+  inventoryCapacity: 4
   collectedSoul: 0
 --- !u!114 &4335573628349318775
 MonoBehaviour:

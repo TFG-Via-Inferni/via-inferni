@@ -22,7 +22,7 @@ public class PlayerStats : MonoBehaviour
     [Min(0.01f)] [SerializeField] private float moveSpeedMultiplier = 1f;
 
     [Header("Progression")]
-    [Range(3, 12)] [SerializeField] private int inventoryCapacity = 3;
+    [Range(4, 12)] [SerializeField] private int inventoryCapacity = 4;
     [Range(0, 100)] [SerializeField] private int collectedSoul = 0;
 
     // Health Properties
@@ -62,7 +62,7 @@ public class PlayerStats : MonoBehaviour
         critChance = Mathf.Clamp01(critChance);
         dodgeChance = Mathf.Clamp01(dodgeChance);
         moveSpeedMultiplier = Mathf.Max(0.01f, moveSpeedMultiplier);
-        inventoryCapacity = Mathf.Clamp(inventoryCapacity, 3, 12);
+        inventoryCapacity = Mathf.Clamp(inventoryCapacity, 4, 12);
         collectedSoul = Mathf.Clamp(collectedSoul, 0, 100);
 
         EnsureWeaponArray(ref meleeWeaponBaseDamage, 10f, 15f, 12f);
@@ -144,7 +144,7 @@ public class PlayerStats : MonoBehaviour
         }
 
         int previous = inventoryCapacity;
-        inventoryCapacity = Mathf.Clamp(inventoryCapacity + amount, 3, 12);
+        inventoryCapacity = Mathf.Clamp(inventoryCapacity + amount, 4, 12);
         return inventoryCapacity != previous;
     }
 
