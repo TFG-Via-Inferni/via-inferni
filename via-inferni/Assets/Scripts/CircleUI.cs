@@ -82,6 +82,8 @@ public class CircleUI : MonoBehaviour
     private Image[] heartOverlayImages = new Image[0];
     private float currentHeartSize;
     private float currentHeartSpacing;
+    private float currentSoulCruetHeight;
+    private int currentSoulCountFontSize;
     private RectTransform inventoryHudRoot;
     private Image inventoryBackgroundImage;
     private Image inventoryFrameOverlayImage;
@@ -478,6 +480,8 @@ public class CircleUI : MonoBehaviour
 
         currentHeartSize = heartSize.x;
         currentHeartSpacing = currentHeartSize * heartsSpacingPercentOfHeartSize;
+        currentSoulCruetHeight = cruetHeight;
+        currentSoulCountFontSize = Mathf.RoundToInt(cruetSize.y * 0.2f);
 
         ConfigureTopLeftRect(heartsRoot, new Vector2(cruetSize.x + gap, 0f), Vector2.zero);
 
@@ -490,7 +494,7 @@ public class CircleUI : MonoBehaviour
             soulCountText.raycastTarget = false;
             soulCountText.alignment = TextAlignmentOptions.Center;
             soulCountText.color = SoulCountDisplayColor;
-            soulCountText.fontSize = soulCountFontSize;
+            soulCountText.fontSize = currentSoulCountFontSize;
         }
     }
 
