@@ -15,6 +15,7 @@ public class CircleManager : MonoBehaviour
     [SerializeField] private InventoryItemDefinition[] globalEnemyDropPool = new InventoryItemDefinition[0];
 
     public int CurrentCircle => currentCircle;
+    public bool HasCurrentCircleKey { get; private set; }
     public CircleDefinition CurrentCircleDefinition { get; private set; }
 
     private void Awake()
@@ -36,6 +37,7 @@ public class CircleManager : MonoBehaviour
         if (currentCircle < maxCircles)
         {
             currentCircle++;
+            HasCurrentCircleKey = false;
             RefreshCurrentCircleDefinition();
             Debug.Log($"=== DESCENDIENDO AL CÍRCULO {currentCircle} ===");
             
@@ -69,6 +71,40 @@ public class CircleManager : MonoBehaviour
         else
         {
             Debug.Log("¡Has alcanzado el último círculo del Infierno!");
+        }
+    }
+
+    public bool TryCollectCurrentCircleKey(int keyCircleNumber, out string reason)
+    {
+        reason = string.Empty;
+
+        if (keyCircleNumber != currentCircle)
+        {
+            reason = $"La llave es del circulo {keyCircleNumber}, pero el actual es {currentCircle}.";
+            return false;
+        }
+
+        if (HasCurrentCircleKey)
+        {
+            reason = "La llave de este circulo ya esta recogida.";
+            return false;
+        }
+
+        HasCurrentCircleKey = true;
+        Debug.Log($"CircleManager: llave del circulo {currentCircle} recogida.");
+        RefreshStairsActivation();
+        return true;
+    }
+
+    public void RefreshStairsActivation()
+    {
+        Stairs[] stairs = UnityEngine.Object.FindObjectsByType<Stairs>(FindObjectsSortMode.None);
+        for (int i = 0; i < stairs.Length; i++)
+        {
+            if (stairs[i] != null)
+            {
+                stairs[i].RefreshActivationFromProgress();
+            }
         }
     }
 

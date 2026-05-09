@@ -50,6 +50,7 @@ public class Room : MonoBehaviour
     {
         this.currentCell = currentCell;
         spawnGrids.Clear();
+        GameObject roomInstance = null;
 
         // Instanciar el prefab visual de la habitación
         if (room != null && room.roomVariations.Length > 0)
@@ -57,7 +58,7 @@ public class Room : MonoBehaviour
             var selectedPrefab = room.roomVariations[Random.Range(0, room.roomVariations.Length)];
             if (selectedPrefab != null)
             {
-                var roomInstance = Instantiate(selectedPrefab, transform);
+                roomInstance = Instantiate(selectedPrefab, transform);
                 roomInstance.transform.localPosition = Vector3.zero;
 
                 spawnGrids = roomInstance
@@ -129,6 +130,8 @@ public class Room : MonoBehaviour
                 }
             }
         }
+
+        SetupProgressionObjects(roomInstance);
 
         CacheCameraData();
 
@@ -724,6 +727,89 @@ public class Room : MonoBehaviour
         {
             UnlockDoors();
         }
+    }
+
+    private void SetupProgressionObjects(GameObject roomInstance)
+    {
+        if (currentCell == null)
+        {
+            return;
+        }
+
+        if (currentCell.roomType == RoomType.Boss && roomInstance != null)
+        {
+            Stairs[] stairsInRoom = roomInstance.GetComponentsInChildren<Stairs>(true);
+            for (int i = 0; i < stairsInRoom.Length; i++)
+            {
+                if (stairsInRoom[i] != null)
+                {
+                    stairsInRoom[i].SetRequiresCurrentCircleKey(true);
+                }
+            }
+        }
+
+        if (MapGenerator.instance == null || !MapGenerator.instance.IsKeyRoom(currentCell.index))
+        {
+            return;
+        }
+
+        if (CircleManager.instance != null && CircleManager.instance.HasCurrentCircleKey)
+        {
+            return;
+        }
+
+        Vector3 spawnPosition = GetProgressionPickupSpawnPosition();
+        int targetCircle = CircleManager.instance != null ? CircleManager.instance.CurrentCircle : 1;
+        CircleKeyPickup.Spawn(targetCircle, spawnPosition, MapGenerator.instance.CircleKeySprite, transform);
+    }
+
+    private Vector3 GetProgressionPickupSpawnPosition()
+    {
+        Vector3 center = transform.position;
+
+        if (cameraCenterTarget != null)
+        {
+            center = cameraCenterTarget.position;
+        }
+        else if (cameraBoundsCollider != null)
+        {
+            center = cameraBoundsCollider.bounds.center;
+        }
+
+        List<Vector3> candidatePositions = new List<Vector3>();
+        for (int i = 0; i < spawnGrids.Count; i++)
+        {
+            if (spawnGrids[i] == null)
+            {
+                continue;
+            }
+
+            List<Vector3> positions = spawnGrids[i].GetAllSpawnPositions();
+            if (positions != null && positions.Count > 0)
+            {
+                candidatePositions.AddRange(positions);
+            }
+        }
+
+        if (candidatePositions.Count == 0)
+        {
+            return center;
+        }
+
+        Vector3 bestPosition = candidatePositions[0];
+        float bestDistance = (bestPosition - center).sqrMagnitude;
+
+        for (int i = 1; i < candidatePositions.Count; i++)
+        {
+            float distance = (candidatePositions[i] - center).sqrMagnitude;
+            if (distance < bestDistance)
+            {
+                bestDistance = distance;
+                bestPosition = candidatePositions[i];
+            }
+        }
+
+        return bestPosition;
     }
 
     private bool ShouldSpawnEnemies()

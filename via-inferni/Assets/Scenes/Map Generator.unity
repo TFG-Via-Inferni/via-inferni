@@ -1638,6 +1638,7 @@ MonoBehaviour:
   item: {fileID: -1032868173, guid: de0e1e393eb030e47b47cdf7fb2a3db3, type: 3}
   shop: {fileID: -946363881, guid: de0e1e393eb030e47b47cdf7fb2a3db3, type: 3}
   boss: {fileID: 604242999, guid: de0e1e393eb030e47b47cdf7fb2a3db3, type: 3}
+  key: {fileID: -313281616, guid: 80b2732509e76de4cb52a304d22f4774, type: 3}
   secret: {fileID: -656775051, guid: de0e1e393eb030e47b47cdf7fb2a3db3, type: 3}
   largeRoom: {fileID: -1996599095, guid: 4749d29fb8ae0654c865d12577afae8b, type: 3}
   verticalRoom: {fileID: 21300000, guid: f8978599938171b44ad320d4edbd4491, type: 3}

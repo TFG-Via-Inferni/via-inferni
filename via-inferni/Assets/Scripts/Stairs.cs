@@ -6,8 +6,9 @@ public class Stairs : MonoBehaviour
     private bool isActive = false;
 
     [Header("Activation Settings")]
-    [Tooltip("Si es true, la escalera está activa desde el inicio. Si es false, necesita activarse (ej: matando al boss)")]
+    [Tooltip("Si es true, la escalera esta activa desde el inicio. Si es false, necesita activarse.")]
     [SerializeField] private bool activeFromStart = false;
+    [SerializeField] private bool requiresCurrentCircleKey = false;
 
     private SpriteRenderer spriteRenderer;
     private Collider2D triggerCollider;
@@ -16,19 +17,38 @@ public class Stairs : MonoBehaviour
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         triggerCollider = GetComponent<Collider2D>();
-        
-        SetActive(activeFromStart);
+
+        RefreshActivationFromProgress();
     }
 
     public void SetActive(bool active)
     {
         isActive = active;
-        
-        // Visualmente mostrar si está activa o no
+        ApplyVisualState(active);
+    }
+
+    public void SetRequiresCurrentCircleKey(bool required)
+    {
+        requiresCurrentCircleKey = required;
+        RefreshActivationFromProgress();
+    }
+
+    public void RefreshActivationFromProgress()
+    {
+        bool unlockedByKey = requiresCurrentCircleKey
+            && CircleManager.instance != null
+            && CircleManager.instance.HasCurrentCircleKey;
+
+        bool shouldBeActive = requiresCurrentCircleKey ? unlockedByKey : activeFromStart;
+        SetActive(shouldBeActive);
+    }
+
+    private void ApplyVisualState(bool active)
+    {
         if (spriteRenderer != null)
         {
             var color = spriteRenderer.color;
-            color.a = active ? 1f : 0.3f; // Transparente si está inactiva
+            color.a = active ? 1f : 0.3f;
             spriteRenderer.color = color;
         }
 
@@ -36,18 +56,19 @@ public class Stairs : MonoBehaviour
         {
             triggerCollider.enabled = active;
         }
-
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!isActive) return;
-        
-        
+        if (!isActive)
+        {
+            return;
+        }
+
         if (other.CompareTag("Player") && !hasBeenUsed)
         {
             hasBeenUsed = true;
-            
+
             if (CircleManager.instance != null)
             {
                 CircleManager.instance.DescendToNextCircle();

@@ -16,6 +16,7 @@ public class MapGenerator : MonoBehaviour
     private List<int> endRooms;
 
     private int bossRoomIndex;
+    private int keyRoomIndex;
     private int secretRoomIndex;
     private int shopRoomIndex;
     private int itemRoomIndex;
@@ -39,6 +40,7 @@ public class MapGenerator : MonoBehaviour
     [SerializeField] private Sprite item;
     [SerializeField] private Sprite shop;
     [SerializeField] private Sprite boss;
+    [SerializeField] private Sprite key;
     [SerializeField] private Sprite secret;
 
     [Header("Room Varations")]
@@ -56,6 +58,9 @@ public class MapGenerator : MonoBehaviour
     private HashSet<Cell> visitedRooms = new();
     private Cell currentRoomCell;
     public Cell CurrentRoomCell => currentRoomCell;
+    public int FinalRoomIndex => bossRoomIndex;
+    public int KeyRoomIndex => keyRoomIndex;
+    public Sprite CircleKeySprite => key;
     private Room lastPlayerRoom;
     private bool fullMapReveal = false;
 
@@ -130,6 +135,11 @@ public class MapGenerator : MonoBehaviour
         cellQueue = new Queue<int>();
         endRooms = new List<int>();
         bigRoomIndexes = new List<int>();
+        bossRoomIndex = -1;
+        keyRoomIndex = -1;
+        secretRoomIndex = -1;
+        shopRoomIndex = -1;
+        itemRoomIndex = -1;
         visitedRooms.Clear();
         currentRoomCell = null;
         lastPlayerRoom = null;
@@ -187,8 +197,9 @@ public class MapGenerator : MonoBehaviour
         itemRoomIndex = RandomEndRoom();
         shopRoomIndex = RandomEndRoom();
         secretRoomIndex = PickSecretRoom();
+        keyRoomIndex = PickKeyRoom();
 
-        if (itemRoomIndex == -1 || shopRoomIndex == -1 || bossRoomIndex == -1 || secretRoomIndex == -1)
+        if (itemRoomIndex == -1 || shopRoomIndex == -1 || bossRoomIndex == -1 || secretRoomIndex == -1 || keyRoomIndex == -1)
         {
             SetupDungeon();
             return;
@@ -210,6 +221,15 @@ public class MapGenerator : MonoBehaviour
             if (pickups[i] != null)
             {
                 Destroy(pickups[i].gameObject);
+            }
+        }
+
+        CircleKeyPickup[] keyPickups = UnityEngine.Object.FindObjectsByType<CircleKeyPickup>(FindObjectsSortMode.None);
+        for (int i = 0; i < keyPickups.Length; i++)
+        {
+            if (keyPickups[i] != null)
+            {
+                Destroy(keyPickups[i].gameObject);
             }
         }
     }
@@ -406,6 +426,10 @@ public class MapGenerator : MonoBehaviour
                 cell.SetSpecialRoomSprite(secret);
                 cell.SetRoomType(RoomType.Secret);
             }
+            else if (cell.index == keyRoomIndex)
+            {
+                cell.SetSpecialRoomSprite(null);
+            }
         }
     }
 
@@ -457,6 +481,31 @@ public class MapGenerator : MonoBehaviour
         }
 
         return -1;
+    }
+
+    int PickKeyRoom()
+    {
+        List<Cell> validCells = spawnedCells
+            .Where(cell =>
+                cell != null
+                && cell.index != 45
+                && cell.index != bossRoomIndex
+                && cell.index != itemRoomIndex
+                && cell.index != shopRoomIndex
+                && cell.index != secretRoomIndex)
+            .ToList();
+
+        if (validCells.Count == 0)
+        {
+            return -1;
+        }
+
+        return validCells[Random.Range(0, validCells.Count)].index;
+    }
+
+    public bool IsKeyRoom(int cellIndex)
+    {
+        return cellIndex == keyRoomIndex;
     }
 
     private int GetNeighborCount(int index)

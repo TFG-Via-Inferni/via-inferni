@@ -24,6 +24,14 @@ public class CircleUI : MonoBehaviour
     [SerializeField] private float circleLabelHeightPercentOfScreen = 0.04f;
     [SerializeField] private float circleLabelVerticalGap = 6f;
 
+    [Header("Circle Key Indicator")]
+    [SerializeField] private bool showCircleKeyIndicator = true;
+    [SerializeField] private Vector2 circleKeyIconOffset = new Vector2(-10f, 18f);
+    [SerializeField] private Vector2 circleKeyTextOffset = new Vector2(-56f, 18f);
+    [SerializeField] private float circleKeyIconSizeMultiplier = 0.62f;
+    [SerializeField] private float circleKeyTextWidthMultiplier = 1.45f;
+    [SerializeField] private float circleKeyTextHeightMultiplier = 0.9f;
+
     [Header("Stats Overlay")]
     [SerializeField] private bool showStatsOverlay = true;
     [SerializeField] private TextMeshProUGUI statsText;
@@ -75,6 +83,8 @@ public class CircleUI : MonoBehaviour
     [SerializeField] private Color inventorySelectedColor = new Color(0.95f, 0.8f, 0.25f, 0.8f);
     [SerializeField] private Color inventoryFeedbackColor = new Color(1f, 0.75f, 0.35f, 0.95f);
     [SerializeField] private float inventoryFeedbackDuration = 1.2f;
+    [SerializeField] private Color inventoryKeyReadyColor = new Color(0.95f, 0.82f, 0.26f, 0.98f);
+    [SerializeField] private Color inventoryKeyMissingColor = new Color(0.66f, 0.66f, 0.66f, 0.95f);
 
     private readonly StringBuilder statsBuilder = new StringBuilder(256);
     private Player trackedPlayer;
@@ -97,6 +107,8 @@ public class CircleUI : MonoBehaviour
     private Image inventoryFrameOverlayImage;
     private RectTransform inventorySlotsRoot;
     private TextMeshProUGUI inventoryFeedbackText;
+    private Image inventoryKeyImage;
+    private TextMeshProUGUI inventoryKeyText;
     private InventorySlotUi[] inventorySlotUis = Array.Empty<InventorySlotUi>();
     private Vector2 currentInventoryHudSize;
 
@@ -232,6 +244,62 @@ public class CircleUI : MonoBehaviour
         {
             circleText.font = statsText.font;
         }
+
+        EnsureCircleKeyIndicatorLayout(targetParent, labelHeight, circleFontSize);
+    }
+
+    private void EnsureCircleKeyIndicatorLayout(RectTransform targetParent, float labelHeight, int circleFontSize)
+    {
+        if (inventoryKeyImage == null)
+        {
+            inventoryKeyImage = EnsureImageReference(targetParent != null ? targetParent : (RectTransform)transform, "InventoryKeyImage");
+        }
+
+        if (inventoryKeyText == null)
+        {
+            inventoryKeyText = EnsureTextReference(targetParent != null ? targetParent : (RectTransform)transform, "InventoryKeyText");
+        }
+
+        if (inventoryKeyImage == null || inventoryKeyText == null)
+        {
+            return;
+        }
+
+        RectTransform desiredParent = targetParent != null ? targetParent : (RectTransform)transform;
+        if (inventoryKeyImage.transform.parent != desiredParent)
+        {
+            inventoryKeyImage.transform.SetParent(desiredParent, false);
+        }
+
+        if (inventoryKeyText.transform.parent != desiredParent)
+        {
+            inventoryKeyText.transform.SetParent(desiredParent, false);
+        }
+
+        float iconSize = Mathf.Max(12f, labelHeight * Mathf.Max(0.25f, circleKeyIconSizeMultiplier));
+        float textWidth = Mathf.Max(90f, labelHeight * Mathf.Max(1f, circleKeyTextWidthMultiplier));
+        float textHeight = Mathf.Max(14f, labelHeight * Mathf.Max(0.8f, circleKeyTextHeightMultiplier));
+        float baseY = -(targetParent != null ? targetParent.rect.height + circleLabelVerticalGap + labelHeight : 10f + labelHeight);
+
+        RectTransform keyImageRect = inventoryKeyImage.rectTransform;
+        keyImageRect.anchorMin = new Vector2(1f, 1f);
+        keyImageRect.anchorMax = new Vector2(1f, 1f);
+        keyImageRect.pivot = new Vector2(1f, 1f);
+        keyImageRect.anchoredPosition = new Vector2(circleKeyIconOffset.x, baseY + circleKeyIconOffset.y);
+        keyImageRect.sizeDelta = new Vector2(iconSize, iconSize);
+        inventoryKeyImage.raycastTarget = false;
+        inventoryKeyImage.preserveAspect = true;
+
+        RectTransform keyTextRect = inventoryKeyText.rectTransform;
+        keyTextRect.anchorMin = new Vector2(1f, 1f);
+        keyTextRect.anchorMax = new Vector2(1f, 1f);
+        keyTextRect.pivot = new Vector2(1f, 1f);
+        keyTextRect.anchoredPosition = new Vector2(circleKeyTextOffset.x, baseY + circleKeyTextOffset.y);
+        keyTextRect.sizeDelta = new Vector2(textWidth, textHeight);
+        inventoryKeyText.alignment = TextAlignmentOptions.Right;
+        inventoryKeyText.fontSize = Mathf.Max(1, Mathf.RoundToInt(circleFontSize * 0.8f));
+        inventoryKeyText.raycastTarget = false;
+        inventoryKeyText.textWrappingMode = TextWrappingModes.NoWrap;
     }
 
     private RectTransform ResolveMinimapContainer()
@@ -766,6 +834,7 @@ public class CircleUI : MonoBehaviour
         {
             inventoryFeedbackText.font = circleText.font;
         }
+
     }
 
     private void EnsureInventorySlotsUi()
@@ -883,6 +952,7 @@ public class CircleUI : MonoBehaviour
         if (!TryResolveTrackedPlayer())
         {
             SetInventoryFeedback(string.Empty);
+            UpdateInventoryKeyDisplay();
             return;
         }
 
@@ -890,6 +960,7 @@ public class CircleUI : MonoBehaviour
         if (inventory == null)
         {
             SetInventoryFeedback(string.Empty);
+            UpdateInventoryKeyDisplay();
             return;
         }
 
@@ -933,6 +1004,7 @@ public class CircleUI : MonoBehaviour
         if (!hasRecentFailure)
         {
             SetInventoryFeedback(string.Empty);
+            UpdateInventoryKeyDisplay();
             return;
         }
 
@@ -941,6 +1013,7 @@ public class CircleUI : MonoBehaviour
             : string.Empty;
 
         SetInventoryFeedback(message);
+        UpdateInventoryKeyDisplay();
     }
 
     private void SetInventoryFeedback(string message)
@@ -952,6 +1025,62 @@ public class CircleUI : MonoBehaviour
 
         inventoryFeedbackText.text = message ?? string.Empty;
         inventoryFeedbackText.enabled = !string.IsNullOrWhiteSpace(inventoryFeedbackText.text);
+    }
+
+    private void UpdateInventoryKeyDisplay()
+    {
+        if (inventoryKeyImage == null || inventoryKeyText == null)
+        {
+            return;
+        }
+
+        if (!showCircleKeyIndicator)
+        {
+            inventoryKeyImage.enabled = false;
+            inventoryKeyText.enabled = false;
+            return;
+        }
+
+        bool hasCircleManager = CircleManager.instance != null;
+        bool hasMapGenerator = MapGenerator.instance != null;
+        bool hasKey = hasCircleManager && CircleManager.instance.HasCurrentCircleKey;
+        int currentCircle = hasCircleManager ? CircleManager.instance.CurrentCircle : 0;
+
+        inventoryKeyImage.sprite = hasMapGenerator ? MapGenerator.instance.CircleKeySprite : null;
+        inventoryKeyImage.enabled = inventoryKeyImage.sprite != null;
+        inventoryKeyImage.color = hasKey ? inventoryKeyReadyColor : inventoryKeyMissingColor;
+
+        if (!hasCircleManager)
+        {
+            inventoryKeyText.text = string.Empty;
+            inventoryKeyText.enabled = false;
+            return;
+        }
+
+        inventoryKeyText.enabled = true;
+        inventoryKeyText.color = hasKey ? inventoryKeyReadyColor : inventoryKeyMissingColor;
+        inventoryKeyText.text = $"{GetShortCircleName()} KEY: {(hasKey ? "YES" : "NO")}";
+    }
+
+    private string GetShortCircleName()
+    {
+        if (CircleManager.instance == null)
+        {
+            return string.Empty;
+        }
+
+        string circleName = CircleManager.instance.GetCircleName();
+        if (string.IsNullOrWhiteSpace(circleName))
+        {
+            return string.Empty;
+        }
+
+        int separatorIndex = circleName.LastIndexOf('-');
+        string shortName = separatorIndex >= 0 && separatorIndex < circleName.Length - 1
+            ? circleName[(separatorIndex + 1)..].Trim()
+            : circleName.Trim();
+
+        return shortName.ToUpperInvariant();
     }
 
     private void UpdateVitalsHudDisplay()
