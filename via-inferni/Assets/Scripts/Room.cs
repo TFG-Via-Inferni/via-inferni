@@ -676,6 +676,11 @@ public class Room : MonoBehaviour
             return;
         }
 
+        if (MapGenerator.instance != null)
+        {
+            MapGenerator.instance.OnPlayerEnteredRoom(currentCell);
+        }
+
         // Cuando el Player entra por primera vez, bloquear puertas si hay enemigos
         if (!playerHasEntered)
         {

@@ -151,7 +151,30 @@ public class RoomManager : MonoBehaviour
 
     public Room GetRoomContainingPoint(Vector2 point)
     {
-        return createdRooms.FirstOrDefault(room => room != null && room.ContainsPoint(point));
+        Room bestRoom = null;
+        float bestDistanceSqr = float.MaxValue;
+
+        for (int i = 0; i < createdRooms.Count; i++)
+        {
+            Room room = createdRooms[i];
+            if (room == null || !room.ContainsPoint(point))
+            {
+                continue;
+            }
+
+            Vector3 roomCenter = room.CameraCenterTarget != null
+                ? room.CameraCenterTarget.position
+                : room.transform.position;
+
+            float distanceSqr = ((Vector2)roomCenter - point).sqrMagnitude;
+            if (distanceSqr < bestDistanceSqr)
+            {
+                bestDistanceSqr = distanceSqr;
+                bestRoom = room;
+            }
+        }
+
+        return bestRoom;
     }
 
     private bool DoesTileMatchCell(int[] occupiedTiles, Cell cell)

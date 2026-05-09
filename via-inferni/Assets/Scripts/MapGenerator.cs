@@ -108,7 +108,10 @@ public class MapGenerator : MonoBehaviour
             SetupDungeon();
         }
 
-        UpdateMinimapCurrentRoomFromPlayer();
+        if (currentRoomCell == null)
+        {
+            UpdateMinimapCurrentRoomFromPlayer();
+        }
     }
 
     public void SetupDungeon()
