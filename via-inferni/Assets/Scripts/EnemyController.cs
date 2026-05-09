@@ -167,11 +167,14 @@ public class EnemyController : MonoBehaviour
             dashTrailVisual.Configure(spriteRenderer);
         }
 
-        speed = definition.moveSpeed;
+        // Aplicar escalado de dificultad por círculo
+        float difficultyMultiplier = GetCircleDifficultyMultiplier();
+
+        speed = definition.moveSpeed * difficultyMultiplier;
         detectionRadius = definition.detectionRadius;
         attackRange = definition.attackRange;
-        attackCooldown = definition.attackCooldown;
-        attackDamage = definition.attackDamage;
+        attackCooldown = definition.attackCooldown / difficultyMultiplier; // Ataque más frecuente
+        attackDamage = definition.attackDamage * difficultyMultiplier;
         startDormant = definition.startDormant;
 
         // If this is a flying enemy, make its preferred orbit distance match its effective attack range
@@ -187,8 +190,32 @@ public class EnemyController : MonoBehaviour
 
         if (health != null)
         {
-            health.Configure(definition.maxHealth, true);
+            float scaledHealth = definition.maxHealth * difficultyMultiplier;
+            health.Configure(scaledHealth, true);
         }
+    }
+
+    private float GetCircleDifficultyMultiplier()
+    {
+        if (CircleManager.instance == null)
+        {
+            return 1f; // Sin multiplicador si no hay CircleManager
+        }
+
+        int currentCircle = CircleManager.instance.CurrentCircle;
+        return currentCircle switch
+        {
+            1 => 1.0f,
+            2 => 1.15f,
+            3 => 1.30f,
+            4 => 1.45f,
+            5 => 1.60f,
+            6 => 1.75f,
+            7 => 1.90f,
+            8 => 2.05f,
+            9 => 2.20f,
+            _ => 1.0f
+        };
     }
 
     public void SetDormant(bool dormant)
