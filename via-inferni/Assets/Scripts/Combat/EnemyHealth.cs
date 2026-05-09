@@ -80,6 +80,8 @@ public class EnemyHealth : MonoBehaviour, IDamageable
 
         currentHealth = Mathf.Max(0f, currentHealth - amount);
 
+        GrantSoulOnHit(source);
+
         if (damageFlash != null)
         {
             damageFlash.PlayFlash();
@@ -146,5 +148,28 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         }
 
         return source.GetComponent<DamageSourceContext>();
+    }
+
+    private static void GrantSoulOnHit(GameObject source)
+    {
+        if (source == null)
+        {
+            return;
+        }
+
+        DamageSourceContext context = source.GetComponent<DamageSourceContext>();
+        if (context == null || context.OwnerRoot == null)
+        {
+            return;
+        }
+
+        Player player = context.OwnerRoot.GetComponent<Player>();
+        if (player == null || player.Stats == null)
+        {
+            return;
+        }
+
+        int randomSoulAmount = UnityEngine.Random.Range(1, 4);
+        player.Stats.AddSoul(randomSoulAmount);
     }
 }
