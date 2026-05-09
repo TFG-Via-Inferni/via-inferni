@@ -354,6 +354,77 @@ public class EnemyController : MonoBehaviour
 
         // Mover al enemigo
         rb.MovePosition(rb.position + movement * Time.fixedDeltaTime);
+
+        // Aplicar repulsión suave para evitar que se agrupen demasiado
+        ApplyMinimalEnemyRepulsion();
+    }
+
+    private void ApplyMinimalEnemyRepulsion()
+    {
+        if (rb == null)
+        {
+            return;
+        }
+        // Ajuste reducido: separación equilibrada
+        const float repulsionRadius = 3.0f;        // Detectar algo más lejos
+        const float repulsionStrength = 1.8f;      // Fuerza de separación moderada
+        const float minDistanceThreshold = 1.6f;   // Activar separación a distancia moderada
+
+        Collider2D[] nearbyColliders = Physics2D.OverlapCircleAll(rb.position, repulsionRadius);
+        Vector2 repulsionForce = Vector2.zero;
+        int enemyCount = 0;
+
+        foreach (Collider2D collider in nearbyColliders)
+        {
+            if (collider.gameObject == gameObject)
+            {
+                continue;
+            }
+
+            EnemyController otherEnemy = collider.GetComponent<EnemyController>();
+            if (otherEnemy == null)
+            {
+                continue;
+            }
+
+            Vector2 toOther = rb.position - otherEnemy.rb.position;
+            float distance = toOther.magnitude;
+
+            if (distance < 0.001f)
+            {
+                // Si están exactamente en el mismo punto, empujar en una dirección aleatoria pequeña
+                repulsionForce += UnityEngine.Random.insideUnitCircle.normalized * repulsionStrength;
+                enemyCount++;
+                continue;
+            }
+
+            Vector2 directionAway = toOther / distance;
+
+            // Aplicar repulsión proporcional a cuán cercanos están (más cerca => más fuerza)
+            if (distance < minDistanceThreshold)
+            {
+                float falloff = 1f - (distance / minDistanceThreshold); // 0..1
+                repulsionForce += directionAway * (repulsionStrength * falloff);
+                enemyCount++;
+            }
+        }
+
+        if (enemyCount > 0 && repulsionForce.sqrMagnitude > 0.0001f)
+        {
+            // Si la fuerza es grande, aplicar un pequeño ajuste posicional directo para despegar instantáneamente
+            float forceMag = repulsionForce.magnitude;
+            Vector2 dir = repulsionForce.normalized;
+
+            if (forceMag > 0.6f)
+            {
+                // Mover un paso aún más pequeño en la dirección opuesta a la multitud
+                Vector2 step = dir * 0.08f; // ajuste posicional muy pequeño
+                rb.MovePosition(rb.position + step);
+            }
+
+            // Ajustar el movimiento para que la IA persiga pero mantenga separación (menos agresivo)
+            movement += repulsionForce * Time.fixedDeltaTime * 1.0f;
+        }
     }
 
     public void ApplyKnockback(Vector2 direction, float force)
