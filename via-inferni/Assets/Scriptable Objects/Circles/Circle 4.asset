@@ -90,3 +90,19 @@ MonoBehaviour:
     weight: 4
   - itemDefinition: {fileID: 11400000, guid: 8378f783794678d44926037ee729b794, type: 2}
     weight: 3.2
+  enemySpawnCountRules:
+  - roomShape: 0
+    minEnemies: 3
+    maxEnemies: 5
+  - roomShape: 1
+    minEnemies: 5
+    maxEnemies: 7
+  - roomShape: 2
+    minEnemies: 5
+    maxEnemies: 7
+  - roomShape: 3
+    minEnemies: 8
+    maxEnemies: 12
+  - roomShape: 4
+    minEnemies: 7
+    maxEnemies: 9

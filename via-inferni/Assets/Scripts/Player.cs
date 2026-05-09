@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public enum PlayerFormType
 {
@@ -215,6 +216,7 @@ public class Player : MonoBehaviour, IDamageable
         HandleInventoryInput();
         HandleSoulInput();
         HandleDashInput();
+        HandleDebugInput();
         HandleDashTrail();
 
         if (swapAction != null && swapAction.WasPressedThisFrame())
@@ -406,6 +408,26 @@ public class Player : MonoBehaviour, IDamageable
         if (playerStats.SpendSoul(SoulHealCost))
         {
             playerStats.RestoreHealth(SoulHealAmount);
+        }
+    }
+
+    private void HandleDebugInput()
+    {
+        Keyboard keyboard = Keyboard.current;
+        if (keyboard == null)
+        {
+            return;
+        }
+
+        // Ctrl + N: Debug - Pasar al siguiente círculo
+        bool ctrlPressed = keyboard.leftCtrlKey.isPressed || keyboard.rightCtrlKey.isPressed;
+        if (ctrlPressed && keyboard.nKey.wasPressedThisFrame)
+        {
+            if (CircleManager.instance != null)
+            {
+                CircleManager.instance.DescendToNextCircle();
+                Debug.Log("[DEBUG] Saltando al siguiente círculo (Ctrl+N)");
+            }
         }
     }
 

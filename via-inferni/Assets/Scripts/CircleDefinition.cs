@@ -40,6 +40,34 @@ public class WeightedInventoryDropEntry
     }
 }
 
+[Serializable]
+public class EnemySpawnCountRule
+{
+    [Header("Room Filter")]
+    public RoomShape roomShape = RoomShape.OneByOne;
+    public bool useRoomTypeFilter;
+    public RoomType[] allowedRoomTypes;
+
+    [Header("Spawn Range")]
+    [Min(0)] public int minEnemies = 1;
+    [Min(0)] public int maxEnemies = 2;
+
+    public bool Matches(RoomShape shape, RoomType roomType)
+    {
+        if (shape != roomShape)
+        {
+            return false;
+        }
+
+        if (!useRoomTypeFilter)
+        {
+            return true;
+        }
+
+        return allowedRoomTypes != null && allowedRoomTypes.Contains(roomType);
+    }
+}
+
 [CreateAssetMenu(fileName = "CircleDefinition", menuName = "Scriptable Objects/Circle Definition")]
 public class CircleDefinition : ScriptableObject
 {
@@ -56,6 +84,14 @@ public class CircleDefinition : ScriptableObject
 
     [Tooltip("Pool de enemigos ponderado para este círculo.")]
     public WeightedEnemyEntry[] enemyPool;
+
+    [Header("Enemy Spawn Amount")]
+    [Tooltip("Rango por defecto cuando no hay regla específica para una sala.")]
+    [Min(0)] public int defaultMinEnemies = 1;
+    [Min(0)] public int defaultMaxEnemies = 2;
+
+    [Tooltip("Reglas por forma/tipo de sala para controlar cantidad de enemigos por círculo.")]
+    public EnemySpawnCountRule[] enemySpawnCountRules;
 
     [Header("Inventory Drops")]
     [Range(0f, 1f)] public float enemyDropChance = 1f;
@@ -210,5 +246,36 @@ public class CircleDefinition : ScriptableObject
 
         itemDefinition = validEntries[validEntries.Count - 1].itemDefinition;
         return itemDefinition != null;
+    }
+
+    public void GetEnemySpawnRange(RoomShape roomShape, RoomType roomType, int fallbackMin, int fallbackMax, out int minCount, out int maxCount)
+    {
+        int safeFallbackMin = Mathf.Max(0, fallbackMin);
+        int safeFallbackMax = Mathf.Max(safeFallbackMin, fallbackMax);
+
+        minCount = defaultMinEnemies > 0 || defaultMaxEnemies > 0
+            ? Mathf.Max(0, defaultMinEnemies)
+            : safeFallbackMin;
+        maxCount = defaultMinEnemies > 0 || defaultMaxEnemies > 0
+            ? Mathf.Max(minCount, defaultMaxEnemies)
+            : safeFallbackMax;
+
+        if (enemySpawnCountRules == null || enemySpawnCountRules.Length == 0)
+        {
+            return;
+        }
+
+        for (int i = 0; i < enemySpawnCountRules.Length; i++)
+        {
+            EnemySpawnCountRule rule = enemySpawnCountRules[i];
+            if (rule == null || !rule.Matches(roomShape, roomType))
+            {
+                continue;
+            }
+
+            minCount = Mathf.Max(0, rule.minEnemies);
+            maxCount = Mathf.Max(minCount, rule.maxEnemies);
+            return;
+        }
     }
 }

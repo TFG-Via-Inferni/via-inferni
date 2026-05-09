@@ -540,7 +540,8 @@ public class Room : MonoBehaviour
     {
         if (spawnGrids.Count == 0) return;
 
-        int enemyCount = Random.Range(minEnemies, maxEnemies + 1);
+        ResolveEnemySpawnRange(out int resolvedMinEnemies, out int resolvedMaxEnemies);
+        int enemyCount = Random.Range(resolvedMinEnemies, resolvedMaxEnemies + 1);
 
         List<SpawnZoneData> spawnZones = new List<SpawnZoneData>();
         HashSet<Vector2Int> usedKeys = new HashSet<Vector2Int>();
@@ -606,6 +607,26 @@ public class Room : MonoBehaviour
         }
 
         // NO bloquear puertas aquí, esperar a que el player entre
+    }
+
+    private void ResolveEnemySpawnRange(out int resolvedMinEnemies, out int resolvedMaxEnemies)
+    {
+        int safeMin = Mathf.Max(0, minEnemies);
+        int safeMax = Mathf.Max(safeMin, maxEnemies);
+
+        resolvedMinEnemies = safeMin;
+        resolvedMaxEnemies = safeMax;
+
+        CircleDefinition definition = CircleManager.instance != null
+            ? CircleManager.instance.CurrentCircleDefinition
+            : null;
+
+        if (definition == null || currentCell == null)
+        {
+            return;
+        }
+
+        definition.GetEnemySpawnRange(currentCell.roomShape, currentCell.roomType, safeMin, safeMax, out resolvedMinEnemies, out resolvedMaxEnemies);
     }
 
     private WeightedEnemyEntry PickEnemyEntryForThisSpawn()
