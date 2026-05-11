@@ -45,6 +45,9 @@ public class Player : MonoBehaviour, IDamageable
     [SerializeField] private float dashCooldown = 2f;
     [SerializeField] private Vector3 dodgeTextOffset = new Vector3(0f, 1.1f, 0f);
 
+    [Header("Special Items - Cloak")]
+    [SerializeField] private float cloakAlpha = 0.4f;
+
     private Rigidbody2D rb;
     private Vector2 movement;
     private Vector2 currentVelocity;
@@ -59,6 +62,8 @@ public class Player : MonoBehaviour, IDamageable
     private PlayerDashTrailVisual dashTrailVisual;
     private PlayerMoveDustVisual moveDustVisual;
     private ShieldVisual shieldVisual;
+    private SpriteRenderer[] characterSpriteRenderers;
+    private float originalCharacterAlpha = 1f;
     private Vector2 facingDirection = Vector2.right;
 
     // Dash state
@@ -105,11 +110,13 @@ public class Player : MonoBehaviour, IDamageable
     public void ActivateCloak()
     {
         cloakActive = true;
+        SetCharacterAlpha(cloakAlpha);
     }
 
     public void DeactivateCloak()
     {
         cloakActive = false;
+        SetCharacterAlpha(originalCharacterAlpha);
     }
 
     public void RechargeCloakIfOwned()
@@ -185,6 +192,7 @@ public class Player : MonoBehaviour, IDamageable
             shieldVisual = gameObject.AddComponent<ShieldVisual>();
         }
 
+        CacheCharacterSprites();
         ConfigureInputActions();
         SetForm(startingForm, force: true);
     }
@@ -796,6 +804,33 @@ public class Player : MonoBehaviour, IDamageable
         }
 
         return true;
+    }
+
+    private void CacheCharacterSprites()
+    {
+        characterSpriteRenderers = GetComponentsInChildren<SpriteRenderer>();
+        if (characterSpriteRenderers != null && characterSpriteRenderers.Length > 0)
+        {
+            originalCharacterAlpha = characterSpriteRenderers[0].color.a;
+        }
+    }
+
+    private void SetCharacterAlpha(float alpha)
+    {
+        if (characterSpriteRenderers == null)
+        {
+            return;
+        }
+
+        foreach (var renderer in characterSpriteRenderers)
+        {
+            if (renderer != null)
+            {
+                Color color = renderer.color;
+                color.a = alpha;
+                renderer.color = color;
+            }
+        }
     }
 
     private void OnDrawGizmosSelected()
