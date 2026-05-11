@@ -19,7 +19,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1734a92f61548114e848d95554a71909, type: 2}
   - {fileID: 11400000, guid: e368d36e071c5d943ab079ff38ccfc11, type: 2}
   - {fileID: 11400000, guid: 4ae0f9e4d604c7649b445edd3a2a5ee5, type: 2}
-  - {fileID: 11400000, guid: f910b677993341949adeff5a01cc6076, type: 2}
+  - {fileID: 11400000, guid: 2ff6e8195c991ed48810efa53f82f2c3, type: 2}
   - {fileID: 11400000, guid: f910b677993341949adeff5a01cc6076, type: 2}
   - {fileID: 11400000, guid: 66159787d711fdb41b75316bca9a24fe, type: 2}
   - {fileID: 11400000, guid: c217c87c6ccfdf64689ddd2a215980d3, type: 2}
@@ -48,6 +48,34 @@ MonoBehaviour:
     weight: 0
     useRoomTypeFilter: 0
     allowedRoomTypes: 
+  defaultMinEnemies: 1
+  defaultMaxEnemies: 2
+  enemySpawnCountRules:
+  - roomShape: 0
+    useRoomTypeFilter: 0
+    allowedRoomTypes: 
+    minEnemies: 5
+    maxEnemies: 7
+  - roomShape: 1
+    useRoomTypeFilter: 0
+    allowedRoomTypes: 
+    minEnemies: 7
+    maxEnemies: 9
+  - roomShape: 2
+    useRoomTypeFilter: 0
+    allowedRoomTypes: 
+    minEnemies: 7
+    maxEnemies: 9
+  - roomShape: 3
+    useRoomTypeFilter: 0
+    allowedRoomTypes: 
+    minEnemies: 12
+    maxEnemies: 15
+  - roomShape: 4
+    useRoomTypeFilter: 0
+    allowedRoomTypes: 
+    minEnemies: 9
+    maxEnemies: 11
   enemyDropChance: 0.1
   inventoryDropPool:
   - itemDefinition: {fileID: 11400000, guid: ec084e978c07f2c41bfcda823352454f, type: 2}
@@ -90,19 +118,3 @@ MonoBehaviour:
     weight: 5.6
   - itemDefinition: {fileID: 11400000, guid: 8378f783794678d44926037ee729b794, type: 2}
     weight: 6.4
-  enemySpawnCountRules:
-  - roomShape: 0
-    minEnemies: 5
-    maxEnemies: 7
-  - roomShape: 1
-    minEnemies: 7
-    maxEnemies: 9
-  - roomShape: 2
-    minEnemies: 7
-    maxEnemies: 9
-  - roomShape: 3
-    minEnemies: 12
-    maxEnemies: 15
-  - roomShape: 4
-    minEnemies: 9
-    maxEnemies: 11
