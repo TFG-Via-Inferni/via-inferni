@@ -58,6 +58,7 @@ public class Player : MonoBehaviour, IDamageable
     private SpriteDamageFlash damageFlash;
     private PlayerDashTrailVisual dashTrailVisual;
     private PlayerMoveDustVisual moveDustVisual;
+    private ShieldVisual shieldVisual;
     private Vector2 facingDirection = Vector2.right;
 
     // Dash state
@@ -76,11 +77,19 @@ public class Player : MonoBehaviour, IDamageable
     public void ActivateShield()
     {
         shieldAvailable = true;
+        if (shieldVisual != null)
+        {
+            shieldVisual.ShowShield();
+        }
     }
 
     public void DeactivateShield()
     {
         shieldAvailable = false;
+        if (shieldVisual != null)
+        {
+            shieldVisual.HideShield();
+        }
     }
 
     public void RechargeShieldIfOwned()
@@ -168,6 +177,12 @@ public class Player : MonoBehaviour, IDamageable
         if (moveDustVisual == null)
         {
             moveDustVisual = gameObject.AddComponent<PlayerMoveDustVisual>();
+        }
+
+        shieldVisual = GetComponent<ShieldVisual>();
+        if (shieldVisual == null)
+        {
+            shieldVisual = gameObject.AddComponent<ShieldVisual>();
         }
 
         ConfigureInputActions();
@@ -568,6 +583,7 @@ public class Player : MonoBehaviour, IDamageable
         if (shieldAvailable)
         {
             shieldAvailable = false;
+            DeactivateShield();
             return;
         }
 
