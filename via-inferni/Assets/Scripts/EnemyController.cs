@@ -78,13 +78,26 @@ public class EnemyController : MonoBehaviour
     private Color spriteBaseColor = Color.white;
     private Vector3 visualBaseScale = Vector3.one;
     private EnemyDashTrailVisual dashTrailVisual;
+    private EnemySpriteAnimator spriteAnimator;
     private Vector2 knockbackVelocity;
     private float knockbackUntil = -999f;
     private Vector2 attackLungeVelocity;
     private float attackLungeUntil = -999f;
     private float currentAttackLungeDuration = 0.1f;
+    private Vector2 facingDirection = Vector2.right;
 
     private EnemyType CurrentEnemyType => runtimeDefinition != null ? runtimeDefinition.enemyType : EnemyType.Normal;
+    public Vector2 VisualVelocity => Time.time < attackLungeUntil
+        ? attackLungeVelocity
+        : Time.time < knockbackUntil
+            ? knockbackVelocity
+            : movement;
+    public Vector2 FacingDirection => facingDirection;
+    public bool IsInAttackVisualState => currentState == EnemyState.Attack
+        || normalIsWindingUp
+        || tankIsWindingUp
+        || flyIsWindingUp
+        || Time.time < attackLungeUntil;
 
     private void TryFindPlayer()
     {
@@ -93,7 +106,7 @@ public class EnemyController : MonoBehaviour
         playerDamageable = playerObject != null ? playerObject.GetComponent<IDamageable>() : null;
     }
 
-    void Start()
+    private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         parentRoom = GetComponentInParent<Room>();
@@ -104,13 +117,7 @@ public class EnemyController : MonoBehaviour
             spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         }
 
-        dashTrailVisual = GetComponent<EnemyDashTrailVisual>();
-        if (dashTrailVisual == null)
-        {
-            dashTrailVisual = gameObject.AddComponent<EnemyDashTrailVisual>();
-        }
-
-        dashTrailVisual.Configure(spriteRenderer);
+        EnsureVisualComponents();
 
         if (spriteRenderer != null)
         {
@@ -122,6 +129,11 @@ public class EnemyController : MonoBehaviour
         {
             health.Died += HandleDeath;
         }
+    }
+
+    void Start()
+    {
+        EnsureVisualComponents();
 
         // Buscar al player por tag
         TryFindPlayer();
@@ -157,9 +169,17 @@ public class EnemyController : MonoBehaviour
             spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         }
 
-        if (spriteRenderer != null && definition.overrideSprite != null)
+        EnsureVisualComponents();
+
+        if (spriteAnimator != null)
         {
-            spriteRenderer.sprite = definition.overrideSprite;
+            spriteAnimator.Bind(this, spriteRenderer);
+            spriteAnimator.ApplyDefinition(definition);
+
+            if (!spriteAnimator.HasConfiguredAnimation() && spriteRenderer != null && definition.overrideSprite != null)
+            {
+                spriteRenderer.sprite = definition.overrideSprite;
+            }
         }
 
         if (dashTrailVisual != null)
@@ -486,6 +506,7 @@ public class EnemyController : MonoBehaviour
                 dashTrailVisual.Play(duration, dashTrailColor, 1f, 1f, 1f, 1f);
             }
         }
+
     }
 
     void UpdateState(float distanceToPlayer)
@@ -561,6 +582,8 @@ public class EnemyController : MonoBehaviour
                 movement = direction * speed;
                 break;
         }
+
+        UpdateFacingDirection(direction);
     }
 
     void HandleAttack()
@@ -609,6 +632,7 @@ public class EnemyController : MonoBehaviour
 
             normalIsWindingUp = true;
             normalCommittedDirection = directionToPlayer.normalized;
+            UpdateFacingDirection(normalCommittedDirection);
             normalWindupReadyAt = Time.time + Mathf.Max(0.04f, normalAttackWindup);
             return;
         }
@@ -622,6 +646,7 @@ public class EnemyController : MonoBehaviour
         }
 
         movement = normalCommittedDirection * (speed * normalWindupChaseSpeedMultiplier);
+        UpdateFacingDirection(normalCommittedDirection);
 
         if (Time.time < normalWindupReadyAt)
         {
@@ -686,6 +711,7 @@ public class EnemyController : MonoBehaviour
             directionToPlayer = Vector2.right;
         }
 
+        UpdateFacingDirection(directionToPlayer.normalized);
         StartAttackLunge(directionToPlayer.normalized, tankAttackLungeForce, tankAttackLungeDuration);
         if (playerDamageable != null && playerDamageable.CanTakeDamage)
         {
@@ -714,6 +740,7 @@ public class EnemyController : MonoBehaviour
             ? direction
             : -direction * 0.35f;
         movement = (radial + tangent * flyOrbitStrength).normalized * speed;
+        UpdateFacingDirection(direction);
 
         if (!flyIsWindingUp)
         {
@@ -740,6 +767,7 @@ public class EnemyController : MonoBehaviour
 
     private void ShootAtPlayer(Vector2 directionToPlayer)
     {
+        UpdateFacingDirection(directionToPlayer);
         Vector3 spawnPos = transform.position + (Vector3)(directionToPlayer * Mathf.Max(0.05f, flyProjectileSpawnOffset));
         GameObject projectileObject = null;
 
@@ -925,6 +953,47 @@ public class EnemyController : MonoBehaviour
         {
             spriteRenderer.transform.localScale = visualBaseScale;
         }
+    }
+
+    private void UpdateFacingDirection(Vector2 direction)
+    {
+        if (direction.sqrMagnitude <= 0.0001f)
+        {
+            return;
+        }
+
+        facingDirection = direction.normalized;
+    }
+
+    private void EnsureVisualComponents()
+    {
+        if (spriteRenderer == null)
+        {
+            spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        }
+
+        if (spriteAnimator == null)
+        {
+            spriteAnimator = GetComponent<EnemySpriteAnimator>();
+            if (spriteAnimator == null)
+            {
+                spriteAnimator = gameObject.AddComponent<EnemySpriteAnimator>();
+            }
+        }
+
+        spriteAnimator.Bind(this, spriteRenderer);
+
+        if (dashTrailVisual == null)
+        {
+            dashTrailVisual = GetComponent<EnemyDashTrailVisual>();
+            if (dashTrailVisual == null)
+            {
+                dashTrailVisual = gameObject.AddComponent<EnemyDashTrailVisual>();
+            }
+        }
+
+        dashTrailVisual.Configure(spriteRenderer);
+
     }
 
     void OnDrawGizmosSelected()

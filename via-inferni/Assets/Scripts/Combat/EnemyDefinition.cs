@@ -8,6 +8,11 @@ public class EnemyDefinition : ScriptableObject
     public string displayName = "Enemy";
     public Sprite overrideSprite;
 
+    [Header("Sprite Animation")]
+    public Sprite[] idleFrames;
+    public Sprite moveRightSprite;
+    public Sprite moveLeftSprite;
+
     [Header("Stats")]
     [Min(1f)] public float maxHealth = 30f;
     [Min(0f)] public float moveSpeed = 2f;
