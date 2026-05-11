@@ -612,7 +612,7 @@ public class Player : MonoBehaviour, IDamageable
         // Cursed Coin: gain souls when taking damage while owning the special
         if (damageTaken > 0f && playerInventory != null && playerInventory.HasSpecialType(SpecialItemType.CursedCoin))
         {
-            int soulsGained = Mathf.FloorToInt(damageTaken) * 5; // 5 souls per 1 HP lost
+            int soulsGained = Mathf.FloorToInt(damageTaken * 5f); // 5 souls per 1 HP lost
             if (soulsGained > 0)
             {
                 playerStats.AddSoul(soulsGained);
