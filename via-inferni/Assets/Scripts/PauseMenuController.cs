@@ -82,6 +82,12 @@ public class PauseMenuController : MonoBehaviour
 
     private void Update()
     {
+        // Don't allow pausing if game is over
+        if (GameOverController.IsGameOver)
+        {
+            return;
+        }
+
         if (Keyboard.current != null && Keyboard.current[pauseKey].wasPressedThisFrame)
         {
             TogglePause();
