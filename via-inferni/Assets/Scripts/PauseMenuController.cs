@@ -83,7 +83,7 @@ public class PauseMenuController : MonoBehaviour
     private void Update()
     {
         // Don't allow pausing if game is over
-        if (GameOverController.IsGameOver)
+        if (GameOverController.IsGameOver || (CircleManager.instance != null && CircleManager.instance.HasGameCompleted))
         {
             return;
         }
@@ -111,6 +111,11 @@ public class PauseMenuController : MonoBehaviour
 
     public void RestartGame()
     {
+        if (CircleManager.instance != null)
+        {
+            CircleManager.instance.ResetRunState();
+        }
+
         ResumeGame();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }

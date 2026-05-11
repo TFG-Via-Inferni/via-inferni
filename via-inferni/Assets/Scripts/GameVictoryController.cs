@@ -3,25 +3,24 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class GameOverController : MonoBehaviour
+public class GameVictoryController : MonoBehaviour
 {
-    private static GameOverController instance;
+    private static GameVictoryController instance;
 
-    [Header("Game Over UI")]
-    [SerializeField] private GameObject gameOverMenuRoot;
+    [Header("Victory UI")]
+    [SerializeField] private GameObject victoryMenuRoot;
     [SerializeField] private Button restartButton;
     [SerializeField] private Button exitButton;
     [SerializeField] private string startMenuSceneName = "StartMenu";
-    [SerializeField] private bool hideGameOverMenuOnStart = true;
+    [SerializeField] private bool hideVictoryMenuOnStart = true;
 
     [Header("Lifetime")]
     [SerializeField] private bool keepAcrossScenes;
 
-    private bool isGameOver;
+    private bool isVictory;
     private CanvasGroup selfCanvasGroup;
-    private Player playerReference;
 
-    public static bool IsGameOver => instance != null && instance.isGameOver;
+    public static bool IsVictory => instance != null && instance.isVictory;
 
     private void Awake()
     {
@@ -38,26 +37,26 @@ public class GameOverController : MonoBehaviour
             DontDestroyOnLoad(gameObject);
         }
 
-        if (gameOverMenuRoot == null)
+        if (victoryMenuRoot == null)
         {
-            gameOverMenuRoot = gameObject;
+            victoryMenuRoot = gameObject;
         }
 
-        if (gameOverMenuRoot == gameObject)
+        if (victoryMenuRoot == gameObject)
         {
-            selfCanvasGroup = gameOverMenuRoot.GetComponent<CanvasGroup>();
+            selfCanvasGroup = victoryMenuRoot.GetComponent<CanvasGroup>();
             if (selfCanvasGroup == null)
             {
-                selfCanvasGroup = gameOverMenuRoot.AddComponent<CanvasGroup>();
+                selfCanvasGroup = victoryMenuRoot.AddComponent<CanvasGroup>();
             }
         }
 
         HookButtons();
-        SetGameOverVisible(false);
+        SetVictoryVisible(false);
 
-        if (hideGameOverMenuOnStart)
+        if (hideVictoryMenuOnStart)
         {
-            SetGameOverVisible(false);
+            SetVictoryVisible(false);
         }
     }
 
@@ -71,21 +70,16 @@ public class GameOverController : MonoBehaviour
         UnhookButtons();
     }
 
-    private void Start()
+    public static void TriggerVictory()
     {
-        CachePlayerReference();
-    }
-
-    private void Update()
-    {
-        if (playerReference == null)
+        if (instance == null)
         {
-            CachePlayerReference();
+            instance = Object.FindFirstObjectByType<GameVictoryController>();
         }
 
-        if (!isGameOver && playerReference != null && playerReference.IsDead())
+        if (instance != null)
         {
-            ShowGameOver();
+            instance.ShowVictory();
         }
     }
 
@@ -108,25 +102,36 @@ public class GameOverController : MonoBehaviour
 
         if (!SceneExistsInBuildSettings(startMenuSceneName))
         {
-            Debug.LogError($"GameOverController: Scene '{startMenuSceneName}' is not in Build Settings.");
+            Debug.LogError($"GameVictoryController: Scene '{startMenuSceneName}' is not in Build Settings.");
             return;
         }
 
         SceneManager.LoadScene(startMenuSceneName);
     }
 
-    private void ShowGameOver()
+    private void ShowVictory()
     {
-        isGameOver = true;
-        SetGameOverVisible(true);
+        if (isVictory)
+        {
+            return;
+        }
+
+        isVictory = true;
+        SetVictoryVisible(true);
         Time.timeScale = 0f;
         AudioListener.pause = true;
+
+        if (CircleUI.instance != null)
+        {
+            CircleUI.instance.gameObject.SetActive(false);
+        }
+
         SelectRestartButton();
     }
 
-    private void SetGameOverVisible(bool visible)
+    private void SetVictoryVisible(bool visible)
     {
-        if (gameOverMenuRoot == null)
+        if (victoryMenuRoot == null)
         {
             return;
         }
@@ -139,7 +144,7 @@ public class GameOverController : MonoBehaviour
             return;
         }
 
-        gameOverMenuRoot.SetActive(visible);
+        victoryMenuRoot.SetActive(visible);
     }
 
     private void SelectRestartButton()
@@ -154,11 +159,13 @@ public class GameOverController : MonoBehaviour
     {
         if (restartButton != null)
         {
+            restartButton.onClick.RemoveListener(RestartGame);
             restartButton.onClick.AddListener(RestartGame);
         }
 
         if (exitButton != null)
         {
+            exitButton.onClick.RemoveListener(ExitGame);
             exitButton.onClick.AddListener(ExitGame);
         }
     }
@@ -188,19 +195,5 @@ public class GameOverController : MonoBehaviour
         }
 
         return false;
-    }
-
-    private void CachePlayerReference()
-    {
-        if (playerReference != null)
-        {
-            return;
-        }
-
-        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
-        if (playerObject != null)
-        {
-            playerReference = playerObject.GetComponent<Player>();
-        }
     }
 }

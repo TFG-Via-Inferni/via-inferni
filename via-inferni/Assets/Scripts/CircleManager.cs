@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System;
+using System.Reflection;
 
 public class CircleManager : MonoBehaviour
 {
@@ -16,6 +18,7 @@ public class CircleManager : MonoBehaviour
 
     public int CurrentCircle => currentCircle;
     public bool HasCurrentCircleKey { get; private set; }
+    public bool HasGameCompleted { get; private set; }
     public CircleDefinition CurrentCircleDefinition { get; private set; }
 
     private void Awake()
@@ -71,6 +74,21 @@ public class CircleManager : MonoBehaviour
         else
         {
             Debug.Log("¡Has alcanzado el último círculo del Infierno!");
+            HasGameCompleted = true;
+            TriggerVictoryScreen();
+        }
+    }
+
+    public void ResetRunState()
+    {
+        currentCircle = 1;
+        HasCurrentCircleKey = false;
+        HasGameCompleted = false;
+        RefreshCurrentCircleDefinition();
+
+        if (CircleUI.instance != null)
+        {
+            CircleUI.instance.UpdateCircleDisplay();
         }
     }
 
@@ -135,14 +153,14 @@ public class CircleManager : MonoBehaviour
         if (CurrentCircleDefinition != null)
         {
             float circleDropChance = Mathf.Clamp01(CurrentCircleDefinition.enemyDropChance);
-            if (Random.value <= circleDropChance && CurrentCircleDefinition.TryPickInventoryDrop(out InventoryItemDefinition circleItem))
+            if (UnityEngine.Random.value <= circleDropChance && CurrentCircleDefinition.TryPickInventoryDrop(out InventoryItemDefinition circleItem))
             {
                 WorldInventoryPickup.Spawn(circleItem, position);
                 return true;
             }
         }
 
-        if (Random.value > Mathf.Clamp01(globalEnemyDropChance))
+        if (UnityEngine.Random.value > Mathf.Clamp01(globalEnemyDropChance))
         {
             return false;
         }
@@ -168,7 +186,7 @@ public class CircleManager : MonoBehaviour
         int attempts = globalEnemyDropPool.Length;
         while (attempts > 0)
         {
-            InventoryItemDefinition candidate = globalEnemyDropPool[Random.Range(0, globalEnemyDropPool.Length)];
+            InventoryItemDefinition candidate = globalEnemyDropPool[UnityEngine.Random.Range(0, globalEnemyDropPool.Length)];
             attempts--;
 
             if (candidate == null)
@@ -192,5 +210,32 @@ public class CircleManager : MonoBehaviour
         CurrentCircleDefinition = circleDatabase != null
             ? circleDatabase.GetByNumber(currentCircle)
             : null;
+    }
+
+    private void TriggerVictoryScreen()
+    {
+        Type victoryType = null;
+        Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+        for (int i = 0; i < assemblies.Length; i++)
+        {
+            victoryType = assemblies[i].GetType("GameVictoryController");
+            if (victoryType != null)
+            {
+                break;
+            }
+        }
+
+        if (victoryType == null)
+        {
+            Debug.LogWarning("CircleManager: no se encontró GameVictoryController en el proyecto.");
+            return;
+        }
+
+        MethodInfo triggerMethod = victoryType.GetMethod("TriggerVictory", BindingFlags.Public | BindingFlags.Static);
+        if (triggerMethod != null)
+        {
+            triggerMethod.Invoke(null, null);
+        }
     }
 }

@@ -35,6 +35,11 @@ public class MainMenuController : MonoBehaviour
             return;
         }
 
+        if (CircleManager.instance != null)
+        {
+            CircleManager.instance.ResetRunState();
+        }
+
         Time.timeScale = 1f;
         SceneManager.LoadScene(gameplaySceneName);
     }
