@@ -121,6 +121,7 @@ public class GameOverController : MonoBehaviour
         SetGameOverVisible(true);
         Time.timeScale = 0f;
         AudioListener.pause = true;
+        SetGameplayHudVisible(false);
         SelectRestartButton();
     }
 
@@ -201,6 +202,15 @@ public class GameOverController : MonoBehaviour
         if (playerObject != null)
         {
             playerReference = playerObject.GetComponent<Player>();
+        }
+    }
+
+    private void SetGameplayHudVisible(bool visible)
+    {
+        if (CircleUI.instance != null)
+        {
+            CircleUI.instance.SetStatsPauseVisibility(!visible);
+            CircleUI.instance.gameObject.SetActive(visible);
         }
     }
 }

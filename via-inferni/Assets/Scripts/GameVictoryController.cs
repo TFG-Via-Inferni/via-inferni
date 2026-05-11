@@ -120,11 +120,7 @@ public class GameVictoryController : MonoBehaviour
         SetVictoryVisible(true);
         Time.timeScale = 0f;
         AudioListener.pause = true;
-
-        if (CircleUI.instance != null)
-        {
-            CircleUI.instance.gameObject.SetActive(false);
-        }
+        SetGameplayHudVisible(false);
 
         SelectRestartButton();
     }
@@ -195,5 +191,14 @@ public class GameVictoryController : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void SetGameplayHudVisible(bool visible)
+    {
+        if (CircleUI.instance != null)
+        {
+            CircleUI.instance.SetStatsPauseVisibility(!visible);
+            CircleUI.instance.gameObject.SetActive(visible);
+        }
     }
 }
