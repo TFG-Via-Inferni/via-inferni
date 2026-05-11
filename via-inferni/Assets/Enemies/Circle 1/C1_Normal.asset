@@ -15,11 +15,11 @@ MonoBehaviour:
   enemyType: 0
   displayName: Limbo Normal Enemy
   overrideSprite: {fileID: 160204226, guid: daa66dd237160c64ead327ba59a12899, type: 3}
-  maxHealth: 45
-  moveSpeed: 3
+  maxHealth: 36
+  moveSpeed: 1.95
   detectionRadius: 10
   attackRange: 1.5
-  attackCooldown: 1
-  attackDamage: 1
+  attackCooldown: 1.1
+  attackDamage: 0.95
   ignoreGravity: 1
   startDormant: 1

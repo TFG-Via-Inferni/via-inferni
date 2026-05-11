@@ -15,11 +15,11 @@ MonoBehaviour:
   enemyType: 2
   displayName: Wrath Tank Enemy
   overrideSprite: {fileID: 0}
-  maxHealth: 30
-  moveSpeed: 2
+  maxHealth: 56
+  moveSpeed: 1.68
   detectionRadius: 10
   attackRange: 1.5
-  attackCooldown: 1
-  attackDamage: 1.0
+  attackCooldown: 1.32
+  attackDamage: 1.18
   ignoreGravity: 1
   startDormant: 1

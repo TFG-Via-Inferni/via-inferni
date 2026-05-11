@@ -15,11 +15,11 @@ MonoBehaviour:
   enemyType: 1
   displayName: Treacherty Fly Enemy
   overrideSprite: {fileID: 0}
-  maxHealth: 30
-  moveSpeed: 2
+  maxHealth: 36
+  moveSpeed: 2.51
   detectionRadius: 10
   attackRange: 1.5
-  attackCooldown: 1
-  attackDamage: 1.0
+  attackCooldown: 1.09
+  attackDamage: 0.91
   ignoreGravity: 1
   startDormant: 1

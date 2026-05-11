@@ -15,11 +15,11 @@ MonoBehaviour:
   enemyType: 1
   displayName: Greed Fly Enemy
   overrideSprite: {fileID: 0}
-  maxHealth: 30
-  moveSpeed: 2
+  maxHealth: 31
+  moveSpeed: 2.41
   detectionRadius: 10
   attackRange: 1.5
-  attackCooldown: 1
-  attackDamage: 1.0
+  attackCooldown: 1.19
+  attackDamage: 0.81
   ignoreGravity: 1
   startDormant: 1

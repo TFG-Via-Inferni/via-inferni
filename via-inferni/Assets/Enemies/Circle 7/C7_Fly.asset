@@ -15,11 +15,11 @@ MonoBehaviour:
   enemyType: 1
   displayName: Violence Fly Enemy
   overrideSprite: {fileID: 0}
-  maxHealth: 30
-  moveSpeed: 2
+  maxHealth: 34
+  moveSpeed: 2.47
   detectionRadius: 10
   attackRange: 1.5
-  attackCooldown: 1
-  attackDamage: 1.0
+  attackCooldown: 1.13
+  attackDamage: 0.87
   ignoreGravity: 1
   startDormant: 1

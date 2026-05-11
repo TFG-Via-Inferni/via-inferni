@@ -15,11 +15,11 @@ MonoBehaviour:
   enemyType: 0
   displayName: Treacherty Normal Enemy
   overrideSprite: {fileID: 0}
-  maxHealth: 30
-  moveSpeed: 2
+  maxHealth: 44
+  moveSpeed: 2.11
   detectionRadius: 10
   attackRange: 1.5
-  attackCooldown: 1
-  attackDamage: 1.0
+  attackCooldown: 0.94
+  attackDamage: 1.11
   ignoreGravity: 1
   startDormant: 1

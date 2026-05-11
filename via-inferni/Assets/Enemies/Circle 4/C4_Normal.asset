@@ -15,11 +15,11 @@ MonoBehaviour:
   enemyType: 0
   displayName: Greed Normal Enemy
   overrideSprite: {fileID: 0}
-  maxHealth: 30
-  moveSpeed: 2
+  maxHealth: 39
+  moveSpeed: 2.01
   detectionRadius: 10
   attackRange: 1.5
-  attackCooldown: 1
-  attackDamage: 1.0
+  attackCooldown: 1.04
+  attackDamage: 1.01
   ignoreGravity: 1
   startDormant: 1

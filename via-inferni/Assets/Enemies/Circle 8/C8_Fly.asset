@@ -15,11 +15,11 @@ MonoBehaviour:
   enemyType: 1
   displayName: Fraud Fly Enemy
   overrideSprite: {fileID: 0}
-  maxHealth: 30
-  moveSpeed: 2
+  maxHealth: 35
+  moveSpeed: 2.49
   detectionRadius: 10
   attackRange: 1.5
-  attackCooldown: 1
-  attackDamage: 1.0
+  attackCooldown: 1.11
+  attackDamage: 0.89
   ignoreGravity: 1
   startDormant: 1

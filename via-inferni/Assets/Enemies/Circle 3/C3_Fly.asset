@@ -16,10 +16,10 @@ MonoBehaviour:
   displayName: Gluttony Fly Enemy
   overrideSprite: {fileID: 0}
   maxHealth: 30
-  moveSpeed: 2
+  moveSpeed: 2.39
   detectionRadius: 10
   attackRange: 1.5
-  attackCooldown: 1
-  attackDamage: 1.0
+  attackCooldown: 1.21
+  attackDamage: 0.79
   ignoreGravity: 1
   startDormant: 1

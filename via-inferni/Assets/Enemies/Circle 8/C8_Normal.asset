@@ -15,11 +15,11 @@ MonoBehaviour:
   enemyType: 0
   displayName: Fraud Normal Enemy
   overrideSprite: {fileID: 0}
-  maxHealth: 30
-  moveSpeed: 2
+  maxHealth: 43
+  moveSpeed: 2.09
   detectionRadius: 10
   attackRange: 1.5
-  attackCooldown: 1
-  attackDamage: 1.0
+  attackCooldown: 0.96
+  attackDamage: 1.09
   ignoreGravity: 1
   startDormant: 1

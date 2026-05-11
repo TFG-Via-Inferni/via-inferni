@@ -15,11 +15,11 @@ MonoBehaviour:
   enemyType: 2
   displayName: Lust Tank Enemy
   overrideSprite: {fileID: 0}
-  maxHealth: 30
-  moveSpeed: 2
+  maxHealth: 50
+  moveSpeed: 1.62
   detectionRadius: 10
   attackRange: 1.5
-  attackCooldown: 1
-  attackDamage: 1.0
+  attackCooldown: 1.38
+  attackDamage: 1.12
   ignoreGravity: 1
   startDormant: 1

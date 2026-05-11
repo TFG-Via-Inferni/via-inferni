@@ -15,11 +15,11 @@ MonoBehaviour:
   enemyType: 0
   displayName: Violence Normal Enemy
   overrideSprite: {fileID: 0}
-  maxHealth: 30
-  moveSpeed: 2
+  maxHealth: 42
+  moveSpeed: 2.07
   detectionRadius: 10
   attackRange: 1.5
-  attackCooldown: 1
-  attackDamage: 1.0
+  attackCooldown: 0.98
+  attackDamage: 1.07
   ignoreGravity: 1
   startDormant: 1

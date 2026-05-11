@@ -15,11 +15,11 @@ MonoBehaviour:
   enemyType: 2
   displayName: Heresy Tank Enemy
   overrideSprite: {fileID: 0}
-  maxHealth: 30
-  moveSpeed: 2
+  maxHealth: 58
+  moveSpeed: 1.7
   detectionRadius: 10
   attackRange: 1.5
-  attackCooldown: 1
-  attackDamage: 1.0
+  attackCooldown: 1.3
+  attackDamage: 1.2
   ignoreGravity: 1
   startDormant: 1

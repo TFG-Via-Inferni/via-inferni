@@ -15,11 +15,11 @@ MonoBehaviour:
   enemyType: 0
   displayName: Wrath Normal Enemy
   overrideSprite: {fileID: 0}
-  maxHealth: 30
-  moveSpeed: 2
+  maxHealth: 40
+  moveSpeed: 2.03
   detectionRadius: 10
   attackRange: 1.5
-  attackCooldown: 1
-  attackDamage: 1.0
+  attackCooldown: 1.02
+  attackDamage: 1.03
   ignoreGravity: 1
   startDormant: 1

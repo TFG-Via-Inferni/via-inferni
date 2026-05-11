@@ -15,11 +15,11 @@ MonoBehaviour:
   enemyType: 2
   displayName: Treacherty Tank Enemy
   overrideSprite: {fileID: 0}
-  maxHealth: 30
-  moveSpeed: 2
+  maxHealth: 64
+  moveSpeed: 1.76
   detectionRadius: 10
   attackRange: 1.5
-  attackCooldown: 1
-  attackDamage: 1.0
+  attackCooldown: 1.24
+  attackDamage: 1.26
   ignoreGravity: 1
   startDormant: 1

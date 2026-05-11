@@ -15,11 +15,11 @@ MonoBehaviour:
   enemyType: 2
   displayName: Violence Tank Enemy
   overrideSprite: {fileID: 0}
-  maxHealth: 30
-  moveSpeed: 2
+  maxHealth: 60
+  moveSpeed: 1.72
   detectionRadius: 10
   attackRange: 1.5
-  attackCooldown: 1
-  attackDamage: 1.0
+  attackCooldown: 1.28
+  attackDamage: 1.22
   ignoreGravity: 1
   startDormant: 1

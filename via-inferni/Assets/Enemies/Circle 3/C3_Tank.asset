@@ -15,11 +15,11 @@ MonoBehaviour:
   enemyType: 2
   displayName: Gluttony Tank Enemy
   overrideSprite: {fileID: 0}
-  maxHealth: 30
-  moveSpeed: 2
+  maxHealth: 52
+  moveSpeed: 1.64
   detectionRadius: 10
   attackRange: 1.5
-  attackCooldown: 1
-  attackDamage: 1.0
+  attackCooldown: 1.36
+  attackDamage: 1.14
   ignoreGravity: 1
   startDormant: 1

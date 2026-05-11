@@ -15,11 +15,11 @@ MonoBehaviour:
   enemyType: 1
   displayName: Wrath Fly Enemy
   overrideSprite: {fileID: 0}
-  maxHealth: 30
-  moveSpeed: 2
+  maxHealth: 32
+  moveSpeed: 2.43
   detectionRadius: 10
   attackRange: 1.5
-  attackCooldown: 1
-  attackDamage: 1.0
+  attackCooldown: 1.17
+  attackDamage: 0.83
   ignoreGravity: 1
   startDormant: 1

@@ -15,11 +15,11 @@ MonoBehaviour:
   enemyType: 1
   displayName: Heresy Fly Enemy
   overrideSprite: {fileID: 0}
-  maxHealth: 30
-  moveSpeed: 2
+  maxHealth: 33
+  moveSpeed: 2.45
   detectionRadius: 10
   attackRange: 1.5
-  attackCooldown: 1
-  attackDamage: 1.0
+  attackCooldown: 1.15
+  attackDamage: 0.85
   ignoreGravity: 1
   startDormant: 1
