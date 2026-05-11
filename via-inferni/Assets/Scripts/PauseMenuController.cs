@@ -31,6 +31,9 @@ public class PauseMenuController : MonoBehaviour
     private CanvasGroup selfCanvasGroup;
 
     public static bool IsPaused => instance != null && instance.isPaused;
+    public static Transform PauseMenuTransform => instance != null && instance.pauseMenuRoot != null
+        ? instance.pauseMenuRoot.transform
+        : null;
 
     private void Awake()
     {
@@ -185,6 +188,7 @@ public class PauseMenuController : MonoBehaviour
     {
         if (CircleUI.instance != null)
         {
+            CircleUI.instance.SetStatsPauseVisibility(!visible);
             CircleUI.instance.gameObject.SetActive(visible);
         }
     }

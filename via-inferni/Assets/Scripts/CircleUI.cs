@@ -41,8 +41,14 @@ public class CircleUI : MonoBehaviour
     [SerializeField] private bool showStatsOverlay = true;
     [SerializeField] private TextMeshProUGUI statsText;
     [SerializeField] private Color statsColor = new Color(0.72f, 0.72f, 0.72f, 0.62f);
-    [SerializeField] private int statsFontSize = 20;
-    [SerializeField] private Vector2 statsAnchoredPosition = new Vector2(-18f, -18f);
+    [SerializeField] private int statsFontSize = 50;
+    [SerializeField] private Vector2 statsAnchoredPosition = new Vector2(24f, 24f);
+    [Range(0.15f, 0.7f)] [SerializeField] private float statsWidthPercentOfScreen = 0.54f;
+    [Range(0.18f, 0.7f)] [SerializeField] private float statsHeightPercentOfScreen = 0.6f;
+    [Range(0.015f, 0.08f)] [SerializeField] private float statsMarginPercentOfScreen = 0.025f;
+    [Range(0.015f, 0.09f)] [SerializeField] private float statsFontPercentOfScreenHeight = 0.065f;
+    [Range(0.01f, 0.07f)] [SerializeField] private float statsMinFontPercentOfScreenHeight = 0.05f;
+    [Range(0.02f, 0.14f)] [SerializeField] private float statsMaxFontPercentOfScreenHeight = 0.09f;
 
     [Header("Selection HUD")]
     [SerializeField] private bool showSelectionHud = true;
@@ -98,6 +104,7 @@ public class CircleUI : MonoBehaviour
     private bool selectionSpritesLoaded;
     private bool vitalsSpritesLoaded;
     private RectTransform minimapContainerRect;
+    private Transform statsDefaultParent;
     private RectTransform vitalsHudRoot;
     private Image soulCruetImage;
     private TextMeshProUGUI soulCountText;
@@ -120,6 +127,7 @@ public class CircleUI : MonoBehaviour
     private void Awake()
     {
         instance = this;
+        statsDefaultParent = transform;
 
         Canvas canvas = GetComponent<Canvas>();
         if (canvas != null)
@@ -152,12 +160,9 @@ public class CircleUI : MonoBehaviour
         EnsureSelectionSpritesLoaded();
         EnsureVitalsSpritesLoaded();
 
-        if (!showStatsOverlay)
+        if (!showStatsOverlay && statsText != null && statsText.gameObject.activeSelf)
         {
-            if (statsText != null && statsText.gameObject.activeSelf)
-            {
-                statsText.gameObject.SetActive(false);
-            }
+            statsText.gameObject.SetActive(false);
         }
 
         if (Time.unscaledTime >= nextUiRefreshTime)
@@ -361,8 +366,9 @@ public class CircleUI : MonoBehaviour
             return;
         }
 
-        statsText.gameObject.SetActive(showStatsOverlay);
-        if (!showStatsOverlay)
+        bool showPausedStats = showStatsOverlay && PauseMenuController.IsPaused;
+        statsText.gameObject.SetActive(showPausedStats);
+        if (!showPausedStats)
         {
             return;
         }
@@ -426,6 +432,34 @@ public class CircleUI : MonoBehaviour
         statsText.text = statsBuilder.ToString();
     }
 
+    public void SetStatsPauseVisibility(bool visible)
+    {
+        EnsureStatsTextReference();
+        if (statsText == null)
+        {
+            return;
+        }
+
+        Transform targetParent = visible
+            ? PauseMenuController.PauseMenuTransform
+            : statsDefaultParent;
+
+        if (targetParent != null && statsText.transform.parent != targetParent)
+        {
+            statsText.transform.SetParent(targetParent, false);
+        }
+
+        if (visible)
+        {
+            EnsureStatsTextReference();
+            UpdateStatsDisplay();
+            statsText.gameObject.SetActive(showStatsOverlay);
+            return;
+        }
+
+        statsText.gameObject.SetActive(false);
+    }
+
     private void EnsureStatsTextReference()
     {
         if (statsText == null)
@@ -440,21 +474,48 @@ public class CircleUI : MonoBehaviour
         if (statsText == null)
         {
             GameObject textObj = new GameObject("StatsOverlayText", typeof(RectTransform));
-            textObj.transform.SetParent(transform, false);
+            textObj.transform.SetParent(statsDefaultParent != null ? statsDefaultParent : transform, false);
             statsText = textObj.AddComponent<TextMeshProUGUI>();
         }
 
         RectTransform rect = statsText.rectTransform;
-        rect.anchorMin = new Vector2(1f, 1f);
-        rect.anchorMax = new Vector2(1f, 1f);
-        rect.pivot = new Vector2(1f, 1f);
-        rect.anchoredPosition = statsAnchoredPosition;
-        rect.sizeDelta = new Vector2(650f, 320f);
+        float safeScreenWidth = Mathf.Max(1f, Screen.width);
+        float safeScreenHeight = Mathf.Max(1f, Screen.height);
+        float shorterSide = Mathf.Min(safeScreenWidth, safeScreenHeight);
+
+        float margin = shorterSide * statsMarginPercentOfScreen;
+        float width = Mathf.Clamp(safeScreenWidth * statsWidthPercentOfScreen, 460f, safeScreenWidth * 0.68f);
+        float height = Mathf.Clamp(safeScreenHeight * statsHeightPercentOfScreen, 340f, safeScreenHeight * 0.74f);
+        int preferredFontSize = Mathf.Max(
+            statsFontSize,
+            Mathf.RoundToInt(safeScreenHeight * statsFontPercentOfScreenHeight));
+        int minAutoFontSize = Mathf.Clamp(
+            Mathf.RoundToInt(safeScreenHeight * statsMinFontPercentOfScreenHeight),
+            34,
+            58);
+        int maxAutoFontSize = Mathf.Clamp(
+            Mathf.RoundToInt(safeScreenHeight * statsMaxFontPercentOfScreenHeight),
+            Mathf.Max(minAutoFontSize + 2, preferredFontSize),
+            124);
+
+        ConfigureBottomLeftRect(
+            rect,
+            new Vector2(
+                statsAnchoredPosition.x + margin,
+                statsAnchoredPosition.y + margin),
+            new Vector2(width, height)
+        );
 
         statsText.color = statsColor;
-        statsText.fontSize = statsFontSize;
-        statsText.alignment = TextAlignmentOptions.TopLeft;
-        statsText.textWrappingMode = TextWrappingModes.NoWrap;
+        statsText.enableAutoSizing = true;
+        statsText.fontSizeMin = minAutoFontSize;
+        statsText.fontSizeMax = maxAutoFontSize;
+        statsText.fontSize = preferredFontSize;
+        statsText.alignment = TextAlignmentOptions.BottomLeft;
+        statsText.textWrappingMode = TextWrappingModes.Normal;
+        statsText.enableWordWrapping = true;
+        statsText.overflowMode = TextOverflowModes.Overflow;
+        statsText.lineSpacing = -4f;
         statsText.raycastTarget = false;
 
         if (statsText.font == null && circleText != null)
