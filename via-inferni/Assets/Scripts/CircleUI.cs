@@ -31,6 +31,11 @@ public class CircleUI : MonoBehaviour
     [SerializeField] private float circleKeyIconSizeMultiplier = 0.62f;
     [SerializeField] private float circleKeyTextWidthMultiplier = 1.45f;
     [SerializeField] private float circleKeyTextHeightMultiplier = 0.9f;
+    [SerializeField] private float circleKeyResponsiveWidthThreshold = 220f;
+    [SerializeField] private float circleKeyTextVerticalDrop = 14f;
+    [SerializeField] private float circleKeySmallScreenTextVerticalDrop = 8f;
+    [SerializeField] private float circleKeyIconGap = 8f;
+    [SerializeField] private float circleKeySmallScreenIconGap = 2f;
 
     [Header("Stats Overlay")]
     [SerializeField] private bool showStatsOverlay = true;
@@ -280,12 +285,19 @@ public class CircleUI : MonoBehaviour
         float textWidth = Mathf.Max(90f, labelHeight * Mathf.Max(1f, circleKeyTextWidthMultiplier));
         float textHeight = Mathf.Max(14f, labelHeight * Mathf.Max(0.8f, circleKeyTextHeightMultiplier));
         float baseY = -(targetParent != null ? targetParent.rect.height + circleLabelVerticalGap + labelHeight : 10f + labelHeight);
+        float availableWidth = targetParent != null ? targetParent.rect.width : Screen.width;
+        float smallScreenFactor = Mathf.Clamp01((circleKeyResponsiveWidthThreshold - availableWidth) / Mathf.Max(1f, circleKeyResponsiveWidthThreshold));
+        float textResponsiveDrop = circleKeyTextVerticalDrop + (circleKeySmallScreenTextVerticalDrop * smallScreenFactor);
+        float iconGap = Mathf.Lerp(circleKeyIconGap, circleKeySmallScreenIconGap, smallScreenFactor);
+        float keyTextX = circleKeyTextOffset.x;
+        float keyTextY = baseY + circleKeyTextOffset.y - textResponsiveDrop;
+        float keyTextCenterY = keyTextY - (textHeight * 0.5f);
 
         RectTransform keyImageRect = inventoryKeyImage.rectTransform;
         keyImageRect.anchorMin = new Vector2(1f, 1f);
         keyImageRect.anchorMax = new Vector2(1f, 1f);
-        keyImageRect.pivot = new Vector2(1f, 1f);
-        keyImageRect.anchoredPosition = new Vector2(circleKeyIconOffset.x, baseY + circleKeyIconOffset.y);
+        keyImageRect.pivot = new Vector2(0f, 0.5f);
+        keyImageRect.anchoredPosition = new Vector2(keyTextX + iconGap, keyTextCenterY);
         keyImageRect.sizeDelta = new Vector2(iconSize, iconSize);
         inventoryKeyImage.raycastTarget = false;
         inventoryKeyImage.preserveAspect = true;
@@ -294,7 +306,7 @@ public class CircleUI : MonoBehaviour
         keyTextRect.anchorMin = new Vector2(1f, 1f);
         keyTextRect.anchorMax = new Vector2(1f, 1f);
         keyTextRect.pivot = new Vector2(1f, 1f);
-        keyTextRect.anchoredPosition = new Vector2(circleKeyTextOffset.x, baseY + circleKeyTextOffset.y);
+        keyTextRect.anchoredPosition = new Vector2(keyTextX, keyTextY);
         keyTextRect.sizeDelta = new Vector2(textWidth, textHeight);
         inventoryKeyText.alignment = TextAlignmentOptions.Right;
         inventoryKeyText.fontSize = Mathf.Max(1, Mathf.RoundToInt(circleFontSize * 0.8f));
