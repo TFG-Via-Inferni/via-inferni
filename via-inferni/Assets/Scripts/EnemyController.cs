@@ -47,6 +47,7 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private float normalAttackLungeDuration = 0.1f;
     [SerializeField] private float flyShotWindup = 0.18f;
     [SerializeField] private float flyAttackCooldownMultiplier = 1.45f;
+    [SerializeField] private float flyFirstSightShotDelay = 0.35f;
     [SerializeField] private Color telegraphColor = new Color(1f, 0.55f, 0.55f, 1f);
     [SerializeField] private float telegraphScaleMultiplier = 1.12f;
     [SerializeField] private float knockbackRecoverDuration = 0.16f;
@@ -75,6 +76,7 @@ public class EnemyController : MonoBehaviour
     private float tankWindupReadyAt;
     private bool flyIsWindingUp;
     private float flyWindupReadyAt;
+    private float flyFirstShotReadyAt = -999f;
     private Color spriteBaseColor = Color.white;
     private Vector3 visualBaseScale = Vector3.one;
     private EnemyDashTrailVisual dashTrailVisual;
@@ -254,6 +256,10 @@ public class EnemyController : MonoBehaviour
 
             currentState = EnemyState.Idle;
         }
+        else if (CurrentEnemyType == EnemyType.Fly)
+        {
+            flyFirstShotReadyAt = Time.time + Mathf.Max(0f, flyFirstSightShotDelay);
+        }
     }
 
     public void ActivateAI()
@@ -264,6 +270,11 @@ public class EnemyController : MonoBehaviour
         }
 
         aiEnabled = true;
+
+        if (CurrentEnemyType == EnemyType.Fly)
+        {
+            flyFirstShotReadyAt = Time.time + Mathf.Max(0f, flyFirstSightShotDelay);
+        }
     }
 
     public void DeactivateAI()
@@ -274,6 +285,7 @@ public class EnemyController : MonoBehaviour
         normalCommittedDirection = Vector2.right;
         tankIsWindingUp = false;
         flyIsWindingUp = false;
+        flyFirstShotReadyAt = -999f;
         attackLungeVelocity = Vector2.zero;
         attackLungeUntil = -999f;
         ResetTelegraphVisual();
@@ -541,6 +553,8 @@ public class EnemyController : MonoBehaviour
     {
         if (currentState == newState) return;
 
+        EnemyState previousState = currentState;
+
         if (newState != EnemyState.Attack)
         {
             normalIsWindingUp = false;
@@ -551,6 +565,18 @@ public class EnemyController : MonoBehaviour
         }
 
         currentState = newState;
+
+        if (CurrentEnemyType == EnemyType.Fly)
+        {
+            if (newState == EnemyState.Idle)
+            {
+                flyFirstShotReadyAt = -999f;
+            }
+            else if (previousState == EnemyState.Idle)
+            {
+                flyFirstShotReadyAt = Time.time + Mathf.Max(0f, flyFirstSightShotDelay);
+            }
+        }
     }
 
     void HandleIdle()
@@ -751,6 +777,12 @@ public class EnemyController : MonoBehaviour
             : -direction * 0.35f;
         movement = (radial + tangent * flyOrbitStrength).normalized * speed;
         UpdateFacingDirection(direction);
+
+        if (Time.time < flyFirstShotReadyAt)
+        {
+            flyIsWindingUp = false;
+            return;
+        }
 
         if (!flyIsWindingUp)
         {
