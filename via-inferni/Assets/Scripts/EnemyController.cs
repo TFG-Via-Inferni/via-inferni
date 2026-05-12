@@ -93,6 +93,7 @@ public class EnemyController : MonoBehaviour
             ? knockbackVelocity
             : movement;
     public Vector2 FacingDirection => facingDirection;
+    public bool IsAlerted => aiEnabled && !isDead && currentState != EnemyState.Idle;
     public bool IsInAttackVisualState => currentState == EnemyState.Attack
         || normalIsWindingUp
         || tankIsWindingUp
@@ -672,6 +673,15 @@ public class EnemyController : MonoBehaviour
     private void HandleTankAttack()
     {
         movement = Vector2.zero;
+
+        if (player != null)
+        {
+            Vector2 tankFacingDirection = ((Vector2)player.position - rb.position);
+            if (tankFacingDirection.sqrMagnitude > 0.0001f)
+            {
+                UpdateFacingDirection(tankFacingDirection.normalized);
+            }
+        }
 
         if (!tankIsWindingUp)
         {

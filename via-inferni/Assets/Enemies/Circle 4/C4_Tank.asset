@@ -15,6 +15,11 @@ MonoBehaviour:
   enemyType: 2
   displayName: Greed Tank Enemy
   overrideSprite: {fileID: 0}
+  sideMoveFrames:
+  - {fileID: -285667586, guid: 961b3b70103523c4ca038fc172aec447, type: 3}
+  - {fileID: 253885611, guid: 961b3b70103523c4ca038fc172aec447, type: 3}
+  - {fileID: 1415069532, guid: 961b3b70103523c4ca038fc172aec447, type: 3}
+  - {fileID: -119121898, guid: 961b3b70103523c4ca038fc172aec447, type: 3}
   maxHealth: 54
   moveSpeed: 1.66
   detectionRadius: 10

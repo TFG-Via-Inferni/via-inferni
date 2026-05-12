@@ -9,17 +9,15 @@ public class EnemySpriteAnimator : MonoBehaviour
     [SerializeField] private SpriteRenderer spriteRenderer;
 
     [Header("Playback")]
-    [Min(0.01f)] [SerializeField] private float idleFramesPerSecond = 5f;
+    [Min(0.01f)] [SerializeField] private float moveFramesPerSecond = 4f;
     [Min(0f)] [SerializeField] private float moveDeadZone = 0.05f;
     [Min(0f)] [SerializeField] private float horizontalDeadZone = 0.02f;
 
-    [Header("Sprites")]
-    [SerializeField] private Sprite[] idleFrames;
-    [SerializeField] private Sprite moveRightSprite;
-    [SerializeField] private Sprite moveLeftSprite;
+    [Header("Side Movement")]
+    [SerializeField] private Sprite[] sideMoveFrames;
 
-    private int currentIdleFrameIndex;
-    private float idleFrameTimer;
+    private int currentFrameIndex;
+    private float frameTimer;
     private bool facingRight = true;
 
     public void Bind(EnemyController controller, SpriteRenderer targetRenderer)
@@ -35,19 +33,15 @@ public class EnemySpriteAnimator : MonoBehaviour
             return;
         }
 
-        idleFrames = definition.idleFrames;
-        moveRightSprite = definition.moveRightSprite;
-        moveLeftSprite = definition.moveLeftSprite;
-        currentIdleFrameIndex = 0;
-        idleFrameTimer = 0f;
+        sideMoveFrames = definition.sideMoveFrames;
+        currentFrameIndex = 0;
+        frameTimer = 0f;
         ApplyCurrentVisual();
     }
 
     public bool HasConfiguredAnimation()
     {
-        return (idleFrames != null && idleFrames.Length > 0)
-            || moveRightSprite != null
-            || moveLeftSprite != null;
+        return sideMoveFrames != null && sideMoveFrames.Length > 0;
     }
 
     private void Awake()
@@ -65,8 +59,8 @@ public class EnemySpriteAnimator : MonoBehaviour
 
     private void OnEnable()
     {
-        currentIdleFrameIndex = 0;
-        idleFrameTimer = 0f;
+        currentFrameIndex = 0;
+        frameTimer = 0f;
         ApplyCurrentVisual();
     }
 
@@ -78,82 +72,63 @@ public class EnemySpriteAnimator : MonoBehaviour
         }
 
         Vector2 visualVelocity = enemyController.VisualVelocity;
-        bool isMoving = visualVelocity.sqrMagnitude > moveDeadZone * moveDeadZone;
+        Vector2 facingVector = visualVelocity.sqrMagnitude > moveDeadZone * moveDeadZone
+            ? visualVelocity
+            : enemyController.FacingDirection;
 
-        if (Mathf.Abs(visualVelocity.x) > horizontalDeadZone)
+        if (Mathf.Abs(facingVector.x) > horizontalDeadZone)
         {
-            facingRight = visualVelocity.x >= 0f;
-        }
-        else if (Mathf.Abs(enemyController.FacingDirection.x) > horizontalDeadZone)
-        {
-            facingRight = enemyController.FacingDirection.x >= 0f;
+            facingRight = facingVector.x >= 0f;
         }
 
-        if (!isMoving)
+        if (enemyController.IsAlerted)
         {
-            AdvanceIdleFrames();
+            AdvanceMoveFrames();
         }
         else
         {
-            idleFrameTimer = 0f;
-            currentIdleFrameIndex = 0;
+            currentFrameIndex = 0;
+            frameTimer = 0f;
         }
 
         ApplyCurrentVisual();
     }
 
-    private void AdvanceIdleFrames()
+    private void AdvanceMoveFrames()
     {
-        if (idleFrames == null || idleFrames.Length <= 1)
+        if (sideMoveFrames == null || sideMoveFrames.Length == 0)
         {
             return;
         }
 
-        float frameDuration = 1f / idleFramesPerSecond;
-        idleFrameTimer += Time.deltaTime;
-
-        while (idleFrameTimer >= frameDuration)
+        if (sideMoveFrames.Length == 1)
         {
-            idleFrameTimer -= frameDuration;
-            currentIdleFrameIndex = (currentIdleFrameIndex + 1) % idleFrames.Length;
+            currentFrameIndex = 0;
+            return;
+        }
+
+        float frameDuration = 1f / moveFramesPerSecond;
+        frameTimer += Time.deltaTime;
+
+        while (frameTimer >= frameDuration)
+        {
+            frameTimer -= frameDuration;
+            currentFrameIndex = (currentFrameIndex + 1) % sideMoveFrames.Length;
         }
     }
 
     private void ApplyCurrentVisual()
     {
-        if (spriteRenderer == null)
+        if (spriteRenderer == null || sideMoveFrames == null || sideMoveFrames.Length == 0)
         {
             return;
         }
 
-        Sprite targetSprite = ResolveSprite();
-        if (targetSprite != null)
-        {
-            spriteRenderer.sprite = targetSprite;
-        }
+        int spriteIndex = enemyController != null && enemyController.IsAlerted
+            ? Mathf.Clamp(currentFrameIndex, 0, sideMoveFrames.Length - 1)
+            : 0;
 
-        spriteRenderer.flipX = false;
-    }
-
-    private Sprite ResolveSprite()
-    {
-        if (enemyController != null && enemyController.VisualVelocity.sqrMagnitude > moveDeadZone * moveDeadZone)
-        {
-            Sprite moveSprite = facingRight ? moveRightSprite : moveLeftSprite;
-            if (moveSprite != null)
-            {
-                return moveSprite;
-            }
-
-            return facingRight ? moveRightSprite : moveLeftSprite;
-        }
-
-        if (idleFrames != null && idleFrames.Length > 0)
-        {
-            currentIdleFrameIndex = Mathf.Clamp(currentIdleFrameIndex, 0, idleFrames.Length - 1);
-            return idleFrames[currentIdleFrameIndex];
-        }
-
-        return facingRight ? moveRightSprite : moveLeftSprite;
+        spriteRenderer.sprite = sideMoveFrames[spriteIndex];
+        spriteRenderer.flipX = !facingRight;
     }
 }

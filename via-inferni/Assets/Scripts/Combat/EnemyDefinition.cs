@@ -9,9 +9,7 @@ public class EnemyDefinition : ScriptableObject
     public Sprite overrideSprite;
 
     [Header("Sprite Animation")]
-    public Sprite[] idleFrames;
-    public Sprite moveRightSprite;
-    public Sprite moveLeftSprite;
+    public Sprite[] sideMoveFrames;
 
     [Header("Stats")]
     [Min(1f)] public float maxHealth = 30f;

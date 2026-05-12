@@ -2980,6 +2980,14 @@ MonoBehaviour:
   globalEnemyDropChance: 0.1
   globalEnemyDropPool:
   - {fileID: 11400000, guid: dd9abf91b923d214b91e88fb16f9f921, type: 2}
+  transitionOverlayColor: {r: 0, g: 0, b: 0, a: 1}
+  transitionTextColor: {r: 0.92, g: 0.92, b: 0.92, a: 1}
+  transitionFadeInDuration: 0.4
+  transitionHoldDuration: 0.85
+  transitionFadeOutDuration: 0.65
+  transitionMapRefreshDelay: 0.12
+  transitionTextWidthPercent: 0.72
+  transitionTextHeightPercent: 0.14
 --- !u!4 &1479316071
 Transform:
   m_ObjectHideFlags: 0
@@ -3379,11 +3387,22 @@ MonoBehaviour:
   circleKeyIconSizeMultiplier: 0.62
   circleKeyTextWidthMultiplier: 1.45
   circleKeyTextHeightMultiplier: 0.9
+  circleKeyResponsiveWidthThreshold: 220
+  circleKeyTextVerticalDrop: 14
+  circleKeySmallScreenTextVerticalDrop: 8
+  circleKeyIconGap: 8
+  circleKeySmallScreenIconGap: 2
   showStatsOverlay: 1
   statsText: {fileID: 913163982}
   statsColor: {r: 0.6698113, g: 0.6698113, b: 0.6698113, a: 0.62}
   statsFontSize: 24
   statsAnchoredPosition: {x: 0, y: 0}
+  statsWidthPercentOfScreen: 0.54
+  statsHeightPercentOfScreen: 0.6
+  statsMarginPercentOfScreen: 0.025
+  statsFontPercentOfScreenHeight: 0.065
+  statsMinFontPercentOfScreenHeight: 0.05
+  statsMaxFontPercentOfScreenHeight: 0.09
   showSelectionHud: 1
   selectedCharacterImage: {fileID: 0}
   selectedWeaponImage: {fileID: 0}

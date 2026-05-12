@@ -15,6 +15,11 @@ MonoBehaviour:
   enemyType: 0
   displayName: Greed Normal Enemy
   overrideSprite: {fileID: 0}
+  sideMoveFrames:
+  - {fileID: -497787041, guid: 6f850c0c9cfae12449b90ffe5e196151, type: 3}
+  - {fileID: 1699300203, guid: 6f850c0c9cfae12449b90ffe5e196151, type: 3}
+  - {fileID: -1550101286, guid: 6f850c0c9cfae12449b90ffe5e196151, type: 3}
+  - {fileID: -540125848, guid: 6f850c0c9cfae12449b90ffe5e196151, type: 3}
   maxHealth: 39
   moveSpeed: 2.01
   detectionRadius: 10
