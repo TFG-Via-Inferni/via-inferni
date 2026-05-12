@@ -43,11 +43,39 @@ MonoBehaviour:
     weight: 0
     useRoomTypeFilter: 0
     allowedRoomTypes: 
-  - enemyPrefab: {fileID: 1736370125707709183, guid: 6033e3505c2cc4d488eb87dc94aa815c, type: 3}
+  - enemyPrefab: {fileID: 1736370125707709183, guid: a2674a26748041a449b36dfaf47f18f9, type: 3}
     enemyDefinition: {fileID: 11400000, guid: 28e1f30cfe0ffd24fa2614e1c02cbeed, type: 2}
     weight: 0
     useRoomTypeFilter: 0
     allowedRoomTypes: 
+  defaultMinEnemies: 1
+  defaultMaxEnemies: 2
+  enemySpawnCountRules:
+  - roomShape: 0
+    useRoomTypeFilter: 0
+    allowedRoomTypes: 
+    minEnemies: 3
+    maxEnemies: 5
+  - roomShape: 1
+    useRoomTypeFilter: 0
+    allowedRoomTypes: 
+    minEnemies: 5
+    maxEnemies: 7
+  - roomShape: 2
+    useRoomTypeFilter: 0
+    allowedRoomTypes: 
+    minEnemies: 5
+    maxEnemies: 7
+  - roomShape: 3
+    useRoomTypeFilter: 0
+    allowedRoomTypes: 
+    minEnemies: 8
+    maxEnemies: 12
+  - roomShape: 4
+    useRoomTypeFilter: 0
+    allowedRoomTypes: 
+    minEnemies: 7
+    maxEnemies: 9
   enemyDropChance: 0.1
   inventoryDropPool:
   - itemDefinition: {fileID: 11400000, guid: ec084e978c07f2c41bfcda823352454f, type: 2}
@@ -90,19 +118,3 @@ MonoBehaviour:
     weight: 4
   - itemDefinition: {fileID: 11400000, guid: 8378f783794678d44926037ee729b794, type: 2}
     weight: 3.2
-  enemySpawnCountRules:
-  - roomShape: 0
-    minEnemies: 3
-    maxEnemies: 5
-  - roomShape: 1
-    minEnemies: 5
-    maxEnemies: 7
-  - roomShape: 2
-    minEnemies: 5
-    maxEnemies: 7
-  - roomShape: 3
-    minEnemies: 8
-    maxEnemies: 12
-  - roomShape: 4
-    minEnemies: 7
-    maxEnemies: 9

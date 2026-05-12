@@ -19,6 +19,7 @@ public class EnemySpriteAnimator : MonoBehaviour
     private int currentFrameIndex;
     private float frameTimer;
     private bool facingRight = true;
+    private Sprite fallbackSprite;
 
     public void Bind(EnemyController controller, SpriteRenderer targetRenderer)
     {
@@ -34,6 +35,7 @@ public class EnemySpriteAnimator : MonoBehaviour
         }
 
         sideMoveFrames = definition.sideMoveFrames;
+        fallbackSprite = definition.overrideSprite;
         currentFrameIndex = 0;
         frameTimer = 0f;
         ApplyCurrentVisual();
@@ -91,6 +93,15 @@ public class EnemySpriteAnimator : MonoBehaviour
             frameTimer = 0f;
         }
 
+    }
+
+    private void LateUpdate()
+    {
+        if (PauseMenuController.IsPaused || enemyController == null || spriteRenderer == null)
+        {
+            return;
+        }
+
         ApplyCurrentVisual();
     }
 
@@ -119,16 +130,35 @@ public class EnemySpriteAnimator : MonoBehaviour
 
     private void ApplyCurrentVisual()
     {
-        if (spriteRenderer == null || sideMoveFrames == null || sideMoveFrames.Length == 0)
+        if (spriteRenderer == null)
         {
             return;
         }
 
-        int spriteIndex = enemyController != null && enemyController.IsAlerted
-            ? Mathf.Clamp(currentFrameIndex, 0, sideMoveFrames.Length - 1)
-            : 0;
+        if (sideMoveFrames != null && sideMoveFrames.Length > 0)
+        {
+            int spriteIndex = enemyController != null && enemyController.IsAlerted
+                ? Mathf.Clamp(currentFrameIndex, 0, sideMoveFrames.Length - 1)
+                : 0;
 
-        spriteRenderer.sprite = sideMoveFrames[spriteIndex];
-        spriteRenderer.flipX = !facingRight;
+            spriteRenderer.sprite = sideMoveFrames[spriteIndex];
+        }
+        else if (fallbackSprite != null)
+        {
+            spriteRenderer.sprite = fallbackSprite;
+        }
+
+        spriteRenderer.flipX = false;
+
+        Transform spriteTransform = spriteRenderer.transform;
+        Vector3 currentScale = spriteTransform.localScale;
+        float absoluteX = Mathf.Abs(currentScale.x);
+        if (absoluteX <= 0.0001f)
+        {
+            absoluteX = 1f;
+        }
+
+        currentScale.x = facingRight ? absoluteX : -absoluteX;
+        spriteTransform.localScale = currentScale;
     }
 }
