@@ -157,17 +157,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.01789856, y: -0.012472153}
+  m_Offset: {x: 0.026683807, y: -0.05201149}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 2, y: 2}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.9461365, y: 0.9705391}
+  m_Size: {x: 1.9126511, y: 1.9458351}
   m_EdgeRadius: 0
 --- !u!114 &3000090820783681809
 MonoBehaviour:
@@ -209,6 +209,7 @@ MonoBehaviour:
   normalAttackLungeDuration: 0.1
   flyShotWindup: 0.18
   flyAttackCooldownMultiplier: 1.45
+  flyFirstSightShotDelay: 0.35
   telegraphColor: {r: 1, g: 0.55, b: 0.55, a: 1}
   telegraphScaleMultiplier: 1.12
   knockbackRecoverDuration: 0.16
@@ -251,17 +252,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.021877289, y: -0.016450882}
+  m_Offset: {x: 0.026268005, y: -0.038417816}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 2, y: 2}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.95409393, y: 0.9705391}
+  m_Size: {x: 1.9118195, y: 1.9809799}
   m_EdgeRadius: 0
 --- !u!114 &4566395978418312827
 MonoBehaviour:
