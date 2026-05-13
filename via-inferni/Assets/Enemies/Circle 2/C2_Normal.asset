@@ -15,6 +15,11 @@ MonoBehaviour:
   enemyType: 0
   displayName: Lust Normal Enemy
   overrideSprite: {fileID: 0}
+  sideMoveFrames:
+  - {fileID: -694428866, guid: 4b8f58c418fff5244877d2090b42d116, type: 3}
+  - {fileID: -1736950584, guid: 4b8f58c418fff5244877d2090b42d116, type: 3}
+  - {fileID: 1289678616, guid: 4b8f58c418fff5244877d2090b42d116, type: 3}
+  - {fileID: 489303252, guid: 4b8f58c418fff5244877d2090b42d116, type: 3}
   maxHealth: 37
   moveSpeed: 1.97
   detectionRadius: 10

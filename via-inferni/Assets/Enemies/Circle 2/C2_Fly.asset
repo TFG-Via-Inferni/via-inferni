@@ -15,6 +15,11 @@ MonoBehaviour:
   enemyType: 1
   displayName: Lust Fly Enemy
   overrideSprite: {fileID: 0}
+  sideMoveFrames:
+  - {fileID: -1795263412, guid: 9aebbda57356f314a95a598d3158f0b3, type: 3}
+  - {fileID: -1847503199, guid: 9aebbda57356f314a95a598d3158f0b3, type: 3}
+  - {fileID: -999551534, guid: 9aebbda57356f314a95a598d3158f0b3, type: 3}
+  - {fileID: -124017485, guid: 9aebbda57356f314a95a598d3158f0b3, type: 3}
   maxHealth: 29
   moveSpeed: 2.37
   detectionRadius: 10

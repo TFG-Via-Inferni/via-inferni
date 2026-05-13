@@ -15,6 +15,11 @@ MonoBehaviour:
   enemyType: 2
   displayName: Lust Tank Enemy
   overrideSprite: {fileID: 0}
+  sideMoveFrames:
+  - {fileID: -900884961, guid: 7bae948899f75a746a82497a95faec72, type: 3}
+  - {fileID: 707123314, guid: 7bae948899f75a746a82497a95faec72, type: 3}
+  - {fileID: -962644502, guid: 7bae948899f75a746a82497a95faec72, type: 3}
+  - {fileID: 1679954096, guid: 7bae948899f75a746a82497a95faec72, type: 3}
   maxHealth: 50
   moveSpeed: 1.62
   detectionRadius: 10
