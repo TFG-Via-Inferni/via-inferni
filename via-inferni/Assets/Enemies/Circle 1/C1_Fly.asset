@@ -15,6 +15,11 @@ MonoBehaviour:
   enemyType: 1
   displayName: Limbo Fly Enemy
   overrideSprite: {fileID: -290241622, guid: daa66dd237160c64ead327ba59a12899, type: 3}
+  sideMoveFrames:
+  - {fileID: 971829476, guid: bd7b267f140efcf49bd94a351de6b216, type: 3}
+  - {fileID: 337623100, guid: bd7b267f140efcf49bd94a351de6b216, type: 3}
+  - {fileID: 542460087, guid: bd7b267f140efcf49bd94a351de6b216, type: 3}
+  - {fileID: 1189570108, guid: bd7b267f140efcf49bd94a351de6b216, type: 3}
   maxHealth: 28
   moveSpeed: 2.35
   detectionRadius: 10
