@@ -15,6 +15,11 @@ MonoBehaviour:
   enemyType: 1
   displayName: Wrath Fly Enemy
   overrideSprite: {fileID: 0}
+  sideMoveFrames:
+  - {fileID: -1993337523, guid: 25fb334c0c3836046aa0bfb68b9bc62a, type: 3}
+  - {fileID: -1637488209, guid: 25fb334c0c3836046aa0bfb68b9bc62a, type: 3}
+  - {fileID: 1433797324, guid: 25fb334c0c3836046aa0bfb68b9bc62a, type: 3}
+  - {fileID: -1146768092, guid: 25fb334c0c3836046aa0bfb68b9bc62a, type: 3}
   maxHealth: 32
   moveSpeed: 2.43
   detectionRadius: 10
