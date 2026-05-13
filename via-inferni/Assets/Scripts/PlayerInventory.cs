@@ -43,7 +43,7 @@ public class PlayerInventory : MonoBehaviour
 
     private void Update()
     {
-        if (!enableDebugItemInjection)
+        if (!enableDebugItemInjection || !DebugToggle.DebugEnabled)
         {
             return;
         }

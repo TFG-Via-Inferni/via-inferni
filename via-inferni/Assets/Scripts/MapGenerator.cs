@@ -108,7 +108,7 @@ public class MapGenerator : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (DebugToggle.DebugEnabled && Input.GetKeyDown(KeyCode.Space))
         {
             SetupDungeon();
         }

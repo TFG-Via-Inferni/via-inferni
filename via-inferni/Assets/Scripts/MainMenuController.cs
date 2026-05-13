@@ -29,11 +29,24 @@ public class MainMenuController : MonoBehaviour
 
     public void StartGame()
     {
+        StartGameInternal(debugMode: false);
+    }
+
+    public void StartGameDevMode()
+    {
+        StartGameInternal(debugMode: true);
+    }
+
+    private void StartGameInternal(bool debugMode)
+    {
         if (!SceneExistsInBuildSettings(gameplaySceneName))
         {
             Debug.LogError($"MainMenuController: Scene '{gameplaySceneName}' is not in Build Settings.");
             return;
         }
+
+        // Configurar el debug mode
+        DebugToggle.SetDebugMode(debugMode);
 
         if (CircleManager.instance != null)
         {
@@ -63,6 +76,7 @@ public class MainMenuController : MonoBehaviour
 
     public void ToggleDevMode()
     {
+        StartGameDevMode();
     }
 
     private bool SceneExistsInBuildSettings(string sceneName)

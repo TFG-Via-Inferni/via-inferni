@@ -99,6 +99,11 @@ public class TreasureManager : MonoBehaviour
 
     private void HandleDebugInput()
     {
+        if (!DebugToggle.DebugEnabled)
+        {
+            return;
+        }
+
         Keyboard keyboard = Keyboard.current;
         if (keyboard == null)
         {

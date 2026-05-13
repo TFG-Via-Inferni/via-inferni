@@ -396,7 +396,7 @@ public class Player : MonoBehaviour, IDamageable
 
     private void HandleSoulInput()
     {
-        if (playerStats == null)
+        if (!DebugToggle.DebugEnabled || playerStats == null)
         {
             return;
         }
@@ -436,6 +436,11 @@ public class Player : MonoBehaviour, IDamageable
 
     private void HandleDebugInput()
     {
+        if (!DebugToggle.DebugEnabled)
+        {
+            return;
+        }
+
         Keyboard keyboard = Keyboard.current;
         if (keyboard == null)
         {
