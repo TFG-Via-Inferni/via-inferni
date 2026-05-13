@@ -486,17 +486,18 @@ public class CircleUI : MonoBehaviour
         float margin = shorterSide * statsMarginPercentOfScreen;
         float width = Mathf.Clamp(safeScreenWidth * statsWidthPercentOfScreen, 460f, safeScreenWidth * 0.68f);
         float height = Mathf.Clamp(safeScreenHeight * statsHeightPercentOfScreen, 340f, safeScreenHeight * 0.74f);
-        int preferredFontSize = Mathf.Max(
-            statsFontSize,
-            Mathf.RoundToInt(safeScreenHeight * statsFontPercentOfScreenHeight));
+        int preferredFontSize = Mathf.Clamp(
+            Mathf.Max(statsFontSize, Mathf.RoundToInt(safeScreenHeight * statsFontPercentOfScreenHeight)),
+            20,
+            34);
         int minAutoFontSize = Mathf.Clamp(
             Mathf.RoundToInt(safeScreenHeight * statsMinFontPercentOfScreenHeight),
-            34,
-            58);
+            16,
+            24);
         int maxAutoFontSize = Mathf.Clamp(
             Mathf.RoundToInt(safeScreenHeight * statsMaxFontPercentOfScreenHeight),
             Mathf.Max(minAutoFontSize + 2, preferredFontSize),
-            124);
+            38);
 
         ConfigureBottomLeftRect(
             rect,
