@@ -15,6 +15,11 @@ MonoBehaviour:
   enemyType: 2
   displayName: Gluttony Tank Enemy
   overrideSprite: {fileID: 0}
+  sideMoveFrames:
+  - {fileID: -890586815, guid: 936e9a0e39090bd41acbe1de9bde506c, type: 3}
+  - {fileID: 2130278030, guid: 936e9a0e39090bd41acbe1de9bde506c, type: 3}
+  - {fileID: -1888810844, guid: 936e9a0e39090bd41acbe1de9bde506c, type: 3}
+  - {fileID: 1293886378, guid: 936e9a0e39090bd41acbe1de9bde506c, type: 3}
   maxHealth: 52
   moveSpeed: 1.64
   detectionRadius: 10

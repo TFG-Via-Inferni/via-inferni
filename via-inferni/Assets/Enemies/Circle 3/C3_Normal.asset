@@ -15,6 +15,11 @@ MonoBehaviour:
   enemyType: 0
   displayName: Gluttony Normal Enemy
   overrideSprite: {fileID: 0}
+  sideMoveFrames:
+  - {fileID: -873877776, guid: 86a937a9892417449af6bad8ce4078bb, type: 3}
+  - {fileID: -1633153661, guid: 86a937a9892417449af6bad8ce4078bb, type: 3}
+  - {fileID: 1084204834, guid: 86a937a9892417449af6bad8ce4078bb, type: 3}
+  - {fileID: -1193479597, guid: 86a937a9892417449af6bad8ce4078bb, type: 3}
   maxHealth: 38
   moveSpeed: 1.99
   detectionRadius: 10
