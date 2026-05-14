@@ -15,6 +15,11 @@ MonoBehaviour:
   enemyType: 1
   displayName: Violence Fly Enemy
   overrideSprite: {fileID: 0}
+  sideMoveFrames:
+  - {fileID: -1483590088, guid: 5af1ae9d73703864cbf032bb8989674b, type: 3}
+  - {fileID: 914374433, guid: 5af1ae9d73703864cbf032bb8989674b, type: 3}
+  - {fileID: -1499075686, guid: 5af1ae9d73703864cbf032bb8989674b, type: 3}
+  - {fileID: 1118170958, guid: 5af1ae9d73703864cbf032bb8989674b, type: 3}
   maxHealth: 34
   moveSpeed: 2.47
   detectionRadius: 10

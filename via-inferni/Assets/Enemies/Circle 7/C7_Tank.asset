@@ -15,6 +15,11 @@ MonoBehaviour:
   enemyType: 2
   displayName: Violence Tank Enemy
   overrideSprite: {fileID: 0}
+  sideMoveFrames:
+  - {fileID: -908970701, guid: f008ba3382b93f048aefe0888597ea11, type: 3}
+  - {fileID: -77718399, guid: f008ba3382b93f048aefe0888597ea11, type: 3}
+  - {fileID: -1493686236, guid: f008ba3382b93f048aefe0888597ea11, type: 3}
+  - {fileID: -1061348605, guid: f008ba3382b93f048aefe0888597ea11, type: 3}
   maxHealth: 60
   moveSpeed: 1.72
   detectionRadius: 10
