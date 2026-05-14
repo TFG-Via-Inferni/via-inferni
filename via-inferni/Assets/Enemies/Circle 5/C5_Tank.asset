@@ -15,6 +15,11 @@ MonoBehaviour:
   enemyType: 2
   displayName: Wrath Tank Enemy
   overrideSprite: {fileID: 0}
+  sideMoveFrames:
+  - {fileID: 1298468289, guid: 5c4da4533c7baf849b6bf66a86fce5a8, type: 3}
+  - {fileID: -685722703, guid: 5c4da4533c7baf849b6bf66a86fce5a8, type: 3}
+  - {fileID: -544883011, guid: 5c4da4533c7baf849b6bf66a86fce5a8, type: 3}
+  - {fileID: 1992280772, guid: 5c4da4533c7baf849b6bf66a86fce5a8, type: 3}
   maxHealth: 56
   moveSpeed: 1.68
   detectionRadius: 10
