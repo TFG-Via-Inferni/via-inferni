@@ -15,6 +15,11 @@ MonoBehaviour:
   enemyType: 1
   displayName: Greed Fly Enemy
   overrideSprite: {fileID: 0}
+  sideMoveFrames:
+  - {fileID: 363430469, guid: cd51165cbddbc0c42a232a16c6ead974, type: 3}
+  - {fileID: -1788194478, guid: cd51165cbddbc0c42a232a16c6ead974, type: 3}
+  - {fileID: 2133299723, guid: cd51165cbddbc0c42a232a16c6ead974, type: 3}
+  - {fileID: 1918427198, guid: cd51165cbddbc0c42a232a16c6ead974, type: 3}
   maxHealth: 31
   moveSpeed: 2.41
   detectionRadius: 10
