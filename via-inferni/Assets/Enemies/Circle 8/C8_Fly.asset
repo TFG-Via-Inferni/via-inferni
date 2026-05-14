@@ -15,6 +15,11 @@ MonoBehaviour:
   enemyType: 1
   displayName: Fraud Fly Enemy
   overrideSprite: {fileID: 0}
+  sideMoveFrames:
+  - {fileID: -152144588, guid: 902343f7e406b67499aff1457a525b20, type: 3}
+  - {fileID: -314136664, guid: 902343f7e406b67499aff1457a525b20, type: 3}
+  - {fileID: 2116621300, guid: 902343f7e406b67499aff1457a525b20, type: 3}
+  - {fileID: -1123154012, guid: 902343f7e406b67499aff1457a525b20, type: 3}
   maxHealth: 35
   moveSpeed: 2.49
   detectionRadius: 10

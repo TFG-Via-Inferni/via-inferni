@@ -15,6 +15,11 @@ MonoBehaviour:
   enemyType: 0
   displayName: Fraud Normal Enemy
   overrideSprite: {fileID: 0}
+  sideMoveFrames:
+  - {fileID: 331163807, guid: a85cdd18c0856de418fa917985364525, type: 3}
+  - {fileID: 1470450843, guid: a85cdd18c0856de418fa917985364525, type: 3}
+  - {fileID: 1094890847, guid: a85cdd18c0856de418fa917985364525, type: 3}
+  - {fileID: 1595991962, guid: a85cdd18c0856de418fa917985364525, type: 3}
   maxHealth: 43
   moveSpeed: 2.09
   detectionRadius: 10
