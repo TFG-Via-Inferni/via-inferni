@@ -15,6 +15,11 @@ MonoBehaviour:
   enemyType: 0
   displayName: Treacherty Normal Enemy
   overrideSprite: {fileID: 0}
+  sideMoveFrames:
+  - {fileID: -1316847304, guid: 82933e9e5e5ccb745bb40cc23eab5764, type: 3}
+  - {fileID: -1193166720, guid: 82933e9e5e5ccb745bb40cc23eab5764, type: 3}
+  - {fileID: 632004588, guid: 82933e9e5e5ccb745bb40cc23eab5764, type: 3}
+  - {fileID: -1785518794, guid: 82933e9e5e5ccb745bb40cc23eab5764, type: 3}
   maxHealth: 44
   moveSpeed: 2.11
   detectionRadius: 10

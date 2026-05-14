@@ -15,6 +15,11 @@ MonoBehaviour:
   enemyType: 2
   displayName: Treacherty Tank Enemy
   overrideSprite: {fileID: 0}
+  sideMoveFrames:
+  - {fileID: 339975861, guid: af132f33b933e714ebacccbc628f62ae, type: 3}
+  - {fileID: 1298667634, guid: af132f33b933e714ebacccbc628f62ae, type: 3}
+  - {fileID: -1566342858, guid: af132f33b933e714ebacccbc628f62ae, type: 3}
+  - {fileID: -72464272, guid: af132f33b933e714ebacccbc628f62ae, type: 3}
   maxHealth: 64
   moveSpeed: 1.76
   detectionRadius: 10

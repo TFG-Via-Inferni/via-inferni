@@ -86,7 +86,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 5
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 160204226, guid: daa66dd237160c64ead327ba59a12899, type: 3}
+  m_Sprite: {fileID: -1316847304, guid: 82933e9e5e5ccb745bb40cc23eab5764, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -157,7 +157,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: -0.1}
+  m_Offset: {x: 0, y: 0.0034389496}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -167,7 +167,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.6, y: 0.7}
+  m_Size: {x: 0.6, y: 1.0023689}
   m_EdgeRadius: 0
 --- !u!114 &3000090820783681809
 MonoBehaviour:
@@ -188,6 +188,36 @@ MonoBehaviour:
   attackDamage: 10
   spriteRenderer: {fileID: 0}
   startDormant: 1
+  flyPreferredDistance: 2
+  flyOrbitStrength: 0.65
+  flyAttackRangeMultiplier: 3
+  flyProjectileSpeed: 8.5
+  flyProjectileLifetime: 2.2
+  flyProjectileSpawnOffset: 0.5
+  flyProjectilePrefab: {fileID: 0}
+  tankSpeedMultiplier: 0.7
+  tankAttackWindup: 0.45
+  tankAttackDamageMultiplier: 2
+  tankAttackLungeForce: 6.5
+  tankAttackLungeDuration: 0.12
+  normalAttackRangeMultiplier: 0.72
+  normalAttackEngageRangeMultiplier: 1.45
+  normalAttackWindup: 0.1
+  normalWindupChaseSpeedMultiplier: 0.48
+  normalAttackCommitRangeMultiplier: 1.35
+  normalAttackLungeForce: 5.1
+  normalAttackLungeDuration: 0.1
+  flyShotWindup: 0.18
+  flyAttackCooldownMultiplier: 1.45
+  flyFirstSightShotDelay: 0.35
+  telegraphColor: {r: 1, g: 0.55, b: 0.55, a: 1}
+  telegraphScaleMultiplier: 1.12
+  knockbackRecoverDuration: 0.16
+  dashTrailColor: {r: 1, g: 0.92, b: 0.92, a: 1}
+  normalDashTrailAlphaMultiplier: 1.65
+  normalDashTrailSpawnIntervalMultiplier: 0.68
+  normalDashTrailLifetimeMultiplier: 1.35
+  normalDashTrailScaleMultiplier: 1.05
 --- !u!61 &8029814907209707987
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -222,7 +252,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: -0.1}
+  m_Offset: {x: 0, y: -0.0005378723}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -232,7 +262,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.6, y: 0.7}
+  m_Size: {x: 0.6, y: 1.0023651}
   m_EdgeRadius: 0
 --- !u!114 &4566395978418312827
 MonoBehaviour:
@@ -248,3 +278,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
   maxHealth: 30
   destroyOnDeath: 1
+  combatTextOffset: {x: 0, y: 0.8, z: 0}
+  criticalTextColor: {r: 1, g: 0.85, b: 0.25, a: 1}
