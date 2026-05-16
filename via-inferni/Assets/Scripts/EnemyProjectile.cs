@@ -12,7 +12,7 @@ public class EnemyProjectile : MonoBehaviour
     private float lifetime;
     private Vector2 direction = Vector2.right;
     private float spawnTime;
-    private Transform ownerRoot;
+    private Transform ownerTransform;
 
     private void Awake()
     {
@@ -25,7 +25,7 @@ public class EnemyProjectile : MonoBehaviour
         speed = Mathf.Max(0f, projectileSpeed);
         lifetime = Mathf.Max(0.1f, projectileLifetime);
         direction = travelDirection.sqrMagnitude > 0.0001f ? travelDirection.normalized : Vector2.right;
-        ownerRoot = owner != null ? owner.root : null;
+        ownerTransform = owner;
         spawnTime = Time.time;
         EnsureNonPhysicalProjectile();
         UpdateVisualRotation();
@@ -69,7 +69,7 @@ public class EnemyProjectile : MonoBehaviour
                 continue;
             }
 
-            if (ownerRoot != null && hit.transform.root == ownerRoot)
+            if (ShouldIgnoreOwnerHit(hit))
             {
                 continue;
             }
@@ -112,7 +112,7 @@ public class EnemyProjectile : MonoBehaviour
                 continue;
             }
 
-            if (ownerRoot != null && hit.transform.root == ownerRoot)
+            if (ShouldIgnoreOwnerHit(hit))
             {
                 continue;
             }
@@ -182,5 +182,18 @@ public class EnemyProjectile : MonoBehaviour
             body.bodyType = RigidbodyType2D.Kinematic;
             body.simulated = false;
         }
+    }
+
+    private bool ShouldIgnoreOwnerHit(Collider2D other)
+    {
+        if (ownerTransform == null || other == null)
+        {
+            return false;
+        }
+
+        Transform otherTransform = other.transform;
+        return otherTransform == ownerTransform
+            || otherTransform.IsChildOf(ownerTransform)
+            || ownerTransform.IsChildOf(otherTransform);
     }
 }
