@@ -396,7 +396,7 @@ public class Player : MonoBehaviour, IDamageable
 
     private void HandleSoulInput()
     {
-        if (!DebugToggle.DebugEnabled || playerStats == null)
+        if (playerStats == null)
         {
             return;
         }
@@ -407,14 +407,17 @@ public class Player : MonoBehaviour, IDamageable
             return;
         }
 
-        if (keyboard.zKey.wasPressedThisFrame)
+        if (DebugToggle.DebugEnabled)
         {
-            playerStats.AddSoul(SoulDebugStep);
-        }
+            if (keyboard.zKey.wasPressedThisFrame)
+            {
+                playerStats.AddSoul(SoulDebugStep);
+            }
 
-        if (keyboard.xKey.wasPressedThisFrame)
-        {
-            playerStats.SpendSoul(SoulDebugStep);
+            if (keyboard.xKey.wasPressedThisFrame)
+            {
+                playerStats.SpendSoul(SoulDebugStep);
+            }
         }
 
         bool ctrlPressedThisFrame = keyboard.leftCtrlKey.wasPressedThisFrame || keyboard.rightCtrlKey.wasPressedThisFrame;
